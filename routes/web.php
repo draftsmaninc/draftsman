@@ -8,5 +8,5 @@ Route::prefix('api')->group(function () {
 });
 
 // Catch-all Route...
-Route::view('/{view?}', 'layout');
+Route::view('/{view?}', 'draftsman::layout');
 // Route::get('/{view?}', 'HomeController@index')->where('view', '(.*)')->name('horizon.index');
