@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "draftsmaninc/draftsman",
+    "description": "This is my package draftsman",
     "keywords": [
-        ":vendor_name",
+        "Draftsman Inc",
         "laravel",
-        ":package_slug"
+        "draftsman"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/draftsmaninc/draftsman",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Ron Northrip",
+            "email": "ron.northrip@gmail.com",
             "role": "Developer"
         }
     ],
@@ -30,18 +30,17 @@
         "pestphp/pest-plugin-laravel": "^3.0",
         "phpstan/extension-installer": "^1.3||^2.0",
         "phpstan/phpstan-deprecation-rules": "^1.1||^2.0",
-        "phpstan/phpstan-phpunit": "^1.3||^2.0",
-        "spatie/laravel-ray": "^1.35"
+        "phpstan/phpstan-phpunit": "^1.3||^2.0"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "DraftsmanInc\\Draftsman\\": "src/",
+            "DraftsmanInc\\Draftsman\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "DraftsmanInc\\Draftsman\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +62,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "DraftsmanInc\\Draftsman\\DraftsmanServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "Draftsman": "DraftsmanInc\\Draftsman\\Facades\\Draftsman"
             }
         }
     },
