@@ -19,7 +19,7 @@ class DraftsmanServiceProvider extends PackageServiceProvider
             ->name('draftsman')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_draftsman_table')
+            ->hasRoute('web')
             ->hasCommand(DraftsmanCommand::class);
     }
 }
