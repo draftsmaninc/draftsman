@@ -2,9 +2,9 @@
 
 namespace Draftsman\Draftsman\Tests;
 
+use Draftsman\Draftsman\DraftsmanServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Draftsman\Draftsman\DraftsmanServiceProvider;
 
 class TestCase extends Orchestra
 {
