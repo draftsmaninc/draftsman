@@ -74,4 +74,5 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## License
 
-The Draftsman Package is licensed software by Draftsman Incorporated.
+The Draftsman Package is Copyright (c) 2025 by Draftsman Incorporated.
+Please see the [License File](LICENSE.md) for more information.
