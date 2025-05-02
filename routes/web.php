@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-
 Route::prefix('draftsman')->group(function () {
     Route::prefix('api')->group(function () {
         // API Routes...
