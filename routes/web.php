@@ -2,11 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api')->group(function () {
-    // API Routes...
 
+Route::prefix('draftsman')->group(function () {
+    Route::prefix('api')->group(function () {
+        // API Routes...
+
+    });
+
+    // Catch-all Route...
+    Route::view('/{view?}', 'draftsman::layout');
+    // Route::get('/{view?}', 'HomeController@index')->where('view', '(.*)')->name('horizon.index');
 });
-
-// Catch-all Route...
-Route::view('/{view?}', 'draftsman::layout');
-// Route::get('/{view?}', 'HomeController@index')->where('view', '(.*)')->name('horizon.index');
