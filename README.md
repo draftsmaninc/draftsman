@@ -12,7 +12,7 @@ A graphical tool that diagrams and edits Laravel eloquent models.
 You can install the package via composer:
 
 ```bash
-composer require draftsmaninc/draftsman
+composer require --dev draftsmaninc/draftsman
 ```
 
 You can publish the config file with:
