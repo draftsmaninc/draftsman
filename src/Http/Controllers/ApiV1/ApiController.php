@@ -19,7 +19,7 @@ class ApiController extends BaseController
         'BelongsTo' => 'getForeignKeyName',
         'BelongsToMany' => 'getParentKeyName',
         'HasMany' => 'getLocalKeyName',
-//        'HasManyThrough' => 'getForeignKeyName',
+        'HasManyThrough' => 'getLocalKeyName',
         'HasOne' => 'getLocalKeyName',
 //        'HasOneOrMany' => 'getForeignKeyName',
 //        'HasOneThrough' => 'getForeignKeyName',
@@ -36,7 +36,7 @@ class ApiController extends BaseController
         'BelongsTo' => 'getOwnerKeyName',
         'BelongsToMany' => 'getRelatedKeyName',
         'HasMany' => 'getForeignKeyName',
-//        'HasManyThrough' => 'getForeignKeyName',
+        'HasManyThrough' => 'getForeignKeyName',
         'HasOne' => 'getForeignKeyName',
 //        'HasOneOrMany' => 'getForeignKeyName',
 //        'HasOneThrough' => 'getForeignKeyName',
@@ -59,6 +59,38 @@ class ApiController extends BaseController
 //        'Pivot' => 'getForeignKeyName',
     ];
 
+    protected $relationsThroughAttributes = [
+        'HasManyThrough' => [
+            // 'class' => 'getThroughParentClass', // throughParent is private
+            'from' => 'getFirstKeyName',
+            'to' => 'getSecondLocalKeyName'
+        ],
+//        'MorphPivot' => 'getForeignKeyName',
+//        'Pivot' => 'getForeignKeyName',
+    ];
+
+    public function getPrivateProperty($object, $property) {
+        // hack the private property
+        $array = (array) $object;
+        $propertyLength = strlen($property);
+        foreach ($array as $key => $value) {
+            $propertyNameParts = explode("\0", $key);
+            $propertyName = end($propertyNameParts);
+            if ($propertyName === $property) {
+                return $value;
+            }
+        }
+        return null;
+    }
+
+    public function getPrivatePropertyClass($object, $property) {
+        $value = $this->getPrivateProperty($object, $property);
+        if (!$value) {
+            return null;
+        }
+        return get_class($value);
+    }
+
     public function getModelShow($model): \stdClass | null
     {
         if (Artisan::call('model:show', ['model' => $model, '--json' => true]) === 0) {
@@ -76,6 +108,7 @@ class ApiController extends BaseController
                 $from_attribute = null;
                 $to_attribute = null;
                 $pivot_attributes = [];
+                $through_attributes = [];
                 if (array_key_exists($relation->type, $this->relationsFromAttribute)) {
                     $from_attribute = $this->relationsFromAttribute[$relation->type];
                     $from_attribute = $rel->$from_attribute();
@@ -93,6 +126,14 @@ class ApiController extends BaseController
                         $pivot_attributes['class'].= '.'.$rel->getTable();
                     }
                 }
+                if (array_key_exists($relation->type, $this->relationsThroughAttributes)) {
+                    $through_attributes = $this->relationsThroughAttributes[$relation->type];
+                    foreach ($through_attributes as $through_key => $through_attribute) {
+                        $through_attributes[$through_key] = $rel->$through_attribute();
+                    }
+                    $through_attributes['class'] = $this->getPrivatePropertyClass($rel, 'throughParent');
+                    // seems to through an error if put BEFORE the foreach
+                }
                 $relation->from = $model;
                 $relation->from_attribute = $from_attribute;
                 $relation->to = $related;
@@ -100,6 +141,11 @@ class ApiController extends BaseController
                 if ($pivot_attributes) {
                     foreach ($pivot_attributes as $pivot_key => $pivot_attribute) {
                         $relation->{'pivot_'.$pivot_key} = $pivot_attribute;
+                    }
+                }
+                if ($through_attributes) {
+                    foreach ($through_attributes as $through_key => $through_attribute) {
+                        $relation->{'through_'.$through_key} = $through_attribute;
                     }
                 }
             }
