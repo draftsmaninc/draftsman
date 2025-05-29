@@ -24,7 +24,7 @@ class ApiController extends BaseController
 //        'HasOneOrMany' => 'getForeignKeyName',
 //        'HasOneThrough' => 'getForeignKeyName',
 //        'MorphMany' => 'getForeignKeyName',
-//        'MorphOne' => 'getLocalKeyName',
+        'MorphOne' => 'getLocalKeyName',
 //        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
 //        'MorphTo' => 'getForeignKeyName',
@@ -41,7 +41,7 @@ class ApiController extends BaseController
 //        'HasOneOrMany' => 'getForeignKeyName',
 //        'HasOneThrough' => 'getForeignKeyName',
 //        'MorphMany' => 'getForeignKeyName',
-//        'MorphOne' => 'getForeignKeyName',
+        'MorphOne' => 'getForeignKeyName',
 //        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
 //        'MorphTo' => 'getForeignKeyName',
@@ -67,6 +67,12 @@ class ApiController extends BaseController
         ],
 //        'MorphPivot' => 'getForeignKeyName',
 //        'Pivot' => 'getForeignKeyName',
+    ];
+
+    protected $relationsMorphAttributes = [
+        'MorphOne' => [
+            'attribute' => 'getMorphType',
+        ],
     ];
 
     public function getPrivateProperty($object, $property) {
@@ -100,6 +106,7 @@ class ApiController extends BaseController
                 $to_attribute = null;
                 $pivot_attributes = [];
                 $through_attributes = [];
+                $morph_attributes = [];
                 if (array_key_exists($relation->type, $this->relationsFromAttribute)) {
                     $from_attribute = $this->relationsFromAttribute[$relation->type];
                     $from_attribute = $rel->$from_attribute();
@@ -125,6 +132,12 @@ class ApiController extends BaseController
                     $through_attributes['class'] = $this->getPrivatePropertyClass($rel, 'throughParent');
                     // seems to through an error if put BEFORE the foreach
                 }
+                if (array_key_exists($relation->type, $this->relationsMorphAttributes)) {
+                    $morph_attributes = $this->relationsMorphAttributes[$relation->type];
+                    foreach ($morph_attributes as $morph_key => $morph_attribute) {
+                        $morph_attributes[$morph_key] = $rel->$morph_attribute();
+                    }
+                }
                 $relation->from = $model;
                 $relation->from_attribute = $from_attribute;
                 $relation->to = $related;
@@ -137,6 +150,11 @@ class ApiController extends BaseController
                 if ($through_attributes) {
                     foreach ($through_attributes as $through_key => $through_attribute) {
                         $relation->{'through_'.$through_key} = $through_attribute;
+                    }
+                }
+                if ($morph_attributes) {
+                    foreach ($morph_attributes as $morph_key => $morph_attribute) {
+                        $relation->{'morph_'.$morph_key} = $morph_attribute;
                     }
                 }
             }
