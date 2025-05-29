@@ -71,16 +71,7 @@ class ApiController extends BaseController
 
     public function getPrivateProperty($object, $property) {
         // hack the private property
-        $array = (array) $object;
-        $propertyLength = strlen($property);
-        foreach ($array as $key => $value) {
-            $propertyNameParts = explode("\0", $key);
-            $propertyName = end($propertyNameParts);
-            if ($propertyName === $property) {
-                return $value;
-            }
-        }
-        return null;
+        return (fn () => $this->{$property})->call($object);
     }
 
     public function getPrivatePropertyClass($object, $property) {
