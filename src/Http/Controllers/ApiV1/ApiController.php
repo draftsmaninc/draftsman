@@ -15,6 +15,23 @@ use Illuminate\Support\Facades\File;
 class ApiController extends BaseController
 {
 
+    protected $relationsConnectionMap = [
+        'BelongsTo' => 'direct',
+        'BelongsToMany' => 'direct',
+        'HasMany' => 'direct',
+        'HasManyThrough' => 'through',
+        'HasOne' => 'direct',
+//         'HasOneOrMany' => 'through',
+//        'HasOneThrough' => 'through',
+        'MorphMany' => 'direct',
+        'MorphOne' => 'direct',
+//        'MorphOneOrMany' => 'morph',
+//        'MorphPivot' => 'pivot',
+//        'MorphTo' => 'morph',
+//        'MorphToMany' => 'morph',
+//        'Pivot' => 'pivot',
+    ];
+
     protected $relationsFromAttribute = [
         'BelongsTo' => 'getForeignKeyName',
         'BelongsToMany' => 'getParentKeyName',
@@ -105,11 +122,15 @@ class ApiController extends BaseController
                 unset($relation->related);
                 $rel = $mod->$function();
                 $relation->key = $model . '.' . $function;
+                $connection = null;
                 $from_attribute = null;
                 $to_attribute = null;
                 $pivot_attributes = [];
                 $through_attributes = [];
                 $morph_attributes = [];
+                if (array_key_exists($relation->type, $this->relationsConnectionMap)) {
+                    $connection = $this->relationsConnectionMap[$relation->type];
+                }
                 if (array_key_exists($relation->type, $this->relationsFromAttribute)) {
                     $from_attribute = $this->relationsFromAttribute[$relation->type];
                     $from_attribute = $rel->$from_attribute();
@@ -141,6 +162,7 @@ class ApiController extends BaseController
                         $morph_attributes[$morph_key] = $rel->$morph_attribute();
                     }
                 }
+                $relation->connection = $connection;
                 $relation->from = $model;
                 $relation->from_attribute = $from_attribute;
                 $relation->to = $related;
