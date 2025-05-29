@@ -23,7 +23,7 @@ class ApiController extends BaseController
         'HasOne' => 'getLocalKeyName',
 //        'HasOneOrMany' => 'getForeignKeyName',
 //        'HasOneThrough' => 'getForeignKeyName',
-//        'MorphMany' => 'getForeignKeyName',
+        'MorphMany' => 'getLocalKeyName',
         'MorphOne' => 'getLocalKeyName',
 //        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
@@ -40,7 +40,7 @@ class ApiController extends BaseController
         'HasOne' => 'getForeignKeyName',
 //        'HasOneOrMany' => 'getForeignKeyName',
 //        'HasOneThrough' => 'getForeignKeyName',
-//        'MorphMany' => 'getForeignKeyName',
+        'MorphMany' => 'getForeignKeyName',
         'MorphOne' => 'getForeignKeyName',
 //        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
@@ -63,13 +63,16 @@ class ApiController extends BaseController
         'HasManyThrough' => [
             // 'class' => 'getThroughParentClass', // throughParent is private
             'from' => 'getFirstKeyName',
-            'to' => 'getSecondLocalKeyName'
+            'to' => 'getSecondLocalKeyName',
         ],
 //        'MorphPivot' => 'getForeignKeyName',
 //        'Pivot' => 'getForeignKeyName',
     ];
 
     protected $relationsMorphAttributes = [
+        'MorphMany' => [
+            'attribute' => 'getMorphType',
+        ],
         'MorphOne' => [
             'attribute' => 'getMorphType',
         ],
