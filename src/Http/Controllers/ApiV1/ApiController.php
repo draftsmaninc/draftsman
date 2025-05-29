@@ -154,7 +154,7 @@ class ApiController extends BaseController
                         $through_attributes[$through_key] = $rel->$through_attribute();
                     }
                     $through_attributes['class'] = $this->getPrivatePropertyClass($rel, 'throughParent');
-                    // seems to through an error if put BEFORE the foreach
+                    // seems to throw an error if put BEFORE the foreach
                 }
                 if (array_key_exists($relation->type, $this->relationsMorphAttributes)) {
                     $morph_attributes = $this->relationsMorphAttributes[$relation->type];
