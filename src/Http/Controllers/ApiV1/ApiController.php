@@ -32,6 +32,23 @@ class ApiController extends BaseController
 //        'Pivot' => 'pivot',
     ];
 
+    protected $relationsTypeMap = [
+        'BelongsTo' => 'one',
+        'BelongsToMany' => 'one',
+        'HasMany' => 'many',
+        'HasManyThrough' => 'many',
+        'HasOne' => 'one',
+//         'HasOneOrMany' => 'through',
+//        'HasOneThrough' => 'through',
+        'MorphMany' => 'many',
+        'MorphOne' => 'one',
+//        'MorphOneOrMany' => 'morph',
+//        'MorphPivot' => 'pivot',
+//        'MorphTo' => 'morph',
+//        'MorphToMany' => 'morph',
+//        'Pivot' => 'pivot',
+    ];
+
     protected $relationsFromAttribute = [
         'BelongsTo' => 'getForeignKeyName',
         'BelongsToMany' => 'getParentKeyName',
@@ -119,7 +136,10 @@ class ApiController extends BaseController
             foreach ($data->relations as &$relation) {
                 $function = $relation->name;
                 $related = $relation->related;
+                $framework_type = $relation->type;
                 unset($relation->related);
+                $relation->type = (array_key_exists($framework_type, $this->relationsTypeMap))? $this->relationsTypeMap[$framework_type] : null;
+                $relation->framework_type = $framework_type;
                 $rel = $mod->$function();
                 $relation->key = $model . '.' . $function;
                 $connection = null;
@@ -128,19 +148,19 @@ class ApiController extends BaseController
                 $pivot_attributes = [];
                 $through_attributes = [];
                 $morph_attributes = [];
-                if (array_key_exists($relation->type, $this->relationsConnectionMap)) {
-                    $connection = $this->relationsConnectionMap[$relation->type];
+                if (array_key_exists($framework_type, $this->relationsConnectionMap)) {
+                    $connection = $this->relationsConnectionMap[$framework_type];
                 }
-                if (array_key_exists($relation->type, $this->relationsFromAttribute)) {
-                    $from_attribute = $this->relationsFromAttribute[$relation->type];
+                if (array_key_exists($framework_type, $this->relationsFromAttribute)) {
+                    $from_attribute = $this->relationsFromAttribute[$framework_type];
                     $from_attribute = $rel->$from_attribute();
                 }
-                if (array_key_exists($relation->type, $this->relationsToAttribute)) {
-                    $to_attribute = $this->relationsToAttribute[$relation->type];
+                if (array_key_exists($framework_type, $this->relationsToAttribute)) {
+                    $to_attribute = $this->relationsToAttribute[$framework_type];
                     $to_attribute = $rel->$to_attribute();
                 }
-                if (array_key_exists($relation->type, $this->relationsPivotsAttributes)) {
-                    $pivot_attributes = $this->relationsPivotsAttributes[$relation->type];
+                if (array_key_exists($framework_type, $this->relationsPivotsAttributes)) {
+                    $pivot_attributes = $this->relationsPivotsAttributes[$framework_type];
                     foreach ($pivot_attributes as $pivot_key => $pivot_attribute) {
                         $pivot_attributes[$pivot_key] = $rel->$pivot_attribute();
                     }
@@ -148,16 +168,16 @@ class ApiController extends BaseController
                         $pivot_attributes['class'].= '.'.$rel->getTable();
                     }
                 }
-                if (array_key_exists($relation->type, $this->relationsThroughAttributes)) {
-                    $through_attributes = $this->relationsThroughAttributes[$relation->type];
+                if (array_key_exists($framework_type, $this->relationsThroughAttributes)) {
+                    $through_attributes = $this->relationsThroughAttributes[$framework_type];
                     foreach ($through_attributes as $through_key => $through_attribute) {
                         $through_attributes[$through_key] = $rel->$through_attribute();
                     }
                     $through_attributes['class'] = $this->getPrivatePropertyClass($rel, 'throughParent');
                     // seems to throw an error if put BEFORE the foreach
                 }
-                if (array_key_exists($relation->type, $this->relationsMorphAttributes)) {
-                    $morph_attributes = $this->relationsMorphAttributes[$relation->type];
+                if (array_key_exists($framework_type, $this->relationsMorphAttributes)) {
+                    $morph_attributes = $this->relationsMorphAttributes[$framework_type];
                     foreach ($morph_attributes as $morph_key => $morph_attribute) {
                         $morph_attributes[$morph_key] = $rel->$morph_attribute();
                     }
