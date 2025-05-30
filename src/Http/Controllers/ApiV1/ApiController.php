@@ -14,6 +14,28 @@ use Illuminate\Support\Facades\File;
 
 class ApiController extends BaseController
 {
+    /* 
+    * Eloquent models:
+    * BelongsTo
+    * BelongsToMany
+    * HasMany
+    * HasManyThrough
+    * HasOne
+    * HasOneOrMany * model that can be used in place where both are needed
+    * HasOneThrough
+    * MorphMany
+    * MorphOne
+    * MorphOneOrMany * model that can be used in place where both are needed
+    * MorphPivot
+    * MorphTo * model that defines a custom morph type
+    * MorphToMany * model that defines a custom morph type for manys
+    * Pivot
+    */
+
+    protected $relationsOmitList = [
+        'MorphTo',
+        'MorphToMany',
+    ];
 
     protected $relationsConnectionMap = [
         'BelongsTo' => 'direct',
@@ -134,6 +156,10 @@ class ApiController extends BaseController
             $mod = new $model;
 
             foreach ($data->relations as &$relation) {
+                if (in_array($relation->type, $this->relationsOmitList)) {
+                    $relation = null;
+                    continue;
+                }
                 $function = $relation->name;
                 $related = $relation->related;
                 $framework_type = $relation->type;
@@ -203,6 +229,8 @@ class ApiController extends BaseController
                     }
                 }
             }
+            $data->relations = array_values(array_filter($data->relations)) ?? [];
+            $data->relations_count = count($data->relations) ?? 0;
             return $data;
         }
         return null;
