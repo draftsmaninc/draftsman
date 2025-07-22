@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\File;
 
 class ApiController extends BaseController
 {
-    /* 
+    /*
     * Eloquent models:
     * BelongsTo
     * BelongsToMany
@@ -36,6 +36,8 @@ class ApiController extends BaseController
         'MorphTo',
         'MorphToMany',
     ];
+
+    protected $relationsRestrictToList = [];
 
     protected $relationsConnectionMap = [
         'BelongsTo' => 'direct',
@@ -157,6 +159,10 @@ class ApiController extends BaseController
 
             foreach ($data->relations as &$relation) {
                 if (in_array($relation->type, $this->relationsOmitList)) {
+                    $relation = null;
+                    continue;
+                }
+                if (isset($this->relationsRestrictToList) && count($this->relationsRestrictToList) && !in_array($relation->type, $this->relationsRestrictToList)) {
                     $relation = null;
                     continue;
                 }
