@@ -46,7 +46,7 @@ class ApiController extends BaseController
         'HasManyThrough' => 'through',
         'HasOne' => 'direct',
 //         'HasOneOrMany' => 'through',
-//        'HasOneThrough' => 'through',
+        'HasOneThrough' => 'through',
         'MorphMany' => 'direct',
         'MorphOne' => 'direct',
 //        'MorphOneOrMany' => 'morph',
@@ -63,7 +63,7 @@ class ApiController extends BaseController
         'HasManyThrough' => 'many',
         'HasOne' => 'one',
 //         'HasOneOrMany' => 'through',
-//        'HasOneThrough' => 'through',
+        'HasOneThrough' => 'through',
         'MorphMany' => 'many',
         'MorphOne' => 'one',
 //        'MorphOneOrMany' => 'morph',
@@ -80,7 +80,7 @@ class ApiController extends BaseController
         'HasManyThrough' => 'getLocalKeyName',
         'HasOne' => 'getLocalKeyName',
 //        'HasOneOrMany' => 'getForeignKeyName',
-//        'HasOneThrough' => 'getForeignKeyName',
+        'HasOneThrough' => 'getLocalKeyName',
         'MorphMany' => 'getLocalKeyName',
         'MorphOne' => 'getLocalKeyName',
 //        'MorphOneOrMany' => 'getForeignKeyName',
@@ -97,7 +97,7 @@ class ApiController extends BaseController
         'HasManyThrough' => 'getForeignKeyName',
         'HasOne' => 'getForeignKeyName',
 //        'HasOneOrMany' => 'getForeignKeyName',
-//        'HasOneThrough' => 'getForeignKeyName',
+        'HasOneThrough' => 'getForeignKeyName',
         'MorphMany' => 'getForeignKeyName',
         'MorphOne' => 'getForeignKeyName',
 //        'MorphOneOrMany' => 'getForeignKeyName',
@@ -119,6 +119,11 @@ class ApiController extends BaseController
 
     protected $relationsThroughAttributes = [
         'HasManyThrough' => [
+            // 'class' => 'getThroughParentClass', // throughParent is private
+            'from' => 'getFirstKeyName',
+            'to' => 'getSecondLocalKeyName',
+        ],
+        'HasOneThrough' => [
             // 'class' => 'getThroughParentClass', // throughParent is private
             'from' => 'getFirstKeyName',
             'to' => 'getSecondLocalKeyName',
