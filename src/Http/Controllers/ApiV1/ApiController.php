@@ -33,7 +33,7 @@ class ApiController extends BaseController
     */
 
     protected $relationsOmitList = [
-        'MorphTo',
+//        'MorphTo',
         'MorphToMany',
     ];
 
@@ -51,7 +51,7 @@ class ApiController extends BaseController
         'MorphOne' => 'direct',
 //        'MorphOneOrMany' => 'morph',
 //        'MorphPivot' => 'pivot',
-//        'MorphTo' => 'morph',
+        'MorphTo' => 'direct',
 //        'MorphToMany' => 'morph',
 //        'Pivot' => 'pivot',
     ];
@@ -68,7 +68,7 @@ class ApiController extends BaseController
         'MorphOne' => 'one',
 //        'MorphOneOrMany' => 'morph',
 //        'MorphPivot' => 'pivot',
-//        'MorphTo' => 'morph',
+        'MorphTo' => 'one',
 //        'MorphToMany' => 'morph',
 //        'Pivot' => 'pivot',
     ];
@@ -85,7 +85,7 @@ class ApiController extends BaseController
         'MorphOne' => 'getLocalKeyName',
 //        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
-//        'MorphTo' => 'getForeignKeyName',
+        'MorphTo' => 'getForeignKeyName',
 //        'MorphToMany' => 'getForeignKeyName',
 //        'Pivot' => 'getForeignKeyName',
     ];
@@ -102,7 +102,7 @@ class ApiController extends BaseController
         'MorphOne' => 'getForeignKeyName',
 //        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
-//        'MorphTo' => 'getForeignKeyName',
+        'MorphTo' => 'getForeignKeyName',
 //        'MorphToMany' => 'getForeignKeyName',
 //        'Pivot' => 'getForeignKeyName',
     ];
@@ -139,6 +139,13 @@ class ApiController extends BaseController
         'MorphOne' => [
             'attribute' => 'getMorphType',
         ],
+        'MorphTo' => [
+            'attribute' => 'getMorphType',
+        ],
+    ];
+
+    protected $relationsMorphSkipDefintions = [
+        'MorphTo',
     ];
 
     public function getPrivateProperty($object, $property) {
@@ -224,6 +231,12 @@ class ApiController extends BaseController
                 $relation->from_attribute = $from_attribute;
                 $relation->to = $related;
                 $relation->to_attribute = $to_attribute;
+                if (in_array($framework_type, $this->relationsMorphSkipDefintions)) {
+                    if (($relation->from === $relation->to) && ($relation->from_attribute === $relation->to_attribute)) {
+                        $relation = null;
+                        continue;
+                    }
+                }
                 if ($pivot_attributes) {
                     foreach ($pivot_attributes as $pivot_key => $pivot_attribute) {
                         $relation->{'pivot_'.$pivot_key} = $pivot_attribute;
