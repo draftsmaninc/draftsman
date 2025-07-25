@@ -26,15 +26,15 @@ class ApiController extends BaseController
     * MorphMany
     * MorphOne
     * MorphOneOrMany * model that can be used in place where both are needed
+    * MorphTo * model for defining a morph to
+    * MorphToMany * model for defining a morph to many
     * MorphPivot !!!! 0
-    * MorphTo * model that defines a custom morph type ??
-    * MorphToMany * model that defines a custom morph type for manys ??
     * Pivot
     */
 
     protected $relationsOmitList = [
-//        'MorphTo',
-//        'MorphToMany',
+        'MorphTo',
+        'MorphToMany',
     ];
 
     protected $relationsRestrictToList = [];
@@ -238,6 +238,7 @@ class ApiController extends BaseController
                     foreach ($morph_attributes as $morph_key => $morph_attribute) {
                         $relation->{'morph_'.$morph_key} = $morph_attribute;
                     }
+                    $relation->{'morph_key'} = $related.'.'.$to_attribute.'.'.$relation->{'morph_attribute'};
                 }
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
