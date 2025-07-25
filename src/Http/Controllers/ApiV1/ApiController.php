@@ -26,15 +26,15 @@ class ApiController extends BaseController
     * MorphMany
     * MorphOne
     * MorphOneOrMany * model that can be used in place where both are needed
-    * MorphPivot
-    * MorphTo * model that defines a custom morph type
-    * MorphToMany * model that defines a custom morph type for manys
+    * MorphPivot !!!! 0
+    * MorphTo * model that defines a custom morph type ??
+    * MorphToMany * model that defines a custom morph type for manys ??
     * Pivot
     */
 
     protected $relationsOmitList = [
-        'MorphTo',
-        'MorphToMany',
+//        'MorphTo',
+//        'MorphToMany',
     ];
 
     protected $relationsRestrictToList = [];
@@ -63,7 +63,7 @@ class ApiController extends BaseController
         'HasManyThrough' => 'many',
         'HasOne' => 'one',
 //         'HasOneOrMany' => 'through',
-        'HasOneThrough' => 'through',
+        'HasOneThrough' => 'one',
         'MorphMany' => 'many',
         'MorphOne' => 'one',
 //        'MorphOneOrMany' => 'morph',
