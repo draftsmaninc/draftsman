@@ -113,12 +113,14 @@ class ApiController extends BaseController
 
     protected $relationsThroughAttributes = [
         'HasManyThrough' => [
-            // 'class' => 'getThroughParentClass', // throughParent is private
+            // 'class' => 'getThroughParentClass',
+            // throughParent is a private attribute
             'from' => 'getFirstKeyName',
             'to' => 'getSecondLocalKeyName',
         ],
         'HasOneThrough' => [
-            // 'class' => 'getThroughParentClass', // throughParent is private
+            // 'class' => 'getThroughParentClass',
+            // throughParent is a private attribute
             'from' => 'getFirstKeyName',
             'to' => 'getSecondLocalKeyName',
         ],
