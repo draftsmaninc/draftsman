@@ -28,8 +28,9 @@ class ApiController extends BaseController
     * MorphOneOrMany * model that can be used in place where both are needed
     * MorphTo
     * MorphToMany
-    * MorphPivot !!!! 0
-    * Pivot
+    * MorphPivot * custom many-to-many pivot models should extend
+    * Pivot * custom polymorphic many-to-many pivot models should extend
+    * https://laravel.com/docs/10.x/eloquent-relationships#defining-custom-intermediate-table-models
     */
 
     protected $relationsOmitList = [];
@@ -45,10 +46,8 @@ class ApiController extends BaseController
         'HasOneThrough' => 'through',
         'MorphMany' => 'direct',
         'MorphOne' => 'direct',
-//        'MorphPivot' => 'pivot',
         'MorphTo' => 'direct',
         'MorphToMany' => 'direct',
-//        'Pivot' => 'pivot',
     ];
 
     protected $relationsTypeMap = [
@@ -60,10 +59,8 @@ class ApiController extends BaseController
         'HasOneThrough' => 'one',
         'MorphMany' => 'many',
         'MorphOne' => 'one',
-//        'MorphPivot' => 'pivot',
         'MorphTo' => 'one',
         'MorphToMany' => 'many',
-//        'Pivot' => 'pivot',
     ];
 
     protected $relationsFromAttribute = [
@@ -75,10 +72,8 @@ class ApiController extends BaseController
         'HasOneThrough' => 'getLocalKeyName',
         'MorphMany' => 'getLocalKeyName',
         'MorphOne' => 'getLocalKeyName',
-//        'MorphPivot' => 'getForeignKeyName',
         'MorphTo' => 'getForeignKeyName',
         'MorphToMany' => 'getParentKeyName',
-//        'Pivot' => 'getForeignKeyName',
     ];
 
     protected $relationsToAttribute = [
@@ -90,10 +85,8 @@ class ApiController extends BaseController
         'HasOneThrough' => 'getForeignKeyName',
         'MorphMany' => 'getForeignKeyName',
         'MorphOne' => 'getForeignKeyName',
-//        'MorphPivot' => 'getForeignKeyName',
         'MorphTo' => 'getForeignKeyName',
         'MorphToMany' => 'getRelatedPivotKeyName',
-//        'Pivot' => 'getForeignKeyName',
     ];
 
     protected $relationsPivotsAttributes = [
@@ -107,8 +100,6 @@ class ApiController extends BaseController
             'from' => 'getForeignPivotKeyName',
             'to' => 'getRelatedPivotKeyName'
         ],
-//        'MorphPivot' => 'getForeignKeyName',
-//        'Pivot' => 'getForeignKeyName',
     ];
 
     protected $relationsThroughAttributes = [
@@ -124,8 +115,6 @@ class ApiController extends BaseController
             'from' => 'getFirstKeyName',
             'to' => 'getSecondLocalKeyName',
         ],
-//        'MorphPivot' => 'getForeignKeyName',
-//        'Pivot' => 'getForeignKeyName',
     ];
 
     protected $relationsMorphAttributes = [
