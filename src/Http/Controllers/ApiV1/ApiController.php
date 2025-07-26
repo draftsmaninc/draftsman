@@ -26,8 +26,8 @@ class ApiController extends BaseController
     * MorphMany
     * MorphOne
     * MorphOneOrMany * model that can be used in place where both are needed
-    * MorphTo * model for defining a morph to
-    * MorphToMany * model for defining a morph to many
+    * MorphTo
+    * MorphToMany
     * MorphPivot !!!! 0
     * Pivot
     */
@@ -59,11 +59,9 @@ class ApiController extends BaseController
         'HasMany' => 'many',
         'HasManyThrough' => 'many',
         'HasOne' => 'one',
-//         'HasOneOrMany' => 'through',
         'HasOneThrough' => 'one',
         'MorphMany' => 'many',
         'MorphOne' => 'one',
-//        'MorphOneOrMany' => 'morph',
 //        'MorphPivot' => 'pivot',
         'MorphTo' => 'one',
         'MorphToMany' => 'many',
@@ -76,11 +74,9 @@ class ApiController extends BaseController
         'HasMany' => 'getLocalKeyName',
         'HasManyThrough' => 'getLocalKeyName',
         'HasOne' => 'getLocalKeyName',
-//        'HasOneOrMany' => 'getForeignKeyName',
         'HasOneThrough' => 'getLocalKeyName',
         'MorphMany' => 'getLocalKeyName',
         'MorphOne' => 'getLocalKeyName',
-//        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
         'MorphTo' => 'getForeignKeyName',
         'MorphToMany' => 'getParentKeyName',
@@ -93,11 +89,9 @@ class ApiController extends BaseController
         'HasMany' => 'getForeignKeyName',
         'HasManyThrough' => 'getForeignKeyName',
         'HasOne' => 'getForeignKeyName',
-//        'HasOneOrMany' => 'getForeignKeyName',
         'HasOneThrough' => 'getForeignKeyName',
         'MorphMany' => 'getForeignKeyName',
         'MorphOne' => 'getForeignKeyName',
-//        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
         'MorphTo' => 'getForeignKeyName',
         'MorphToMany' => 'getRelatedPivotKeyName',
