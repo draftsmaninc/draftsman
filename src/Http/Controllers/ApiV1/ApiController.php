@@ -102,6 +102,11 @@ class ApiController extends BaseController
             'from' => 'getForeignPivotKeyName',
             'to' => 'getRelatedPivotKeyName'
         ],
+        'MorphToMany' => [
+            'class' => 'getPivotClass',
+            'from' => 'getForeignPivotKeyName',
+            'to' => 'getRelatedPivotKeyName'
+        ],
 //        'MorphPivot' => 'getForeignKeyName',
 //        'Pivot' => 'getForeignKeyName',
     ];
