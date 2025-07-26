@@ -32,10 +32,7 @@ class ApiController extends BaseController
     * Pivot
     */
 
-    protected $relationsOmitList = [
-//        'MorphTo',
-        'MorphToMany',
-    ];
+    protected $relationsOmitList = [];
 
     protected $relationsRestrictToList = [];
 
@@ -52,7 +49,7 @@ class ApiController extends BaseController
 //        'MorphOneOrMany' => 'morph',
 //        'MorphPivot' => 'pivot',
         'MorphTo' => 'direct',
-//        'MorphToMany' => 'morph',
+        'MorphToMany' => 'direct',
 //        'Pivot' => 'pivot',
     ];
 
@@ -69,7 +66,7 @@ class ApiController extends BaseController
 //        'MorphOneOrMany' => 'morph',
 //        'MorphPivot' => 'pivot',
         'MorphTo' => 'one',
-//        'MorphToMany' => 'morph',
+        'MorphToMany' => 'many',
 //        'Pivot' => 'pivot',
     ];
 
@@ -86,7 +83,7 @@ class ApiController extends BaseController
 //        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
         'MorphTo' => 'getForeignKeyName',
-//        'MorphToMany' => 'getForeignKeyName',
+        'MorphToMany' => 'getParentKeyName',
 //        'Pivot' => 'getForeignKeyName',
     ];
 
@@ -103,7 +100,7 @@ class ApiController extends BaseController
 //        'MorphOneOrMany' => 'getForeignKeyName',
 //        'MorphPivot' => 'getForeignKeyName',
         'MorphTo' => 'getForeignKeyName',
-//        'MorphToMany' => 'getForeignKeyName',
+        'MorphToMany' => 'getRelatedPivotKeyName',
 //        'Pivot' => 'getForeignKeyName',
     ];
 
@@ -142,10 +139,14 @@ class ApiController extends BaseController
         'MorphTo' => [
             'attribute' => 'getMorphType',
         ],
+        'MorphToMany' => [
+            'attribute' => 'getMorphType',
+        ],
     ];
 
     protected $relationsMorphSkipDefintions = [
         'MorphTo',
+        'MorphToMany',
     ];
 
     public function getPrivateProperty($object, $property) {
