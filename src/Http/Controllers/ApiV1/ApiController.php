@@ -265,6 +265,12 @@ class ApiController extends BaseController
             }
             $data[] = $show;
         }
+        //rev sort attributes_count
+        /*
+        usort($data, function($a, $b) {
+            return $b->attributes_count - $a->attributes_count;
+        });
+        */
         return $data;
     }
 
