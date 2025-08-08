@@ -154,9 +154,12 @@ class ApiController extends BaseController
     {
         if (Artisan::call('model:show', ['model' => $model, '--json' => true]) === 0) {
             $data = json_decode(Artisan::output());
+            $mod = new $model;
+            $ref = new \ReflectionClass($model);
+            $data->namespace = substr($data->class, 0, strrpos($data->class, '\\'));
+            $data->file = $ref?->getFileName() ?? null;
             $data->attributes_count = count($data->attributes) ?? 0;
             $data->relations_count = count($data->relations) ?? 0;
-            $mod = new $model;
 
             foreach ($data->relations as &$relation) {
                 if (in_array($relation->type, $this->relationsOmitList)) {
