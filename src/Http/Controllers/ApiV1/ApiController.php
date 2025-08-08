@@ -177,6 +177,9 @@ class ApiController extends BaseController
                 $relation->type = (array_key_exists($framework_type, $this->relationsTypeMap))? $this->relationsTypeMap[$framework_type] : null;
                 $relation->framework_type = $framework_type;
                 $rel = $mod->$function();
+                $relref = $ref->getMethod($function);
+                $relation->file = $relref?->getFileName() ?? null;
+                $relation->line = $relref?->getStartLine() ?? null;
                 $relation->key = $model . '.' . $function;
                 $connection = null;
                 $from_attribute = null;
