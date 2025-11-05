@@ -24,6 +24,21 @@ class ModelsController extends ApiController
     }
 
     /**
+     * Display a presorted listing of the resource.
+     */
+    public function presorted()
+    {
+        $models = $this->getModels();
+
+        //rev sort relations_count
+        usort($models, function($a, $b) {
+            return $b->relations_count - $a->relations_count;
+        });
+
+        return response()->json($models);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
