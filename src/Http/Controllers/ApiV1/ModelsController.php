@@ -44,12 +44,26 @@ class ModelsController extends ApiController
     public function store(Request $request)
     {
         dump($request->all());
-        if ($request->has('modelname')) {
+        if ($request->has('modelname') && (!$request->has('attributename'))) {
             $modelname =  Str::ucfirst(Str::camel($request->input('modelname')));
             Artisan::call('make:model', ['name' => $modelname, '-m' => true]);
             Artisan::call('migrate');
-        }
-        if ($request->has('attributename')) {
+        } else if ($request->has('modelname') && (!$request->has('attributename'))) {
+            $modelname =  Str::ucfirst(Str::camel($request->input('modelname')));
+            $modelname = Str::snake($modelname);
+            $attributename =  Str::snake($request->input('attributename'));
+            $newname = 'add_'.$attributename.'_to_'.$modelname;
+            Artisan::call('make:migration', ['name' => $newname]);
+            $newfile = glob(database_path('migrations').'/*_'.$newname.'.php')[0];
+            $content = File::get($newfile);
+            $coltype = (Str::endsWith($attributename,'_id'))? 'bigInteger' : 'string';
+            $upstring = '$table->'.$coltype.'(\''.$attributename.'\')->nullable()->after(\'id\');';
+            $downstring = '$table->dropColumn(\''.$attributename.'\')->nullable();';
+            $content = Str::replaceFirst('//', $upstring, $content);
+            $content = Str::replaceLast('//', $downstring, $content);
+            File::put($newfile, $content);
+            Artisan::call('migrate');
+        } else if ($request->has('attributename')) {
             $lastmigration = DB::table('migrations')->whereLike('migration','%_create_%_table')->orderBy('id')->get()->last();
             $attributename =  Str::snake($request->input('attributename'));
             $lastname = Str::afterLast($lastmigration->migration, 'create_');
@@ -69,6 +83,7 @@ class ModelsController extends ApiController
             File::put($newfile, $content);
             Artisan::call('migrate');
         }
+        return response()->json([]);
     }
 
     /**
