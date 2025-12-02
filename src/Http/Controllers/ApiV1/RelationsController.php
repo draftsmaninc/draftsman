@@ -2,18 +2,10 @@
 
 namespace Draftsman\Draftsman\Http\Controllers\ApiV1;
 
-use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
-use Illuminate\Container\Container;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\File;
 
 class RelationsController extends ApiController
 {
-
-
     /**
      * Display a listing of the resource.
      */
@@ -21,7 +13,7 @@ class RelationsController extends ApiController
     {
         $list = $this->getModels()->toArray();
         $relations = [];
-        $models= [];
+        $models = [];
         foreach ($list as $name) {
             $model = $this->getModelShow($name);
             if ($model) {
@@ -35,13 +27,14 @@ class RelationsController extends ApiController
                     $type = $this->relationsTypeMap[$relation->type];
                     $related = $relation->related;
                     $function = $relation->name;
-                    $key = $type . '.' . $name . '.' . $function. '.' . $related . '.NULL';
+                    $key = $type.'.'.$name.'.'.$function.'.'.$related.'.NULL';
                     $connection = [
                         'column' => 'NOT IMPLEMENTED',
                         'framework_type' => $relation->type,
                         'function' => $function,
                         'model' => $name,
                     ];
+
                     return;
                     // dd($connection);
                     $relations[$key] = [
