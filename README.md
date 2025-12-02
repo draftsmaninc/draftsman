@@ -27,7 +27,7 @@ If your composer.json file doesn't have a repositories block add it to the end.
 You can now install the package via composer:
 
 ```bash
-composer require --dev draftsmaninc/draftsman
+composer require --dev draftsmaninc/draftsman:dev-main
 ```
 
 You can publish the config file with:
