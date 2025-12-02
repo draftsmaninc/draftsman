@@ -2,16 +2,11 @@
 
 namespace Draftsman\Draftsman\Http\Controllers\ApiV1;
 
-use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
-use Illuminate\Container\Container;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Illuminate\Routing\Controller as BaseController;
 
 class ModelsController extends ApiController
 {
@@ -30,8 +25,8 @@ class ModelsController extends ApiController
     {
         $models = $this->getModels();
 
-        //rev sort relations_count
-        usort($models, function($a, $b) {
+        // rev sort relations_count
+        usort($models, function ($a, $b) {
             return $b->relations_count - $a->relations_count;
         });
 
@@ -44,28 +39,28 @@ class ModelsController extends ApiController
     public function store(Request $request)
     {
         dump($request->all());
-        if ($request->has('modelname') && (!$request->has('attributename'))) {
-            $modelname =  Str::ucfirst(Str::camel($request->input('modelname')));
+        if ($request->has('modelname') && (! $request->has('attributename'))) {
+            $modelname = Str::ucfirst(Str::camel($request->input('modelname')));
             Artisan::call('make:model', ['name' => $modelname, '-m' => true]);
             Artisan::call('migrate');
-        } else if ($request->has('modelname') && (!$request->has('attributename'))) {
-            $modelname =  Str::ucfirst(Str::camel($request->input('modelname')));
+        } elseif ($request->has('modelname') && (! $request->has('attributename'))) {
+            $modelname = Str::ucfirst(Str::camel($request->input('modelname')));
             $modelname = Str::snake($modelname);
-            $attributename =  Str::snake($request->input('attributename'));
+            $attributename = Str::snake($request->input('attributename'));
             $newname = 'add_'.$attributename.'_to_'.$modelname;
             Artisan::call('make:migration', ['name' => $newname]);
             $newfile = glob(database_path('migrations').'/*_'.$newname.'.php')[0];
             $content = File::get($newfile);
-            $coltype = (Str::endsWith($attributename,'_id'))? 'bigInteger' : 'string';
+            $coltype = (Str::endsWith($attributename, '_id')) ? 'bigInteger' : 'string';
             $upstring = '$table->'.$coltype.'(\''.$attributename.'\')->nullable()->after(\'id\');';
             $downstring = '$table->dropColumn(\''.$attributename.'\')->nullable();';
             $content = Str::replaceFirst('//', $upstring, $content);
             $content = Str::replaceLast('//', $downstring, $content);
             File::put($newfile, $content);
             Artisan::call('migrate');
-        } else if ($request->has('attributename')) {
-            $lastmigration = DB::table('migrations')->whereLike('migration','%_create_%_table')->orderBy('id')->get()->last();
-            $attributename =  Str::snake($request->input('attributename'));
+        } elseif ($request->has('attributename')) {
+            $lastmigration = DB::table('migrations')->whereLike('migration', '%_create_%_table')->orderBy('id')->get()->last();
+            $attributename = Str::snake($request->input('attributename'));
             $lastname = Str::afterLast($lastmigration->migration, 'create_');
             if ($lastname === 'jobs_table') {
                 $lastname = 'users_table';
@@ -75,7 +70,7 @@ class ModelsController extends ApiController
             Artisan::call('make:migration', ['name' => $newname]);
             $newfile = glob(database_path('migrations').'/*_'.$newname.'.php')[0];
             $content = File::get($newfile);
-            $coltype = (Str::endsWith($attributename,'_id'))? 'bigInteger' : 'string';
+            $coltype = (Str::endsWith($attributename, '_id')) ? 'bigInteger' : 'string';
             $upstring = '$table->'.$coltype.'(\''.$attributename.'\')->nullable()->after(\'id\');';
             $downstring = '$table->dropColumn(\''.$attributename.'\')->nullable();';
             $content = Str::replaceFirst('//', $upstring, $content);
@@ -83,6 +78,7 @@ class ModelsController extends ApiController
             File::put($newfile, $content);
             Artisan::call('migrate');
         }
+
         return response()->json([]);
     }
 

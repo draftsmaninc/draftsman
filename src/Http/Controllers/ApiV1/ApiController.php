@@ -2,13 +2,10 @@
 
 namespace Draftsman\Draftsman\Http\Controllers\ApiV1;
 
-use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Container\Container;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
@@ -93,12 +90,12 @@ class ApiController extends BaseController
         'BelongsToMany' => [
             'class' => 'getPivotClass',
             'from' => 'getForeignPivotKeyName',
-            'to' => 'getRelatedPivotKeyName'
+            'to' => 'getRelatedPivotKeyName',
         ],
         'MorphToMany' => [
             'class' => 'getPivotClass',
             'from' => 'getForeignPivotKeyName',
-            'to' => 'getRelatedPivotKeyName'
+            'to' => 'getRelatedPivotKeyName',
         ],
     ];
 
@@ -137,20 +134,23 @@ class ApiController extends BaseController
         'MorphToMany',
     ];
 
-    public function getPrivateProperty($object, $property) {
+    public function getPrivateProperty($object, $property)
+    {
         // hack the private property
         return (fn () => $this->{$property})->call($object);
     }
 
-    public function getPrivatePropertyClass($object, $property) {
+    public function getPrivatePropertyClass($object, $property)
+    {
         $value = $this->getPrivateProperty($object, $property);
-        if (!$value) {
+        if (! $value) {
             return null;
         }
+
         return get_class($value);
     }
 
-    public function getModelShow($model): \stdClass | null
+    public function getModelShow($model): ?\stdClass
     {
         if (Artisan::call('model:show', ['model' => $model, '--json' => true]) === 0) {
             $data = json_decode(Artisan::output());
@@ -164,23 +164,25 @@ class ApiController extends BaseController
             foreach ($data->relations as &$relation) {
                 if (in_array($relation->type, $this->relationsOmitList)) {
                     $relation = null;
+
                     continue;
                 }
-                if (isset($this->relationsRestrictToList) && count($this->relationsRestrictToList) && !in_array($relation->type, $this->relationsRestrictToList)) {
+                if (isset($this->relationsRestrictToList) && count($this->relationsRestrictToList) && ! in_array($relation->type, $this->relationsRestrictToList)) {
                     $relation = null;
+
                     continue;
                 }
                 $function = $relation->name;
                 $related = $relation->related;
                 $framework_type = $relation->type;
                 unset($relation->related);
-                $relation->type = (array_key_exists($framework_type, $this->relationsTypeMap))? $this->relationsTypeMap[$framework_type] : null;
+                $relation->type = (array_key_exists($framework_type, $this->relationsTypeMap)) ? $this->relationsTypeMap[$framework_type] : null;
                 $relation->framework_type = $framework_type;
                 $rel = $mod->$function();
                 $relref = $ref->getMethod($function);
                 $relation->file = $relref?->getFileName() ?? null;
                 $relation->line = $relref?->getStartLine() ?? null;
-                $relation->key = $model . '.' . $function;
+                $relation->key = $model.'.'.$function;
                 $connection = null;
                 $from_attribute = null;
                 $to_attribute = null;
@@ -204,7 +206,7 @@ class ApiController extends BaseController
                         $pivot_attributes[$pivot_key] = $rel->$pivot_attribute();
                     }
                     if ($pivot_attributes['class'] === Pivot::class) {
-                        $pivot_attributes['class'].= '.'.$rel->getTable();
+                        $pivot_attributes['class'] .= '.'.$rel->getTable();
                     }
                 }
                 if (array_key_exists($framework_type, $this->relationsThroughAttributes)) {
@@ -229,6 +231,7 @@ class ApiController extends BaseController
                 if (in_array($framework_type, $this->relationsMorphSkipDefintions)) {
                     if (($relation->from === $relation->to) && ($relation->from_attribute === $relation->to_attribute)) {
                         $relation = null;
+
                         continue;
                     }
                 }
@@ -251,8 +254,10 @@ class ApiController extends BaseController
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
             $data->relations_count = count($data->relations) ?? 0;
+
             return $data;
         }
+
         return null;
     }
 
@@ -266,12 +271,13 @@ class ApiController extends BaseController
         $data = [];
         foreach ($this->getModelsList() as $model) {
             $show = $this->getModelShow($model);
-            if (!$show) {
+            if (! $show) {
                 continue;
             }
             $data[] = $show;
         }
-        //rev sort attributes_count
+
+        // rev sort attributes_count
         /*
         usort($data, function($a, $b) {
             return $b->attributes_count - $a->attributes_count;
@@ -288,6 +294,7 @@ class ApiController extends BaseController
                 $class = sprintf('%s%s',
                     Container::getInstance()->getNamespace(),
                     strtr(substr($path, 0, strrpos($path, '.')), '/', '\\'));
+
                 return $class;
             })
             ->filter(function ($class) {
@@ -295,8 +302,9 @@ class ApiController extends BaseController
                 if (class_exists($class)) {
                     $reflection = new \ReflectionClass($class);
                     $valid = $reflection->isSubclassOf(EloquentModel::class) &&
-                        !$reflection->isAbstract();
+                        ! $reflection->isAbstract();
                 }
+
                 return $valid;
             });
 
