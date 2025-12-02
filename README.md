@@ -21,7 +21,6 @@ need to start by adding it to your repositories block in composer.json.
         "url": "https://github.com/draftsmaninc/draftsman.git"
     }
 }
-
 ```
 
 You can now install the package via composer:
