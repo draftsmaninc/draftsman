@@ -13,5 +13,5 @@ Route::prefix('draftsman')->group(function () {
     });
 
     // Catch-all Route...
-    Route::view('/{view?}', 'draftsman::layout')->name('draftsman.index');
+    Route::view('/{view?}', 'draftsman::index')->name('draftsman.index');
 });
