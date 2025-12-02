@@ -14,7 +14,7 @@ need to start by adding it to your repositories block in composer.json.
 If your composer.json file doesn't have a repositories block add it to the end.
 
 ```json
-,"repositories" : {
+"repositories" : {
     ...
 
     "draftsman" : {
