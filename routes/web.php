@@ -10,7 +10,8 @@ Route::prefix('draftsman')->group(function () {
         $uri = Request::getRequestUri();
         $prefix = '/draftsman/_next/';
         if (substr($uri, 0, strlen($prefix)) === $prefix) {
-            $file = __DIR__.'/../resources/views/_next/'.substr($uri, strlen($prefix), strlen($uri));
+            $file = '/../resources/views/_next/'.substr($uri, strlen($prefix), strlen($uri));
+            $file = __DIR__ . join(DIRECTORY_SEPARATOR, explode('/', $file));
             if (file_exists($file)) {
                 $content = file_get_contents($file);
                 $ext = pathinfo($file, PATHINFO_EXTENSION);
