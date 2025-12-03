@@ -12,6 +12,7 @@ Route::prefix('draftsman')->group(function () {
         if (substr($uri, 0, strlen($prefix)) === $prefix) {
             $file = __DIR__.'/../resources/views/_next/' . substr($uri, strlen($prefix), strlen($uri));
             if (file_exists($file)) {
+                $content = file_get_contents($file);
                 $ext = pathinfo($file, PATHINFO_EXTENSION);
                 $mime = mime_content_type($file);
                 if ($mime === 'text/plain') {
@@ -30,12 +31,9 @@ Route::prefix('draftsman')->group(function () {
                             break;
                     }
                 }
-                header('Content-type: '.$mime);
-                readfile($file);
-                return;
+                response($content)->header('Content-Type', $mime)->send();
             }
         }
-        abort(404);
     });
     Route::prefix('api')->group(function () {
         // API Routes...
