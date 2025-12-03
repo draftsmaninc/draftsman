@@ -11,7 +11,7 @@ Route::prefix('draftsman')->group(function () {
         $prefix = '/draftsman/_next/';
         if (substr($uri, 0, strlen($prefix)) === $prefix) {
             $file = '/../resources/views/_next/'.substr($uri, strlen($prefix), strlen($uri));
-            $file = __DIR__ . join(DIRECTORY_SEPARATOR, explode('/', $file));
+            $file = __DIR__.implode(DIRECTORY_SEPARATOR, explode('/', $file));
             if (file_exists($file)) {
                 $content = file_get_contents($file);
                 $ext = pathinfo($file, PATHINFO_EXTENSION);
