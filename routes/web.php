@@ -3,7 +3,6 @@
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ModelsController;
 use Draftsman\Draftsman\Http\Controllers\ApiV1\RelationsController;
 use Draftsman\Draftsman\Http\Controllers\DraftsmanController;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('draftsman')->group(function () {
@@ -21,5 +20,5 @@ Route::prefix('draftsman')->group(function () {
     });
 
     // Home Route...
-    Route::get('',  [DraftsmanController::class, 'index'])->name('draftsman.index');
+    Route::get('', [DraftsmanController::class, 'index'])->name('draftsman.index');
 });

@@ -8,7 +8,9 @@ use Illuminate\Routing\Controller;
 class DraftsmanController extends Controller
 {
     protected $index_file = 'resources/front/index.html';
+
     protected $next_dir = 'resources/front/_next/';
+
     protected $package_root_path = '/../../../';
 
     /**
@@ -18,6 +20,7 @@ class DraftsmanController extends Controller
     {
         $file = __DIR__.$this->osSafe($this->package_root_path.$this->index_file);
         $front = file_get_contents($file);
+
         return $front;
     }
 
@@ -29,7 +32,7 @@ class DraftsmanController extends Controller
         $uri = $request->path();
         $prefix = 'draftsman/_next/';
         if (substr($uri, 0, strlen($prefix)) === $prefix) {
-            $uri = $this->next_dir. substr($uri, strlen($prefix));
+            $uri = $this->next_dir.substr($uri, strlen($prefix));
             $file = __DIR__.$this->osSafe($this->package_root_path.$uri);
             if (file_exists($file)) {
                 $content = file_get_contents($file);
@@ -50,11 +53,12 @@ class DraftsmanController extends Controller
                             $mime = 'application/json';
                             break;
                     }
+
                     return response()->file($file, ['Content-Type' => $mime]);
                 }
             }
         }
-//        abort(404);
+        //        abort(404);
     }
 
     protected function osSafe(string $path)
