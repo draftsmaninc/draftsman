@@ -15,11 +15,16 @@ class DraftsmanController extends Controller
      */
     public function index()
     {
-        $file = __DIR__.$this->package_root_path.$this->index_file;
+        $file = __DIR__.$this->osSafe($this->package_root_path.$this->index_file);
         $front = file_get_contents($file);
         $pattern = '/(href|src)=(["\'])(\/)(_next)\//im';
         $replacement = '/$1=$2$3draftsman$3$4/';
         $front = preg_replace($pattern, $replacement, $front);
         return $front;
+    }
+
+    protected function osSafe(string $path)
+    {
+        return implode(DIRECTORY_SEPARATOR, explode('/', $path));
     }
 }
