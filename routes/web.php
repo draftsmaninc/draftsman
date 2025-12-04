@@ -20,6 +20,6 @@ Route::prefix('draftsman')->group(function () {
         Route::apiResource('relations', RelationsController::class);
     });
 
-    // Catch-all Route...
-    Route::get('/{view?}',  [DraftsmanController::class, 'index'])->name('draftsman.index');
+    // Home Route...
+    Route::get('',  [DraftsmanController::class, 'index'])->name('draftsman.index');
 });
