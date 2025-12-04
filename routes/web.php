@@ -2,6 +2,7 @@
 
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ModelsController;
 use Draftsman\Draftsman\Http\Controllers\ApiV1\RelationsController;
+use Draftsman\Draftsman\Http\Controllers\DraftsmanController;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,5 +45,5 @@ Route::prefix('draftsman')->group(function () {
     });
 
     // Catch-all Route...
-    Route::view('/{view?}', 'draftsman::index')->name('draftsman.index');
+    Route::get('/{view?}',  [DraftsmanController::class, 'index'])->name('draftsman.index');
 });
