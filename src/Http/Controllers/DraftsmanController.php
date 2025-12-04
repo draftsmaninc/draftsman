@@ -58,7 +58,6 @@ class DraftsmanController extends Controller
                 }
             }
         }
-        //        abort(404);
     }
 
     protected function osSafe(string $path)
