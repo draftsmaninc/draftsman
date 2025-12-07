@@ -38,7 +38,7 @@ class DraftsmanSnapshotCommand extends Command
             "  php artisan draftsman:snapshot --exclude=config --exclude=about\n".
             "  php artisan draftsman:snapshot --exclude=config,about\n".
             "  php artisan draftsman:snapshot --path=storage/app/draftsman/snapshots\n".
-            "  php artisan draftsman:snapshot --path=storage/app/draftsman/snapshots/custom_snapshot.json");
+            '  php artisan draftsman:snapshot --path=storage/app/draftsman/snapshots/custom_snapshot.json');
     }
 
     public function handle(): int
@@ -213,7 +213,7 @@ class DraftsmanSnapshotCommand extends Command
             $outputPath = (string) (config('draftsman.snapshot_path') ?? storage_path('app/draftsman/snapshots'));
         }
 
-        $outputPath = rtrim($outputPath, "\\/");
+        $outputPath = rtrim($outputPath, '\\/');
 
         // If ends with .json, treat as file path; otherwise as directory
         $isFile = str_ends_with(strtolower($outputPath), '.json');
