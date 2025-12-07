@@ -14,7 +14,7 @@ class DraftsmanInstallCommand extends Command
     {
         // TODO Add any relevant install methods here.
 
-        $this->info("
+        $this->info('
  ███████████████████████████████████
  ███████████████████████████████████
  ███                             ███
@@ -36,7 +36,7 @@ class DraftsmanInstallCommand extends Command
       ██████            ██████
          ██████████████████
              ██████████
-");
+');
 
         return self::SUCCESS;
     }

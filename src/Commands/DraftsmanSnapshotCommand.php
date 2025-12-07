@@ -4,9 +4,9 @@ namespace Draftsman\Draftsman\Commands;
 
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Carbon;
 
 class DraftsmanSnapshotCommand extends Command
 {
@@ -15,9 +15,9 @@ class DraftsmanSnapshotCommand extends Command
     public $description = 'Creates a snapshot of relevant Draftsman data for support/debugging.';
 
     private const array SECTIONS = [
-        'config'   => 'getConfigData',
+        'config' => 'getConfigData',
         'composer' => 'getComposerData',
-        'about'    => 'getAboutData',
+        'about' => 'getAboutData',
     ];
 
     public $snapshot = [];
@@ -27,10 +27,10 @@ class DraftsmanSnapshotCommand extends Command
         parent::configure();
         $available = implode(', ', array_keys(self::SECTIONS));
 
-        $this->setHelp("Exclude one or more sections. Available: $available\n" .
-            "Examples:\n" .
-            "  php artisan draftsman:snapshot --exclude=config --exclude=about\n" .
-            "  php artisan draftsman:snapshot --exclude=config,about");
+        $this->setHelp("Exclude one or more sections. Available: $available\n".
+            "Examples:\n".
+            "  php artisan draftsman:snapshot --exclude=config --exclude=about\n".
+            '  php artisan draftsman:snapshot --exclude=config,about');
     }
 
     public function handle(): int
@@ -59,7 +59,7 @@ class DraftsmanSnapshotCommand extends Command
             $savedPath = $this->saveSnapshot($this->snapshot);
             $this->info("Draftsman snapshot saved to: {$savedPath}");
         } catch (\Throwable $e) {
-            $this->error('Failed to save Draftsman snapshot: ' . $e->getMessage());
+            $this->error('Failed to save Draftsman snapshot: '.$e->getMessage());
         }
 
         return self::SUCCESS;
@@ -70,7 +70,6 @@ class DraftsmanSnapshotCommand extends Command
      * Supports multiple usages:
      *  - --exclude=config --exclude=about
      *  - --exclude=config,about
-     * @return array
      */
     protected function normalizeExcludeOption(): array
     {
@@ -81,7 +80,7 @@ class DraftsmanSnapshotCommand extends Command
         if (is_array($raw)) {
             // Support: --exclude=a --exclude=b and also --exclude=a,b
             foreach ($raw as $entry) {
-                if (!is_string($entry)) {
+                if (! is_string($entry)) {
                     continue;
                 }
                 $parts = array_map('trim', explode(',', $entry));
@@ -115,18 +114,17 @@ class DraftsmanSnapshotCommand extends Command
     protected function getModelData(): void
     {
         try {
-            $api = new ApiController();
+            $api = new ApiController;
             $models = $api->getModels();
             // Store under a dedicated key in the snapshot
             $this->snapshot['models'] = $models;
         } catch (\Throwable $e) {
-            $this->snapshot['models_error'] = 'Error collecting model data: ' . $e->getMessage();
+            $this->snapshot['models_error'] = 'Error collecting model data: '.$e->getMessage();
         }
     }
 
     /**
      * Retrieves the Draftsman config file and adds it to the snapshot.
-     * @return void
      */
     protected function getConfigData(): void
     {
@@ -139,16 +137,15 @@ class DraftsmanSnapshotCommand extends Command
                 $this->snapshot['config'] = $configFileContents;
 
             } catch (\Exception $e) {
-                $this->snapshot['config_error'] = 'Error reading Draftsman config: ' . $e->getMessage();
+                $this->snapshot['config_error'] = 'Error reading Draftsman config: '.$e->getMessage();
             }
         } else {
-            $this->snapshot['config_path'] = 'Draftsman config not found at ' . $configFilePath;
+            $this->snapshot['config_path'] = 'Draftsman config not found at '.$configFilePath;
         }
     }
 
     /**
      * Retrieves the composer.json file and adds it to the snapshot.
-     * @return void
      */
     protected function getComposerData(): void
     {
@@ -171,21 +168,20 @@ class DraftsmanSnapshotCommand extends Command
                     // $snapshot['composer_dependencies'] = Arr::only($composerData, ['require', 'require-dev']);
                 } else {
                     // Handle JSON decoding failure
-                    $this->snapshot['composer_error'] = 'Could not decode composer.json: ' . json_last_error_msg();
+                    $this->snapshot['composer_error'] = 'Could not decode composer.json: '.json_last_error_msg();
                     $this->snapshot['composer_raw'] = $composerFileContents;
                 }
 
             } catch (\Exception $e) {
-                $this->snapshot['composer_error'] = 'Error reading composer.json: ' . $e->getMessage();
+                $this->snapshot['composer_error'] = 'Error reading composer.json: '.$e->getMessage();
             }
         } else {
-            $this->snapshot['composer_path'] = 'composer.json not found at ' . $composerFilePath;
+            $this->snapshot['composer_path'] = 'composer.json not found at '.$composerFilePath;
         }
     }
 
     /**
      * Retrieves the output from 'php artisan about' as JSON and adds it to the snapshot.
-     * @return void
      */
     protected function getAboutData(): void
     {
@@ -198,25 +194,24 @@ class DraftsmanSnapshotCommand extends Command
      * Saves the provided snapshot array as a JSON file inside the app private storage directory.
      * Filename pattern: draftsman_snapshot_<YYYY-MM-DD_HH-mm-ss>.json
      *
-     * @param array $snapshot
      * @return string Full path to the saved file
      */
     protected function saveSnapshot(array $snapshot): string
     {
         $dir = storage_path('app/private');
 
-        if (!File::exists($dir)) {
+        if (! File::exists($dir)) {
             File::makeDirectory($dir, 0755, true);
         }
 
         $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
         $filename = "draftsman_snapshot_{$timestamp}.json";
-        $path = $dir . DIRECTORY_SEPARATOR . $filename;
+        $path = $dir.DIRECTORY_SEPARATOR.$filename;
 
         $json = json_encode($snapshot, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         if ($json === false) {
             // Fallback: encode errors are unlikely with arrays from our sources, but guard anyway
-            throw new \RuntimeException('Unable to encode snapshot to JSON: ' . json_last_error_msg());
+            throw new \RuntimeException('Unable to encode snapshot to JSON: '.json_last_error_msg());
         }
 
         File::put($path, $json);
