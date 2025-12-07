@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\File;
 
 class DraftsmanSnapshotCommand extends Command
 {
-    public $signature = 'draftsman:snapshot {--exclude=* : Sections to exclude (repeatable or comma-separated)}';
+    public $signature = 'draftsman:snapshot '
+        .'{--exclude=* : Sections to exclude (repeatable or comma-separated)} '
+        .'{--path= : Output file or directory for the snapshot. Defaults to config(draftsman.snapshot_path)}';
 
     public $description = 'Creates a snapshot of relevant Draftsman data for support/debugging.';
 
@@ -27,10 +29,16 @@ class DraftsmanSnapshotCommand extends Command
         parent::configure();
         $available = implode(', ', array_keys(self::SECTIONS));
 
+        $defaultPath = (string) (config('draftsman.snapshot_path') ?? 'storage/app/draftsman/snapshots');
         $this->setHelp("Exclude one or more sections. Available: $available\n".
+            "Options:\n".
+            "  --exclude=SECTION   Repeatable or comma-separated list to exclude sections.\n".
+            "  --path=PATH        Output file or directory for the snapshot (default: $defaultPath).\n".
             "Examples:\n".
             "  php artisan draftsman:snapshot --exclude=config --exclude=about\n".
-            '  php artisan draftsman:snapshot --exclude=config,about');
+            "  php artisan draftsman:snapshot --exclude=config,about\n".
+            "  php artisan draftsman:snapshot --path=storage/app/draftsman/snapshots\n".
+            "  php artisan draftsman:snapshot --path=storage/app/draftsman/snapshots/custom_snapshot.json");
     }
 
     public function handle(): int
@@ -54,9 +62,9 @@ class DraftsmanSnapshotCommand extends Command
             $this->{$method}();
         }
 
-        // Persist snapshot to storage/app/private as JSON
+        // Persist snapshot as JSON (to --path or default config path)
         try {
-            $savedPath = $this->saveSnapshot($this->snapshot);
+            $savedPath = $this->saveSnapshot($this->snapshot, $this->option('path'));
             $this->info("Draftsman snapshot saved to: {$savedPath}");
         } catch (\Throwable $e) {
             $this->error('Failed to save Draftsman snapshot: '.$e->getMessage());
@@ -191,22 +199,38 @@ class DraftsmanSnapshotCommand extends Command
     }
 
     /**
-     * Saves the provided snapshot array as a JSON file inside the app private storage directory.
-     * Filename pattern: draftsman_snapshot_<YYYY-MM-DD_HH-mm-ss>.json
+     * Saves the provided snapshot array as a JSON file.
+     * If $outputPath is a directory, file will be named draftsman_snapshot_<YYYY-MM-DD_HH-mm-ss>.json in that directory.
+     * If $outputPath is a file path ending with .json, it will be used directly.
+     * If $outputPath is null, uses config('draftsman.snapshot_path') as directory.
      *
      * @return string Full path to the saved file
      */
-    protected function saveSnapshot(array $snapshot): string
+    protected function saveSnapshot(array $snapshot, ?string $outputPath = null): string
     {
-        $dir = storage_path('app/private');
+        // Determine base path: option or config default
+        if ($outputPath === null || $outputPath === '') {
+            $outputPath = (string) (config('draftsman.snapshot_path') ?? storage_path('app/draftsman/snapshots'));
+        }
+
+        $outputPath = rtrim($outputPath, "\\/");
+
+        // If ends with .json, treat as file path; otherwise as directory
+        $isFile = str_ends_with(strtolower($outputPath), '.json');
+
+        if ($isFile) {
+            $dir = dirname($outputPath);
+            $targetPath = $outputPath;
+        } else {
+            $dir = $outputPath;
+            $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
+            $filename = "draftsman_snapshot_{$timestamp}.json";
+            $targetPath = $dir.DIRECTORY_SEPARATOR.$filename;
+        }
 
         if (! File::exists($dir)) {
             File::makeDirectory($dir, 0755, true);
         }
-
-        $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
-        $filename = "draftsman_snapshot_{$timestamp}.json";
-        $path = $dir.DIRECTORY_SEPARATOR.$filename;
 
         $json = json_encode($snapshot, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         if ($json === false) {
@@ -214,8 +238,8 @@ class DraftsmanSnapshotCommand extends Command
             throw new \RuntimeException('Unable to encode snapshot to JSON: '.json_last_error_msg());
         }
 
-        File::put($path, $json);
+        File::put($targetPath, $json);
 
-        return $path;
+        return $targetPath;
     }
 }
