@@ -53,6 +53,7 @@ class DraftsmanSnapshotCommand extends Command
         $exclude = $this->normalizeExcludeOption();
 
         // Always include model data; this section cannot be excluded
+        $this->getModelList();
         $this->getModelData();
 
         foreach ($sections as $name => $method) {
@@ -119,15 +120,25 @@ class DraftsmanSnapshotCommand extends Command
         return $items;
     }
 
+    protected function getModelList(): void
+    {
+        try {
+            $api = new ApiController;
+            $modelsList = $api->getModelsList();
+            $this->snapshot['models_list'] = $modelsList;
+        } catch (\Throwable $e) {
+            $this->snapshot['models_list_error'] = 'Error collecting models list: '.$e->getMessage();
+        }
+    }
+
     protected function getModelData(): void
     {
         try {
             $api = new ApiController;
-            $models = $api->getModels();
-            // Store under a dedicated key in the snapshot
-            $this->snapshot['models'] = $models;
+            $modelsData = $api->getModels();
+            $this->snapshot['models_data'] = $modelsData;
         } catch (\Throwable $e) {
-            $this->snapshot['models_error'] = 'Error collecting model data: '.$e->getMessage();
+            $this->snapshot['models_error'] = 'Error collecting models data: '.$e->getMessage();
         }
     }
 
