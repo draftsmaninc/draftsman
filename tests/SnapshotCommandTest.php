@@ -243,3 +243,37 @@ it('gets expected composer.json schema', function () {
         expect($json['composer']['require'])->toBeArray();
     }
 });
+
+it('gets expected package.json schema', function () {
+    // Arrange
+    $dir = storage_path('app/draftsman/pest-package');
+    if (File::exists($dir)) {
+        File::deleteDirectory($dir);
+    }
+    File::makeDirectory($dir, 0755, true);
+    $filePath = $dir.DIRECTORY_SEPARATOR.'schema_package.json';
+    if (File::exists($filePath)) {
+        File::delete($filePath);
+    }
+
+    // Act
+    $exit = Artisan::call('draftsman:snapshot', [
+        '--path' => $filePath,
+    ]);
+
+    expect($exit)->toBe(0);
+    expect(File::exists($filePath))->toBeTrue();
+
+    $json = json_decode(File::get($filePath), true);
+
+    // Assert minimal schema
+    expect($json)->toBeArray()->and($json)->toHaveKey('package');
+    expect($json['package'])->toBeArray();
+    // Common, high‑value keys
+    if (array_key_exists('name', $json['package'])) {
+        expect($json['package']['name'])->toBeString();
+    }
+    if (array_key_exists('dependencies', $json['package'])) {
+        expect($json['package']['dependencies'])->toBeArray();
+    }
+});

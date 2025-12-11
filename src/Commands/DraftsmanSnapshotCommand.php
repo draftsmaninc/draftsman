@@ -19,6 +19,7 @@ class DraftsmanSnapshotCommand extends Command
     private const array SECTIONS = [
         'config' => 'getConfigData',
         'composer' => 'getComposerData',
+        'package' => 'getPackageJsonData',
         'about' => 'getAboutData',
     ];
 
@@ -47,14 +48,16 @@ class DraftsmanSnapshotCommand extends Command
         $sections = [
             'config' => 'getConfigData',
             'composer' => 'getComposerData',
+            'package' => 'getPackageJsonData',
             'about' => 'getAboutData',
         ];
 
         $exclude = $this->normalizeExcludeOption();
 
-        // Always include model data; this section cannot be excluded
+        // Always include model list, model data, env, and ui config; these sections cannot be excluded
         $this->getModelList();
         $this->getModelData();
+        $this->getEnvData();
 
         foreach ($sections as $name => $method) {
             if (in_array($name, $exclude, true)) {
@@ -143,7 +146,9 @@ class DraftsmanSnapshotCommand extends Command
     }
 
     /**
-     * Retrieves the Draftsman config file and adds it to the snapshot.
+     * Retrieves the app's Draftsman config file and adds it to the snapshot.
+     *
+     * @return void
      */
     protected function getConfigData(): void
     {
@@ -165,6 +170,8 @@ class DraftsmanSnapshotCommand extends Command
 
     /**
      * Retrieves the composer.json file and adds it to the snapshot.
+     *
+     * @return void
      */
     protected function getComposerData(): void
     {
@@ -200,13 +207,116 @@ class DraftsmanSnapshotCommand extends Command
     }
 
     /**
+     * Retrieves the package.json file and adds it to the snapshot.
+     *
+     * @return void
+     */
+    protected function getPackageJsonData(): void
+    {
+        $packageFilePath = base_path('package.json');
+
+        if (File::exists($packageFilePath)) {
+            try {
+                // Read the file content
+                $packageFileContents = File::get($packageFilePath);
+
+                // Decode the JSON into a PHP array
+                $packageData = json_decode($packageFileContents, true);
+
+                // Check for decoding errors
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    // Include the entire structured data
+                    $this->snapshot['package'] = $packageData;
+                } else {
+                    // Handle JSON decoding failure
+                    $this->snapshot['package_error'] = 'Could not decode package.json: '.json_last_error_msg();
+                    $this->snapshot['package_raw'] = $packageFileContents;
+                }
+
+            } catch (\Exception $e) {
+                $this->snapshot['package_error'] = 'Error reading package.json: '.$e->getMessage();
+            }
+        } else {
+            $this->snapshot['package_path'] = 'package.json not found at '.$packageFilePath;
+        }
+    }
+
+    /**
      * Retrieves the output from 'php artisan about' as JSON and adds it to the snapshot.
+     *
+     * @return void
      */
     protected function getAboutData(): void
     {
         Artisan::call('about', ['--json' => true]);
         $aboutJSON = Artisan::output();
         $this->snapshot['about'] = json_decode($aboutJSON, true);
+    }
+
+    /**
+     * Reads the .env file and collects variables beginning with DRAFTSMAN_,
+     * excluding any keys that contain _KEY, _PASS, or _PASSWORD (case-insensitive).
+     */
+    protected function getEnvData(): void
+    {
+        $envPath = base_path('.env');
+
+        if (! File::exists($envPath)) {
+            $this->snapshot['env_path'] = '.env file not found at '.$envPath;
+            return;
+        }
+
+        try {
+            $contents = File::get($envPath);
+            $lines = preg_split("/\r\n|\r|\n/", (string) $contents) ?: [];
+
+            $result = [];
+
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if ($line === '' || str_starts_with($line, '#')) {
+                    continue;
+                }
+
+                // Support optional leading 'export '
+                if (stripos($line, 'export ') === 0) {
+                    $line = trim(substr($line, 7));
+                }
+
+                // Split on the first '=' only
+                $parts = explode('=', $line, 2);
+                if (count($parts) !== 2) {
+                    continue;
+                }
+
+                [$key, $value] = $parts;
+                $key = trim($key);
+                $value = trim($value);
+
+                // Remove surrounding quotes if present
+                if ((str_starts_with($value, '"') && str_ends_with($value, '"')) ||
+                    (str_starts_with($value, "'") && str_ends_with($value, "'"))) {
+                    $value = substr($value, 1, -1);
+                }
+
+                // Only consider keys beginning with DRAFTSMAN_
+                if (stripos($key, 'DRAFTSMAN_') !== 0) {
+                    continue;
+                }
+
+                // Exclude sensitive keys containing _KEY, _PASS, or _PASSWORD
+                $upperKey = strtoupper($key);
+                if (str_contains($upperKey, '_KEY') || str_contains($upperKey, '_PASS') || str_contains($upperKey, '_PASSWORD')) {
+                    continue;
+                }
+
+                $result[$key] = $value;
+            }
+
+            $this->snapshot['env'] = $result;
+        } catch (\Throwable $e) {
+            $this->snapshot['env_error'] = 'Error reading .env: '.$e->getMessage();
+        }
     }
 
     /**
