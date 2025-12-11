@@ -147,8 +147,6 @@ class DraftsmanSnapshotCommand extends Command
 
     /**
      * Retrieves the app's Draftsman config file and adds it to the snapshot.
-     *
-     * @return void
      */
     protected function getConfigData(): void
     {
@@ -170,8 +168,6 @@ class DraftsmanSnapshotCommand extends Command
 
     /**
      * Retrieves the composer.json file and adds it to the snapshot.
-     *
-     * @return void
      */
     protected function getComposerData(): void
     {
@@ -208,8 +204,6 @@ class DraftsmanSnapshotCommand extends Command
 
     /**
      * Retrieves the package.json file and adds it to the snapshot.
-     *
-     * @return void
      */
     protected function getPackageJsonData(): void
     {
@@ -243,8 +237,6 @@ class DraftsmanSnapshotCommand extends Command
 
     /**
      * Retrieves the output from 'php artisan about' as JSON and adds it to the snapshot.
-     *
-     * @return void
      */
     protected function getAboutData(): void
     {
@@ -263,6 +255,7 @@ class DraftsmanSnapshotCommand extends Command
 
         if (! File::exists($envPath)) {
             $this->snapshot['env_path'] = '.env file not found at '.$envPath;
+
             return;
         }
 
