@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\File;
 
 it('saves snapshot to default config path when no --path is provided', function () {
     // Arrange: point default snapshot path to a temp test directory
-    $defaultDir = storage_path('app/draftsman/pest-default');
+    $defaultDir = storage_path('draftsman/pest-default');
     if (File::exists($defaultDir)) {
         File::deleteDirectory($defaultDir);
     }
@@ -32,7 +32,7 @@ it('saves snapshot to default config path when no --path is provided', function 
 
 it('respects --exclude option and still includes models', function () {
     // Arrange: write to a deterministic temp file
-    $dir = storage_path('app/draftsman/pest-exclude');
+    $dir = storage_path('draftsman/pest-exclude');
     if (File::exists($dir)) {
         File::deleteDirectory($dir);
     }
@@ -62,7 +62,7 @@ it('respects --exclude option and still includes models', function () {
 
 it('supports --path as directory and as full filename', function () {
     // Directory case
-    $dir = storage_path('app/draftsman/pest-path-dir');
+    $dir = storage_path('draftsman/pest-path-dir');
     if (File::exists($dir)) {
         File::deleteDirectory($dir);
     }
@@ -78,7 +78,7 @@ it('supports --path as directory and as full filename', function () {
     expect($dirFiles->count())->toBeGreaterThan(0);
 
     // Filename case
-    $dir2 = storage_path('app/draftsman/pest-path-file');
+    $dir2 = storage_path('draftsman/pest-path-file');
     if (File::exists($dir2)) {
         File::deleteDirectory($dir2);
     }
@@ -96,7 +96,7 @@ it('supports --path as directory and as full filename', function () {
 
 it('gets expected models_data schema', function () {
     // Arrange: write to a deterministic temp file
-    $dir = storage_path('app/draftsman/pest-models-data');
+    $dir = storage_path('draftsman/pest-models-data');
     if (File::exists($dir)) {
         File::deleteDirectory($dir);
     }
@@ -148,7 +148,7 @@ it('gets expected models_data schema', function () {
 
 it('gets expected models_list schema', function () {
     // Arrange
-    $dir = storage_path('app/draftsman/pest-models-list');
+    $dir = storage_path('draftsman/pest-models-list');
     if (File::exists($dir)) {
         File::deleteDirectory($dir);
     }
@@ -179,7 +179,7 @@ it('gets expected models_list schema', function () {
 
 it('gets expected artisan about schema', function () {
     // Arrange
-    $dir = storage_path('app/draftsman/pest-about');
+    $dir = storage_path('draftsman/pest-about');
     if (File::exists($dir)) {
         File::deleteDirectory($dir);
     }
@@ -212,7 +212,7 @@ it('gets expected artisan about schema', function () {
 
 it('gets expected composer.json schema', function () {
     // Arrange
-    $dir = storage_path('app/draftsman/pest-composer');
+    $dir = storage_path('draftsman/pest-composer');
     if (File::exists($dir)) {
         File::deleteDirectory($dir);
     }
@@ -232,21 +232,27 @@ it('gets expected composer.json schema', function () {
 
     $json = json_decode(File::get($filePath), true);
 
-    // Assert minimal schema
-    expect($json)->toBeArray()->and($json)->toHaveKey('composer');
-    expect($json['composer'])->toBeArray();
-    // Common, high‑value keys
-    if (array_key_exists('name', $json['composer'])) {
-        expect($json['composer']['name'])->toBeString();
-    }
-    if (array_key_exists('require', $json['composer'])) {
-        expect($json['composer']['require'])->toBeArray();
+    // Assert minimal schema depending on whether composer.json exists
+    $composerPath = base_path('composer.json');
+    expect($json)->toBeArray();
+    if (File::exists($composerPath)) {
+        expect($json)->toHaveKey('composer');
+        expect($json['composer'])->toBeArray();
+        // Common, high‑value keys
+        if (array_key_exists('name', $json['composer'])) {
+            expect($json['composer']['name'])->toBeString();
+        }
+        if (array_key_exists('require', $json['composer'])) {
+            expect($json['composer']['require'])->toBeArray();
+        }
+    } else {
+        expect($json)->toHaveKey('composer_error');
     }
 });
 
 it('gets expected package.json schema', function () {
     // Arrange
-    $dir = storage_path('app/draftsman/pest-package');
+    $dir = storage_path('draftsman/pest-package');
     if (File::exists($dir)) {
         File::deleteDirectory($dir);
     }
@@ -266,14 +272,153 @@ it('gets expected package.json schema', function () {
 
     $json = json_decode(File::get($filePath), true);
 
-    // Assert minimal schema
-    expect($json)->toBeArray()->and($json)->toHaveKey('package');
-    expect($json['package'])->toBeArray();
-    // Common, high‑value keys
-    if (array_key_exists('name', $json['package'])) {
-        expect($json['package']['name'])->toBeString();
+    // Assert minimal schema depending on whether package.json exists
+    $packagePath = base_path('package.json');
+    expect($json)->toBeArray();
+    if (File::exists($packagePath)) {
+        expect($json)->toHaveKey('package');
+        expect($json['package'])->toBeArray();
+        // Common, high‑value keys
+        if (array_key_exists('name', $json['package'])) {
+            expect($json['package']['name'])->toBeString();
+        }
+        if (array_key_exists('dependencies', $json['package'])) {
+            expect($json['package']['dependencies'])->toBeArray();
+        }
+    } else {
+        expect($json)->toHaveKey('package_error');
     }
-    if (array_key_exists('dependencies', $json['package'])) {
-        expect($json['package']['dependencies'])->toBeArray();
+});
+
+it('gets expected .env schema and masking behavior', function () {
+    // Arrange: backup current .env and write a controlled one
+    $envPath = base_path('.env');
+    $original = File::exists($envPath) ? File::get($envPath) : null;
+
+    $dir = storage_path('draftsman/pest-env');
+    if (File::exists($dir)) {
+        File::deleteDirectory($dir);
+    }
+    File::makeDirectory($dir, 0755, true);
+    $filePath = $dir.DIRECTORY_SEPARATOR.'schema_env.json';
+    if (File::exists($filePath)) {
+        File::delete($filePath);
+    }
+
+    try {
+        $envContents = <<<ENV
+        # Comment line
+        OTHER_VAR=should_not_be_included
+        export DRAFTSMAN_VISIBLE=value123
+        DRAFTSMAN_SECRET_KEY=supersecret
+        DRAFTSMAN_SECRET=reallysecret
+        DRAFTSMAN_PASSWORD=should_mask
+        DRAFTSMAN_PASS=also_mask
+        DRAFTSMAN_NORMAL=ok
+
+        INVALID_LINE_WITHOUT_EQUALS
+        ENV;
+
+        File::put($envPath, $envContents);
+
+        // Act
+        $exit = Artisan::call('draftsman:snapshot', [
+            '--path' => $filePath,
+        ]);
+
+        expect($exit)->toBe(0);
+        expect(File::exists($filePath))->toBeTrue();
+
+        $json = json_decode(File::get($filePath), true);
+
+        // Assert minimal schema and masking
+        expect($json)->toBeArray()->and($json)->toHaveKey('env');
+        expect($json['env'])->toBeArray();
+        expect($json['env'])->toHaveKey('DRAFTSMAN_VISIBLE');
+        expect($json['env']['DRAFTSMAN_VISIBLE'])->toBe('value123');
+
+        // Sensitive suffixes should be masked to '...'
+        expect($json['env'])->toHaveKey('DRAFTSMAN_SECRET_KEY');
+        expect($json['env']['DRAFTSMAN_SECRET_KEY'])->toBe('...');
+        expect($json['env'])->toHaveKey('DRAFTSMAN_SECRET');
+        expect($json['env']['DRAFTSMAN_SECRET'])->toBe('...');
+        expect($json['env'])->toHaveKey('DRAFTSMAN_PASSWORD');
+        expect($json['env']['DRAFTSMAN_PASSWORD'])->toBe('...');
+        expect($json['env'])->toHaveKey('DRAFTSMAN_PASS');
+        expect($json['env']['DRAFTSMAN_PASS'])->toBe('...');
+
+        // Non DRAFTSMAN_ vars should not be included
+        expect($json['env'])->not()->toHaveKey('OTHER_VAR');
+
+        // Normal key should pass through
+        expect($json['env'])->toHaveKey('DRAFTSMAN_NORMAL');
+        expect($json['env']['DRAFTSMAN_NORMAL'])->toBe('ok');
+    } finally {
+        // Restore original .env
+        if ($original === null) {
+            if (File::exists($envPath)) {
+                File::delete($envPath);
+            }
+        } else {
+            File::put($envPath, $original);
+        }
+    }
+});
+
+it('creates .gitignore in storage/draftsman when saving a snapshot if missing', function () {
+    $draftsmanDir = storage_path('draftsman');
+    $gitignorePath = $draftsmanDir.DIRECTORY_SEPARATOR.'.gitignore';
+
+    // Ensure draftsman directory exists
+    if (! File::exists($draftsmanDir)) {
+        File::makeDirectory($draftsmanDir, 0755, true);
+    }
+
+    // Backup any existing .gitignore then remove it to simulate the "missing" condition
+    $original = null;
+    if (File::exists($gitignorePath)) {
+        $original = File::get($gitignorePath);
+        File::delete($gitignorePath);
+    }
+
+    // Use a temp snapshots directory to avoid polluting defaults
+    $tempSnapshotsDir = storage_path('testing-snapshots');
+    if (File::exists($tempSnapshotsDir)) {
+        File::deleteDirectory($tempSnapshotsDir);
+    }
+
+    try {
+        // Run the snapshot command
+        $exit = Artisan::call('draftsman:snapshot', [
+            '--path' => $tempSnapshotsDir,
+        ]);
+
+        expect($exit)->toBe(0);
+
+        // .gitignore should be created with expected contents
+        expect(File::exists($gitignorePath))->toBeTrue();
+        $contents = File::get($gitignorePath);
+        expect($contents)->toBe("*\n!.gitignore\n");
+
+        // Also confirm a snapshot file was written to the provided directory (sanity check)
+        expect(File::exists($tempSnapshotsDir))->toBeTrue();
+        $files = collect(File::files($tempSnapshotsDir))
+            ->map(fn ($f) => $f->getFilename())
+            ->filter(fn ($name) => str_ends_with(strtolower($name), '.json'));
+        expect($files->isEmpty())->toBeFalse();
+    } finally {
+        // Restore original .gitignore state
+        if ($original !== null) {
+            File::put($gitignorePath, $original);
+        } else {
+            if (File::exists($gitignorePath)) {
+                File::delete($gitignorePath);
+            }
+        }
+
+        // Clean up temporary snapshots directory
+        if (File::exists($tempSnapshotsDir)) {
+            File::deleteDirectory($tempSnapshotsDir);
+        }
     }
 });

@@ -24,6 +24,6 @@ return [
     |
     */
 
-    'snapshot_path' => env('DRAFTSMAN_SNAPSHOT_PATH', storage_path('app/draftsman/snapshots/')),
+    'snapshot_path' => env('DRAFTSMAN_SNAPSHOT_PATH', storage_path('draftsman/snapshots/')),
 
 ];

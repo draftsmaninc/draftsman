@@ -30,7 +30,7 @@ class DraftsmanSnapshotCommand extends Command
         parent::configure();
         $available = implode(', ', array_keys(self::SECTIONS));
 
-        $defaultPath = (string) (config('draftsman.snapshot_path') ?? 'storage/app/draftsman/snapshots');
+        $defaultPath = (string) (config('draftsman.snapshot_path') ?? 'storage/draftsman/snapshots');
         $this->setHelp("Exclude one or more sections. Available: $available\n".
             "Options:\n".
             "  --exclude=SECTION   Repeatable or comma-separated list to exclude sections.\n".
@@ -38,8 +38,8 @@ class DraftsmanSnapshotCommand extends Command
             "Examples:\n".
             "  php artisan draftsman:snapshot --exclude=config --exclude=about\n".
             "  php artisan draftsman:snapshot --exclude=config,about\n".
-            "  php artisan draftsman:snapshot --path=storage/app/draftsman/snapshots\n".
-            '  php artisan draftsman:snapshot --path=storage/app/draftsman/snapshots/custom_snapshot.json');
+            "  php artisan draftsman:snapshot --path=storage/draftsman/snapshots\n".
+            '  php artisan draftsman:snapshot --path=storage/draftsman/snapshots/custom_snapshot.json');
     }
 
     public function handle(): int
@@ -198,7 +198,8 @@ class DraftsmanSnapshotCommand extends Command
                 $this->snapshot['composer_error'] = 'Error reading composer.json: '.$e->getMessage();
             }
         } else {
-            $this->snapshot['composer_path'] = 'composer.json not found at '.$composerFilePath;
+            // When the file is missing, surface this as an error to align with schema expectations
+            $this->snapshot['composer_error'] = 'composer.json not found at '.$composerFilePath;
         }
     }
 
@@ -231,7 +232,8 @@ class DraftsmanSnapshotCommand extends Command
                 $this->snapshot['package_error'] = 'Error reading package.json: '.$e->getMessage();
             }
         } else {
-            $this->snapshot['package_path'] = 'package.json not found at '.$packageFilePath;
+            // When the file is missing, surface this as an error to align with schema expectations
+            $this->snapshot['package_error'] = 'package.json not found at '.$packageFilePath;
         }
     }
 
@@ -297,13 +299,14 @@ class DraftsmanSnapshotCommand extends Command
                     continue;
                 }
 
-                // Exclude sensitive keys containing _KEY, _PASS, or _PASSWORD
+                // Mask sensitive keys that end with _KEY, _PASS, or _PASSWORD
                 $upperKey = strtoupper($key);
-                if (str_contains($upperKey, '_KEY') || str_contains($upperKey, '_PASS') || str_contains($upperKey, '_PASSWORD')) {
-                    continue;
-                }
+                $isSensitive = str_ends_with($upperKey, '_KEY')
+                    || str_ends_with($upperKey, '_SECRET')
+                    || str_ends_with($upperKey, '_PASS')
+                    || str_ends_with($upperKey, '_PASSWORD');
 
-                $result[$key] = $value;
+                $result[$key] = $isSensitive ? '...' : $value;
             }
 
             $this->snapshot['env'] = $result;
@@ -324,7 +327,7 @@ class DraftsmanSnapshotCommand extends Command
     {
         // Determine base path: option or config default
         if ($outputPath === null || $outputPath === '') {
-            $outputPath = (string) (config('draftsman.snapshot_path') ?? storage_path('app/draftsman/snapshots'));
+            $outputPath = (string) (config('draftsman.snapshot_path') ?? storage_path('draftsman/snapshots'));
         }
 
         $outputPath = rtrim($outputPath, '\\/');
@@ -344,6 +347,23 @@ class DraftsmanSnapshotCommand extends Command
 
         if (! File::exists($dir)) {
             File::makeDirectory($dir, 0755, true);
+        }
+
+        // Ensure a .gitignore exists in the draftsman directory to ignore everything inside it
+        // We only create the file if it doesn't already exist.
+        try {
+            $draftsmanDir = storage_path('draftsman');
+            if (! File::exists($draftsmanDir)) {
+                File::makeDirectory($draftsmanDir, 0755, true);
+            }
+
+            $gitignorePath = $draftsmanDir.DIRECTORY_SEPARATOR.'.gitignore';
+            if (! File::exists($gitignorePath)) {
+                // Ignore everything in draftsman, but keep this .gitignore tracked
+                File::put($gitignorePath, "*\n!.gitignore\n");
+            }
+        } catch (\Throwable $e) {
+            // Non-fatal: failure to create .gitignore shouldn't block snapshot saving
         }
 
         $json = json_encode($snapshot, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
