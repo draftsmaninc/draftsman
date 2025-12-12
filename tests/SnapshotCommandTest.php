@@ -306,7 +306,7 @@ it('gets expected .env schema and masking behavior', function () {
     }
 
     try {
-        $envContents = <<<ENV
+        $envContents = <<<'ENV'
         # Comment line
         OTHER_VAR=should_not_be_included
         export DRAFTSMAN_VISIBLE=value123
