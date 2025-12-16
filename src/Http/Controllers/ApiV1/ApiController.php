@@ -2,6 +2,8 @@
 
 namespace Draftsman\Draftsman\Http\Controllers\ApiV1;
 
+use Draftsman\Draftsman\Actions\GetDraftsmanConfig;
+use Draftsman\Draftsman\Actions\UpdateDraftsmanConfig;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -9,7 +11,6 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 
 class ApiController extends BaseController
 {
@@ -147,33 +148,11 @@ class ApiController extends BaseController
      * If the published config file does not exist, attempt to publish it,
      * then fall back to the vendor default if still unavailable.
      */
-    public function getConfig()
+    public function getConfig(GetDraftsmanConfig $action)
     {
         try {
-            $publishedConfigPath = base_path('config/draftsman.php');
-            $vendorConfigPath = base_path('vendor/draftsmaninc/draftsman/config/draftsman.php');
-
-            // Ensure published config exists; if missing, attempt to publish
-            if (! File::exists($publishedConfigPath)) {
-                try {
-                    Artisan::call('vendor:publish', ['--tag' => 'draftsman-config']);
-                } catch (\Throwable $e) {
-                    // ignore publish failures; we'll fall back to vendor
-                }
-            }
-
-            $config = [];
-            if (File::exists($publishedConfigPath)) {
-                $loaded = include $publishedConfigPath;
-                $config = is_array($loaded) ? $loaded : [];
-            } elseif (File::exists($vendorConfigPath)) {
-                $loaded = include $vendorConfigPath;
-                $config = is_array($loaded) ? $loaded : [];
-            }
-
-            return response()->json([
-                'config' => $config,
-            ]);
+            $data = $action->handle();
+            return response()->json($data);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Failed to load Draftsman configuration.',
@@ -356,7 +335,7 @@ class ApiController extends BaseController
     /**
      * Update Draftsman configuration and optionally ENV values.
      */
-    public function updateConfig(Request $request)
+    public function updateConfig(Request $request, UpdateDraftsmanConfig $action)
     {
         try {
             $payload = $request->json()->all();
@@ -366,173 +345,13 @@ class ApiController extends BaseController
                 ], 422);
             }
 
-            $publishedConfigPath = base_path('config/draftsman.php');
-            $vendorConfigPath = base_path('vendor/draftsmaninc/draftsman/config/draftsman.php');
-
-            // Ensure published config exists
-            if (! File::exists($publishedConfigPath)) {
-                Artisan::call('vendor:publish', ['--tag' => 'draftsman-config']);
-            }
-
-            // Load defaults from vendor (source of truth for structure)
-            $defaults = [];
-            if (File::exists($vendorConfigPath)) {
-                $defaults = include $vendorConfigPath;
-                if (! is_array($defaults)) {
-                    $defaults = [];
-                }
-            }
-
-            // Merge: defaults overwritten by incoming payload
-            $merged = $this->arrayMergeRecursiveDistinct($defaults, $payload);
-
-            // Write merged config to app config path
-            $this->writePhpConfig($publishedConfigPath, $merged);
-
-            $didWriteEnv = false;
-            // Honor the update_env setting from the merged config (defaults to true in config file).
-            // New semantics per latest requirement: when update_env is TRUE -> update existing DRAFTSMAN_ keys in .env.
-            // When FALSE -> do NOT update .env (config-only mode).
-            $updateEnvFlag = (bool) Arr::get($merged, 'config.update_env', Arr::get($merged, 'update_env', false));
-
-            if ($updateEnvFlag === true) {
-                $envUpdates = $this->buildEnvMapFromConfig($merged);
-                if (count($envUpdates)) {
-                    $this->updateEnvFile($envUpdates);
-                    $didWriteEnv = true;
-                }
-            }
-
-            // Clear config cache if we wrote config or env
-            if ($didWriteEnv || true) {
-                // Always clear when writing config
-                Artisan::call('config:clear');
-            }
-
-            return response()->json([
-                'message' => 'Draftsman configuration updated successfully.',
-                'config' => $merged,
-                'env_updated' => $didWriteEnv,
-            ]);
+            $result = $action->handle($payload);
+            return response()->json($result);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Failed to update Draftsman configuration.',
                 'error' => $e->getMessage(),
             ], 500);
         }
-    }
-
-    private function arrayMergeRecursiveDistinct(array $base, array $override): array
-    {
-        foreach ($override as $key => $value) {
-            if (is_array($value) && isset($base[$key]) && is_array($base[$key])) {
-                $base[$key] = $this->arrayMergeRecursiveDistinct($base[$key], $value);
-            } else {
-                $base[$key] = $value;
-            }
-        }
-
-        return $base;
-    }
-
-    private function writePhpConfig(string $path, array $config): void
-    {
-        // Convert array to PHP file contents
-        $export = var_export($config, true);
-        $contents = <<<PHP
-<?php
-
-// This file is auto-generated by Draftsman API. Do not edit manually.
-
-return {$export};
-
-PHP;
-        File::ensureDirectoryExists(dirname($path));
-        File::put($path, $contents);
-    }
-
-    private function buildEnvMapFromConfig(array $config): array
-    {
-        $map = [];
-
-        // Helper to flatten paths
-        $addSection = function (string $section, array $values) use (&$map) {
-            $iterator = function ($arr, $prefix = '') use (&$map, $section, & $iterator) {
-                foreach ($arr as $k => $v) {
-                    $keyPart = strtoupper(is_int($k) ? (string) $k : str_replace(['-', '.'], '_', $k));
-                    $currentPrefix = $prefix === '' ? $keyPart : $prefix . '_' . $keyPart;
-                    if (is_array($v)) {
-                        $iterator($v, $currentPrefix);
-                    } else {
-                        if ($section === 'config') {
-                            $envKey = 'DRAFTSMAN_' . $currentPrefix;
-                        } else {
-                            $envKey = 'DRAFTSMAN_' . strtoupper($section) . '_' . $currentPrefix;
-                        }
-                        $map[$envKey] = $this->scalarToEnv($v);
-                    }
-                }
-            };
-            $iterator($values);
-        };
-
-        foreach ($config as $section => $values) {
-            if (! is_array($values)) {
-                // top-level scalar
-                $map['DRAFTSMAN_' . strtoupper($section)] = $this->scalarToEnv($values);
-                continue;
-            }
-            $addSection($section, $values);
-        }
-
-        return $map;
-    }
-
-    private function scalarToEnv($value): string
-    {
-        if (is_bool($value)) {
-            return $value ? 'true' : 'false';
-        }
-        if ($value === null) {
-            return 'null';
-        }
-        return (string) $value;
-    }
-
-    private function updateEnvFile(array $updates): void
-    {
-        $envPath = base_path('.env');
-        $lines = File::exists($envPath) ? preg_split("/\r?\n/", File::get($envPath)) : [];
-        $existingKeys = [];
-        foreach ($lines as $idx => $line) {
-            if (preg_match('/^([A-Z0-9_]+)\s*=.*/', $line, $m)) {
-                $existingKeys[$m[1]] = $idx;
-            }
-        }
-
-        foreach ($updates as $k => $v) {
-            // Only update keys that start with DRAFTSMAN_
-            if (strpos($k, 'DRAFTSMAN_') !== 0) {
-                continue;
-            }
-            // Update only if key already exists; do not append missing keys
-            if (array_key_exists($k, $existingKeys)) {
-                $entry = $k . '=' . $this->quoteEnvValue($v);
-                $lines[$existingKeys[$k]] = $entry;
-            }
-        }
-
-        File::put($envPath, implode(PHP_EOL, $lines) . PHP_EOL);
-    }
-
-    private function quoteEnvValue(string $value): string
-    {
-        // Quote only when needed
-        if (preg_match('/\s|#|\\"|\\' . "'" . '/u', $value)) {
-            // wrap in double quotes and escape existing ones
-            $escaped = str_replace('"', '\\"', $value);
-            return '"' . $escaped . '"';
-        }
-        return $value;
     }
 }
