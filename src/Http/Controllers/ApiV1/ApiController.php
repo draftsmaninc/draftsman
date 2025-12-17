@@ -337,8 +337,9 @@ class ApiController extends BaseController
      */
     public function updateConfig(Request $request, UpdateDraftsmanConfig $action)
     {
+        dump($request);
         try {
-            $payload = $request->json()->all();
+            $payload = $request->json()->all()['config'];
             if (! is_array($payload)) {
                 return response()->json([
                     'message' => 'Invalid JSON body. Expecting an object matching draftsman.php structure.',

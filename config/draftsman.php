@@ -6,7 +6,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Draftsman Package
+    | Package Settings
     |--------------------------------------------------------------------------
     |
     | These options configure the global environment for your
@@ -15,11 +15,11 @@ return [
     | customize the storage location for snapshots.
     |
     */
-    'config' => [
+    'package' => [
         // Preferred editor executable; falls back to env or sensible defaults.
         'editor' => env('DRAFTSMAN_EDITOR', 'php-storm'),
         // Additional flags to pass to the editor.
-        'editor_flags' => env('DRAFTSMAN_EDITOR_FLAGS', ['flag1', 'flag2', 'flag3']),
+        'editor_flags' => env('DRAFTSMAN_EDITOR_FLAGS', '--flag1 --flag2 --flag3'),
         // Browser to open links with; 'system' = OS default.
         'browser' => env('DRAFTSMAN_BROWSER', 'chrome'),
         // Path (relative to project root) where Draftsman is installed.
@@ -91,8 +91,7 @@ return [
         // Examples:
         App\Models\User::class => [
             'icon' => 'heroicon-o-user',
-            'bg_color' => 'bg-sky-500',
-            'text_color' => 'text-sky-500',
+            'class' => 'bg-sky-500 text-sky-100',
         ],
     ],
 ];
