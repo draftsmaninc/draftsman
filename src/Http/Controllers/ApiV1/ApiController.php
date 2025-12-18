@@ -337,7 +337,6 @@ class ApiController extends BaseController
      */
     public function updateConfig(Request $request, UpdateDraftsmanConfig $action)
     {
-        dump($request);
         try {
             $payload = $request->json()->all()['config'];
             if (! is_array($payload)) {
