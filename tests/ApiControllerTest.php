@@ -6,7 +6,7 @@ use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
 use Illuminate\Http\Request;
 
 it('returns config JSON on getConfig success', function () {
-    $controller = new ApiController();
+    $controller = new ApiController;
 
     $mock = \Mockery::mock(GetDraftsmanConfig::class);
     $expected = ['config' => ['foo' => 'bar']];
@@ -20,7 +20,7 @@ it('returns config JSON on getConfig success', function () {
 });
 
 it('returns full config sections (front, presentation, graph) on getConfig', function () {
-    $controller = new ApiController();
+    $controller = new ApiController;
 
     $mock = \Mockery::mock(GetDraftsmanConfig::class);
     $expected = [
@@ -81,7 +81,7 @@ it('returns full config sections (front, presentation, graph) on getConfig', fun
 });
 
 it('returns 500 JSON on getConfig failure', function () {
-    $controller = new ApiController();
+    $controller = new ApiController;
 
     $mock = \Mockery::mock(GetDraftsmanConfig::class);
     $mock->shouldReceive('handle')->once()->andThrow(new Exception('boom'));
@@ -96,7 +96,7 @@ it('returns 500 JSON on getConfig failure', function () {
 });
 
 it('updates config and returns JSON on updateConfig success', function () {
-    $controller = new ApiController();
+    $controller = new ApiController;
 
     $payload = [
         'package' => [
@@ -131,7 +131,7 @@ it('updates config and returns JSON on updateConfig success', function () {
 });
 
 it('updates all config sections (front, presentation, graph) and returns JSON', function () {
-    $controller = new ApiController();
+    $controller = new ApiController;
 
     $payload = [
         'package' => [
@@ -191,7 +191,7 @@ it('updates all config sections (front, presentation, graph) and returns JSON', 
 });
 
 it('returns 500 JSON on updateConfig failure', function () {
-    $controller = new ApiController();
+    $controller = new ApiController;
 
     $payload = ['package' => ['update_env' => true]];
     $request = Request::create(
@@ -217,7 +217,7 @@ it('returns 500 JSON on updateConfig failure', function () {
 });
 
 it('reflects env updates when update_env=true and existing DRAFTSMAN_ keys are updated', function () {
-    $controller = new ApiController();
+    $controller = new ApiController;
 
     $payload = [
         'package' => [
@@ -254,7 +254,7 @@ it('reflects env updates when update_env=true and existing DRAFTSMAN_ keys are u
 });
 
 it('does not add new DRAFTSMAN_ keys to .env (env_updated=false case)', function () {
-    $controller = new ApiController();
+    $controller = new ApiController;
 
     $payload = [
         'package' => [
@@ -291,7 +291,7 @@ it('does not add new DRAFTSMAN_ keys to .env (env_updated=false case)', function
 });
 
 it('returns 422 JSON on updateConfig invalid payload', function () {
-    $controller = new ApiController();
+    $controller = new ApiController;
 
     // Invalid: config is not an array
     $request = Request::create(
