@@ -25,7 +25,7 @@ it('returns full config sections (front, presentation, graph) on getConfig', fun
     $mock = \Mockery::mock(GetDraftsmanConfig::class);
     $expected = [
         'config' => [
-            'config' => [
+            'package' => [
                 'update_env' => true,
                 'snapshot_path' => storage_path('draftsman/snapshots'),
                 'models_path' => app_path('Models'),
@@ -62,7 +62,7 @@ it('returns full config sections (front, presentation, graph) on getConfig', fun
     $data = $response->getData(true);
     expect($response->getStatusCode())->toBe(200)
         ->and($data)->toMatchArray($expected)
-        ->and($data['config'])->toHaveKeys(['config', 'front', 'graph', 'presentation'])
+        ->and($data['config'])->toHaveKeys(['package', 'front', 'graph', 'presentation'])
         ->and($data['config']['front'])->toMatchArray([
             'history_length' => 200,
             'snap_to_grid' => true,
@@ -99,7 +99,7 @@ it('updates config and returns JSON on updateConfig success', function () {
     $controller = new ApiController();
 
     $payload = [
-        'config' => [
+        'package' => [
             'update_env' => false,
             'snapshot_path' => storage_path('draftsman/tests'),
         ],
@@ -112,7 +112,7 @@ it('updates config and returns JSON on updateConfig success', function () {
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
         ],
-        content: json_encode($payload)
+        content: json_encode(['config' => $payload])
     );
 
     $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
@@ -134,7 +134,7 @@ it('updates all config sections (front, presentation, graph) and returns JSON', 
     $controller = new ApiController();
 
     $payload = [
-        'config' => [
+        'package' => [
             'update_env' => true,
             'snapshot_path' => storage_path('draftsman/complex'),
             'models_path' => app_path('Models'),
@@ -158,8 +158,7 @@ it('updates all config sections (front, presentation, graph) and returns JSON', 
         'presentation' => [
             'App\\Models\\User' => [
                 'icon' => 'heroicon-o-user-circle',
-                'bg_color' => 'bg-emerald-500',
-                'text_color' => 'text-emerald-500',
+                'class' => 'bg-emerald-500 text-emerald-500',
             ],
         ],
     ];
@@ -177,24 +176,24 @@ it('updates all config sections (front, presentation, graph) and returns JSON', 
     $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
     $result = [
         'message' => 'Draftsman configuration updated successfully.',
-        'config' => ['config' => $payload],
+        'config' => $payload,
         'env_updated' => true,
     ];
-    $mock->shouldReceive('handle')->once()->with(['config' => $payload])->andReturn($result);
+    $mock->shouldReceive('handle')->once()->with($payload)->andReturn($result);
 
     $response = $controller->updateConfig($request, $mock);
 
     $data = $response->getData(true);
     expect($response->getStatusCode())->toBe(200)
         ->and($data)->toMatchArray($result)
-        ->and($data['config']['config'])->toHaveKeys(['config', 'front', 'graph', 'presentation'])
+        ->and($data['config'])->toHaveKeys(['package', 'front', 'graph', 'presentation'])
         ->and($data['env_updated'])->toBeTrue();
 });
 
 it('returns 500 JSON on updateConfig failure', function () {
     $controller = new ApiController();
 
-    $payload = ['config' => ['update_env' => true]];
+    $payload = ['package' => ['update_env' => true]];
     $request = Request::create(
         '/api/draftsman/config',
         'POST',
@@ -202,7 +201,7 @@ it('returns 500 JSON on updateConfig failure', function () {
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
         ],
-        content: json_encode($payload)
+        content: json_encode(['config' => $payload])
     );
 
     $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
@@ -221,7 +220,7 @@ it('reflects env updates when update_env=true and existing DRAFTSMAN_ keys are u
     $controller = new ApiController();
 
     $payload = [
-        'config' => [
+        'package' => [
             'update_env' => true,
         ],
         'env_map' => [
@@ -236,7 +235,7 @@ it('reflects env updates when update_env=true and existing DRAFTSMAN_ keys are u
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
         ],
-        content: json_encode($payload)
+        content: json_encode(['config' => $payload])
     );
 
     $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
@@ -258,7 +257,7 @@ it('does not add new DRAFTSMAN_ keys to .env (env_updated=false case)', function
     $controller = new ApiController();
 
     $payload = [
-        'config' => [
+        'package' => [
             'update_env' => true,
         ],
         'env_map' => [
@@ -273,7 +272,7 @@ it('does not add new DRAFTSMAN_ keys to .env (env_updated=false case)', function
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
         ],
-        content: json_encode($payload)
+        content: json_encode(['config' => $payload])
     );
 
     $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
@@ -289,4 +288,28 @@ it('does not add new DRAFTSMAN_ keys to .env (env_updated=false case)', function
     $data = $response->getData(true);
     expect($response->getStatusCode())->toBe(200)
         ->and($data['env_updated'])->toBeFalse();
+});
+
+it('returns 422 JSON on updateConfig invalid payload', function () {
+    $controller = new ApiController();
+
+    // Invalid: config is not an array
+    $request = Request::create(
+        '/api/draftsman/config',
+        'POST',
+        server: [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+        ],
+        content: json_encode(['config' => 'invalid'])
+    );
+
+    $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
+    $mock->shouldNotReceive('handle');
+
+    $response = $controller->updateConfig($request, $mock);
+
+    $data = $response->getData(true);
+    expect($response->getStatusCode())->toBe(422)
+        ->and($data)->toHaveKey('message');
 });
