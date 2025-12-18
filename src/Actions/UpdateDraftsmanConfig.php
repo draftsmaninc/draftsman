@@ -2,11 +2,10 @@
 
 namespace Draftsman\Draftsman\Actions;
 
-use Illuminate\Http\Request;
+use Illuminate\Container\Container;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
-use Illuminate\Container\Container;
 
 class UpdateDraftsmanConfig
 {
@@ -21,7 +20,7 @@ class UpdateDraftsmanConfig
      *   DRAFTSMAN_* keys in .env. Never append new keys.
      * - Always run config:clear after writing config and any env updates.
      *
-     * @param array $payload JSON body decoded to array
+     * @param  array  $payload  JSON body decoded to array
      * @return array{message:string, config:array, env_updated:bool}
      */
     public function handle(array $payload): array
@@ -102,8 +101,11 @@ class UpdateDraftsmanConfig
     // Parsed formatting data loaded from vendor config file to stay in sync
     // with original comments/structure.
     private array $vendorSectionComments = [];
+
     private array $vendorKeyComments = [];
+
     private ?array $vendorPresentationExample = null; // array of raw lines
+
     // Map of vendor RHS expressions to honor env()/helper code in generation
     // [section][key] => ['type' => 'env', 'env_key' => string, 'default_code' => string]
     //                 | ['type' => 'code', 'code' => string]
@@ -151,15 +153,16 @@ class UpdateDraftsmanConfig
         if (! is_array($value)) {
             $valCode = $this->exportScalar($value);
             $inline = $this->getInlineComment($section);
-            $line = sprintf("%s%s => %s,", $indent, var_export($section, true), $valCode);
+            $line = sprintf('%s%s => %s,', $indent, var_export($section, true), $valCode);
             if ($inline !== null) {
-                $line .= ' // ' . $inline;
+                $line .= ' // '.$inline;
             }
             $lines[] = $line;
+
             return;
         }
 
-        $lines[] = sprintf("%s%s => [", $indent, var_export($section, true));
+        $lines[] = sprintf('%s%s => [', $indent, var_export($section, true));
 
         // Special handling for presentation: if empty, preserve vendor example block
         if ($section === 'presentation' && is_array($value) && count($value) === 0) {
@@ -168,8 +171,9 @@ class UpdateDraftsmanConfig
                     $lines[] = $rawLine; // already indented in vendor file
                 }
             }
-            $lines[] = sprintf("%s],", $indent);
+            $lines[] = sprintf('%s],', $indent);
             $lines[] = '';
+
             return;
         }
 
@@ -185,7 +189,7 @@ class UpdateDraftsmanConfig
             $this->renderValueLine($lines, $keyCode, $v, $path, $mergedConfig, $indentLevel + 1);
         }
 
-        $lines[] = sprintf("%s],", $indent);
+        $lines[] = sprintf('%s],', $indent);
         $lines[] = '';
     }
 
@@ -207,15 +211,16 @@ class UpdateDraftsmanConfig
                     } else {
                         $defaultCode = $this->exportPhpCode($value, $path, $indentLevel);
                     }
-                    $line = $indent . $keyCode . ' => env(' . var_export($expr['env_key'], true) . ', ' . $defaultCode . '),';
+                    $line = $indent.$keyCode.' => env('.var_export($expr['env_key'], true).', '.$defaultCode.'),';
                     $lines[] = $line;
+
                     return;
                 }
             }
         }
 
         if (is_array($value)) {
-            $prefix = $keyCode ? ($indent . $keyCode . ' => [') : ($indent . '[');
+            $prefix = $keyCode ? ($indent.$keyCode.' => [') : ($indent.'[');
             $lines[] = $prefix;
 
             $isAssoc = $this->isAssoc($value);
@@ -233,17 +238,18 @@ class UpdateDraftsmanConfig
                 $this->renderValueLine($lines, $childKey, $v, $childPath, $mergedConfig, $indentLevel + 1);
             }
 
-            $lines[] = str_repeat('    ', $indentLevel) . '],';
+            $lines[] = str_repeat('    ', $indentLevel).'],';
+
             return;
         }
 
         $valCode = $this->exportScalar($value);
-        $line = $keyCode ? ($indent . $keyCode . ' => ' . $valCode . ',') : ($indent . $valCode . ',');
+        $line = $keyCode ? ($indent.$keyCode.' => '.$valCode.',') : ($indent.$valCode.',');
 
         // Inline comments are only included if present in vendor map (rare)
         $inline = $this->getInlineComment($this->dotPath($path));
         if ($inline !== null && $inline !== '') {
-            $line .= ' // ' . $inline;
+            $line .= ' // '.$inline;
         }
 
         $lines[] = $line;
@@ -257,11 +263,14 @@ class UpdateDraftsmanConfig
             // Path is like ['presentation', <modelKey>] for model level
             if (count($path) === 2) {
                 $fqcn = $this->resolveModelFqcn($key, $mergedConfig);
-                return $fqcn . '::class';
+
+                return $fqcn.'::class';
             }
+
             // Any deeper levels should be exported as quoted strings
             return var_export($key, true);
         }
+
         return var_export($key, true);
     }
 
@@ -306,7 +315,9 @@ class UpdateDraftsmanConfig
 
     private function dotPath(array $segments): string
     {
-        return implode('.', array_map(function ($s) { return is_int($s) ? (string) $s : (string) $s; }, $segments));
+        return implode('.', array_map(function ($s) {
+            return is_int($s) ? (string) $s : (string) $s;
+        }, $segments));
     }
 
     private function exportScalar($value): string
@@ -317,6 +328,7 @@ class UpdateDraftsmanConfig
         if ($value === null) {
             return 'null';
         }
+
         return var_export($value, true);
     }
 
@@ -333,6 +345,7 @@ class UpdateDraftsmanConfig
             $this->vendorKeyComments = [];
             $this->vendorPresentationExample = null;
             $this->vendorKeyExpressions = [];
+
             return;
         }
 
@@ -345,7 +358,7 @@ class UpdateDraftsmanConfig
         foreach ($lines as $i => $line) {
             foreach ($sections as $sec) {
                 // Match: 4 spaces, 'section' => [
-                if (preg_match("/^\s{4}'" . preg_quote($sec, '/') . "'\s*=>\s*\[/", $line)) {
+                if (preg_match("/^\s{4}'".preg_quote($sec, '/')."'\s*=>\s*\[/", $line)) {
                     $sectionLineIndex[$sec] = $i;
                 }
             }
@@ -359,6 +372,7 @@ class UpdateDraftsmanConfig
             for ($j = $idx - 1; $j >= 0; $j--) {
                 if ($end === null && strpos($lines[$j], '*/') !== false) {
                     $end = $j;
+
                     continue;
                 }
                 if ($end !== null && strpos($lines[$j], '/*') !== false) {
@@ -366,7 +380,7 @@ class UpdateDraftsmanConfig
                     break;
                 }
                 // Stop if we hit another section or 'return ['
-                if (preg_match("/^\s{4}'[a-z_]+?'\s*=>\s*\[/i", $lines[$j]) || trim($lines[$j]) === 'return [' ) {
+                if (preg_match("/^\s{4}'[a-z_]+?'\s*=>\s*\[/i", $lines[$j]) || trim($lines[$j]) === 'return [') {
                     break;
                 }
             }
@@ -398,6 +412,7 @@ class UpdateDraftsmanConfig
                 if (preg_match("/^\s*\/\/ /", $ln)) {
                     // Accumulate consecutive // comment lines
                     $buffer[] = $ln;
+
                     continue;
                 }
                 // Key line pattern: 8 spaces 'key' =>
@@ -484,12 +499,13 @@ class UpdateDraftsmanConfig
             $items = [];
             foreach ($value as $k => $v) {
                 if ($isAssoc) {
-                    $items[] = $indent . var_export($k, true) . ' => ' . $this->exportPhpCode($v, $path, $indentLevel + 1);
+                    $items[] = $indent.var_export($k, true).' => '.$this->exportPhpCode($v, $path, $indentLevel + 1);
                 } else {
-                    $items[] = $indent . $this->exportPhpCode($v, $path, $indentLevel + 1);
+                    $items[] = $indent.$this->exportPhpCode($v, $path, $indentLevel + 1);
                 }
             }
-            return "[\n" . implode(",\n", $items) . "\n" . $closeIndent . "]";
+
+            return "[\n".implode(",\n", $items)."\n".$closeIndent.']';
         }
         if (is_bool($value)) {
             return $value ? 'true' : 'false';
@@ -497,6 +513,7 @@ class UpdateDraftsmanConfig
         if ($value === null) {
             return 'null';
         }
+
         return var_export($value, true);
     }
 
@@ -512,13 +529,13 @@ class UpdateDraftsmanConfig
     {
         // Non-string (e.g., arrays) — just wrap exported code as-is
         if (! is_string($value)) {
-            return $helper . '(' . $this->exportPhpCode($value) . ')';
+            return $helper.'('.$this->exportPhpCode($value).')';
         }
 
         $root = $this->helperRoot($helper);
         if ($root === '') {
             // Unknown helper; fallback
-            return $helper . '(' . $this->exportPhpCode($value) . ')';
+            return $helper.'('.$this->exportPhpCode($value).')';
         }
 
         [$normValueLower, $normRootLower] = $this->normalizeForCompare($value, $root);
@@ -526,14 +543,15 @@ class UpdateDraftsmanConfig
         if (str_starts_with($normValueLower, $normRootLower)) {
             $relative = substr($normValueLower, strlen($normRootLower));
             // Trim leading separators
-            $relative = ltrim($relative, "\\/");
+            $relative = ltrim($relative, '\\/');
             // Use forward slashes inside helper args for readability (matches vendor style)
             $relative = str_replace(['\\\\', '\\'], '/', $relative);
             if ($relative === '') {
                 // Exactly the root path — call helper with no args
-                return $helper . '()';
+                return $helper.'()';
             }
-            return $helper . '(' . var_export($relative, true) . ')';
+
+            return $helper.'('.var_export($relative, true).')';
         }
 
         // Not under the helper root; if it's already a relative path, pass it as-is,
@@ -542,7 +560,8 @@ class UpdateDraftsmanConfig
         if ($this->isAbsolutePath($value)) {
             $arg = str_replace(['\\\\', '\\'], '/', $value);
         }
-        return $helper . '(' . var_export($arg, true) . ')';
+
+        return $helper.'('.var_export($arg, true).')';
     }
 
     private function helperRoot(string $helper): string
@@ -576,6 +595,7 @@ class UpdateDraftsmanConfig
         // Use mb_strtolower to be safe
         $lowerValue = function_exists('mb_strtolower') ? mb_strtolower($normValue) : strtolower($normValue);
         $lowerRoot = function_exists('mb_strtolower') ? mb_strtolower($normRoot) : strtolower($normRoot);
+
         return [$lowerValue, $lowerRoot];
     }
 
@@ -585,6 +605,7 @@ class UpdateDraftsmanConfig
         if (preg_match('/^[A-Za-z]:\\\\|^\\\\\\\\/u', $p) === 1) {
             return true;
         }
+
         return str_starts_with($p, '/');
     }
 
@@ -592,7 +613,7 @@ class UpdateDraftsmanConfig
     {
         // True when currently exporting inside the 'presentation' array,
         // so keys of this array represent model classes.
-        return (count($path) === 1 && $path[0] === 'presentation');
+        return count($path) === 1 && $path[0] === 'presentation';
     }
 
     /**
@@ -623,21 +644,21 @@ class UpdateDraftsmanConfig
         $key = ltrim(str_replace('/', '\\', $modelKey), '\\');
 
         // If already fully qualified under app namespace, return as-is
-        if (stripos($key, $appNs . '\\') === 0) {
+        if (stripos($key, $appNs.'\\') === 0) {
             return $key;
         }
 
         // If key has namespace but doesn't start with appNs, assume provided FQCN
-        if (strpos($key, '\\') !== false && stripos($key, $appNs . '\\') !== 0) {
+        if (strpos($key, '\\') !== false && stripos($key, $appNs.'\\') !== 0) {
             return $key;
         }
 
         // If key is relative (no namespace) or relative under models sub-namespace
         if ($subNamespace !== '') {
-            return $appNs . '\\' . $subNamespace . '\\' . $key;
+            return $appNs.'\\'.$subNamespace.'\\'.$key;
         }
 
-        return $appNs . '\\' . $key;
+        return $appNs.'\\'.$key;
     }
 
     private function buildEnvMapFromConfig(array $config): array
@@ -645,17 +666,17 @@ class UpdateDraftsmanConfig
         $map = [];
 
         $addSection = function (string $section, array $values) use (&$map) {
-            $iterator = function ($arr, $prefix = '') use (&$map, $section, & $iterator) {
+            $iterator = function ($arr, $prefix = '') use (&$map, $section, &$iterator) {
                 foreach ($arr as $k => $v) {
                     $keyPart = strtoupper(is_int($k) ? (string) $k : str_replace(['-', '.'], '_', $k));
-                    $currentPrefix = $prefix === '' ? $keyPart : $prefix . '_' . $keyPart;
+                    $currentPrefix = $prefix === '' ? $keyPart : $prefix.'_'.$keyPart;
                     if (is_array($v)) {
                         $iterator($v, $currentPrefix);
                     } else {
                         if ($section === 'package') {
-                            $envKey = 'DRAFTSMAN_' . $currentPrefix;
+                            $envKey = 'DRAFTSMAN_'.$currentPrefix;
                         } else {
-                            $envKey = 'DRAFTSMAN_' . strtoupper($section) . '_' . $currentPrefix;
+                            $envKey = 'DRAFTSMAN_'.strtoupper($section).'_'.$currentPrefix;
                         }
                         $map[$envKey] = $this->scalarToEnv($v);
                     }
@@ -666,7 +687,8 @@ class UpdateDraftsmanConfig
 
         foreach ($config as $section => $values) {
             if (! is_array($values)) {
-                $map['DRAFTSMAN_' . strtoupper($section)] = $this->scalarToEnv($values);
+                $map['DRAFTSMAN_'.strtoupper($section)] = $this->scalarToEnv($values);
+
                 continue;
             }
             $addSection($section, $values);
@@ -683,6 +705,7 @@ class UpdateDraftsmanConfig
         if ($value === null) {
             return 'null';
         }
+
         return (string) $value;
     }
 
@@ -704,20 +727,22 @@ class UpdateDraftsmanConfig
             }
             // Update only if key already exists; do not append missing keys
             if (array_key_exists($k, $existingKeys)) {
-                $entry = $k . '=' . $this->quoteEnvValue($v);
+                $entry = $k.'='.$this->quoteEnvValue($v);
                 $lines[$existingKeys[$k]] = $entry;
             }
         }
 
-        File::put($envPath, implode(PHP_EOL, $lines) . PHP_EOL);
+        File::put($envPath, implode(PHP_EOL, $lines).PHP_EOL);
     }
 
     private function quoteEnvValue(string $value): string
     {
-        if (preg_match('/\s|#|\\"|\\' . "'" . '/u', $value)) {
+        if (preg_match('/\s|#|\\"|\\'."'".'/u', $value)) {
             $escaped = str_replace('"', '\\"', $value);
-            return '"' . $escaped . '"';
+
+            return '"'.$escaped.'"';
         }
+
         return $value;
     }
 }

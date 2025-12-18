@@ -1,8 +1,8 @@
 <?php
 
+use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ModelsController;
 use Draftsman\Draftsman\Http\Controllers\ApiV1\RelationsController;
-use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
 use Draftsman\Draftsman\Http\Controllers\DraftsmanController;
 use Illuminate\Support\Facades\Route;
 

@@ -7,10 +7,10 @@ use Draftsman\Draftsman\Actions\UpdateDraftsmanConfig;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
-use Illuminate\Http\Request;
 
 class ApiController extends BaseController
 {
@@ -152,6 +152,7 @@ class ApiController extends BaseController
     {
         try {
             $data = $action->handle();
+
             return response()->json($data);
         } catch (\Throwable $e) {
             return response()->json([
@@ -346,6 +347,7 @@ class ApiController extends BaseController
             }
 
             $result = $action->handle($payload);
+
             return response()->json($result);
         } catch (\Throwable $e) {
             return response()->json([
