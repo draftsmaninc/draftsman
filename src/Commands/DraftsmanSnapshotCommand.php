@@ -30,7 +30,7 @@ class DraftsmanSnapshotCommand extends Command
         parent::configure();
         $available = implode(', ', array_keys(self::SECTIONS));
 
-        $defaultPath = (string) (config('draftsman.snapshot_path') ?? 'storage/draftsman/snapshots');
+        $defaultPath = (string) (config('draftsman.config.snapshot_path') ?? 'storage/draftsman/snapshots');
         $this->setHelp("Exclude one or more sections. Available: $available\n".
             "Options:\n".
             "  --exclude=SECTION   Repeatable or comma-separated list to exclude sections.\n".

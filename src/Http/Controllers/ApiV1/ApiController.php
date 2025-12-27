@@ -2,9 +2,12 @@
 
 namespace Draftsman\Draftsman\Http\Controllers\ApiV1;
 
+use Draftsman\Draftsman\Actions\GetDraftsmanConfig;
+use Draftsman\Draftsman\Actions\UpdateDraftsmanConfig;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -138,6 +141,25 @@ class ApiController extends BaseController
     {
         // hack the private property
         return (fn () => $this->{$property})->call($object);
+    }
+
+    /**
+     * Return the current Draftsman config (config/draftsman.php) as JSON.
+     * If the published config file does not exist, attempt to publish it,
+     * then fall back to the vendor default if still unavailable.
+     */
+    public function getConfig(GetDraftsmanConfig $action)
+    {
+        try {
+            $data = $action->handle();
+
+            return response()->json($data);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to load Draftsman configuration.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function getPrivatePropertyClass($object, $property)
@@ -309,5 +331,29 @@ class ApiController extends BaseController
             });
 
         return $models->values()->sort()->toArray();
+    }
+
+    /**
+     * Update Draftsman configuration and optionally ENV values.
+     */
+    public function updateConfig(Request $request, UpdateDraftsmanConfig $action)
+    {
+        try {
+            $payload = $request->json()->all()['config'];
+            if (! is_array($payload)) {
+                return response()->json([
+                    'message' => 'Invalid JSON body. Expecting an object matching draftsman.php structure.',
+                ], 422);
+            }
+
+            $result = $action->handle($payload);
+
+            return response()->json($result);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to update Draftsman configuration.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
