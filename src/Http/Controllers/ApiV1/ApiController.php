@@ -210,6 +210,7 @@ class ApiController extends BaseController
             $data->file = $ref?->getFileName() ?? null;
             $data->attributes_count = count($data->attributes) ?? 0;
             $data->relations_count = count($data->relations) ?? 0;
+            $keyed_attributes = collect($data->attributes)->keyBy('name');
 
             foreach ($data->relations as &$relation) {
                 if (in_array($relation->type, $this->relationsOmitList)) {
@@ -301,11 +302,9 @@ class ApiController extends BaseController
                 }
                 if (is_string($relation->mandatory)) {
                     $nullable_col = 'nullable';
-                    $from_attr_schema = collect($mod->getConnection()->getSchemaBuilder()->getColumns($mod->getTable()))
-                        ->filter(function ($schema) use ($relation) {
-                            return $relation->{$relation->mandatory} === $schema['name'];
-                        })->last();
-                    $relation->mandatory = (array_key_exists($nullable_col, $from_attr_schema)) ? $from_attr_schema[$nullable_col] : false;
+                    $check_attr = $relation->{$relation->mandatory};
+                    $mandatory_attr = collect($keyed_attributes[$check_attr])->toArray();
+                    $relation->mandatory = (array_key_exists($nullable_col, $mandatory_attr)) ? $mandatory_attr[$nullable_col] : false;
                 }
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
