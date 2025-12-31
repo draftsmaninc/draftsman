@@ -63,6 +63,34 @@ class ApiController extends BaseController
         'MorphToMany' => 'many',
     ];
 
+    // multiplicity details https://www.red-gate.com/blog/crow-s-foot-notation
+    protected $relationsMultiplicityMap = [
+        'BelongsTo' => 'many',
+        'BelongsToMany' => 'many',
+        'HasMany' => 'one',
+        'HasManyThrough' => 'one',
+        'HasOne' => 'many',
+        'HasOneThrough' => 'many',
+        'MorphMany' => 'one',
+        'MorphOne' => 'many',
+        'MorphTo' => 'many',
+        'MorphToMany' => 'one',
+    ];
+
+    // mandatory details https://www.red-gate.com/blog/crow-s-foot-notation
+    protected $relationsMandatoryMap = [
+        'BelongsTo' => 'from',
+        'BelongsToMany' => false,
+        'HasMany' => true,
+        'HasManyThrough' => true,
+        'HasOne' => false,
+        'HasOneThrough' => false,
+        'MorphMany' => true,
+        'MorphOne' => false,
+        'MorphTo' => false,
+        'MorphToMany' => true,
+    ];
+
     protected $relationsFromAttribute = [
         'BelongsTo' => 'getForeignKeyName',
         'BelongsToMany' => 'getParentKeyName',
@@ -198,22 +226,21 @@ class ApiController extends BaseController
                 $related = $relation->related;
                 $framework_type = $relation->type;
                 unset($relation->related);
-                $relation->type = (array_key_exists($framework_type, $this->relationsTypeMap)) ? $this->relationsTypeMap[$framework_type] : null;
                 $relation->framework_type = $framework_type;
+                $relation->type = (array_key_exists($framework_type, $this->relationsTypeMap)) ? $this->relationsTypeMap[$framework_type] : null;
+                $relation->connection = (array_key_exists($framework_type, $this->relationsConnectionMap)) ? $this->relationsConnectionMap[$framework_type] : null;
+                $relation->multiplicity = (array_key_exists($framework_type, $this->relationsMultiplicityMap)) ? $this->relationsMultiplicityMap[$framework_type] : null;
+                $relation->mandatory = (array_key_exists($framework_type, $this->relationsMandatoryMap)) ? $this->relationsMandatoryMap[$framework_type] : false;
                 $rel = $mod->$function();
                 $relref = $ref->getMethod($function);
                 $relation->file = $relref?->getFileName() ?? null;
                 $relation->line = $relref?->getStartLine() ?? null;
                 $relation->key = $model.'.'.$function;
-                $connection = null;
                 $from_attribute = null;
                 $to_attribute = null;
                 $pivot_attributes = [];
                 $through_attributes = [];
                 $morph_attributes = [];
-                if (array_key_exists($framework_type, $this->relationsConnectionMap)) {
-                    $connection = $this->relationsConnectionMap[$framework_type];
-                }
                 if (array_key_exists($framework_type, $this->relationsFromAttribute)) {
                     $from_attribute = $this->relationsFromAttribute[$framework_type];
                     $from_attribute = $rel->$from_attribute();
@@ -245,7 +272,6 @@ class ApiController extends BaseController
                         $morph_attributes[$morph_key] = $rel->$morph_attribute();
                     }
                 }
-                $relation->connection = $connection;
                 $relation->from = $model;
                 $relation->from_attribute = $from_attribute;
                 $relation->to = $related;
@@ -272,6 +298,16 @@ class ApiController extends BaseController
                         $relation->{'morph_'.$morph_key} = $morph_attribute;
                     }
                     $relation->{'morph_key'} = $related.'.'.$to_attribute.'.'.$relation->{'morph_attribute'};
+                }
+                if (is_string($relation->mandatory)) {
+                    if ($relation->mandatory === 'from') {
+                        $nullable_col = 'nullable';
+                        $from_attr_schema = collect($mod->getConnection()->getSchemaBuilder()->getColumns($mod->getTable()))
+                            ->filter(function ($schema) use ($relation) {
+                                return $relation->from_attribute === $schema['name'];
+                            })->last();
+                        $relation->mandatory = (array_key_exists($nullable_col, $from_attr_schema)) ? $from_attr_schema[$nullable_col] : false;
+                    }
                 }
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
