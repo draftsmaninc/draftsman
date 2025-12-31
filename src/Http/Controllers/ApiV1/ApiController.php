@@ -232,7 +232,7 @@ class ApiController extends BaseController
                 $relation->connection = (array_key_exists($framework_type, $this->relationsConnectionMap)) ? $this->relationsConnectionMap[$framework_type] : null;
                 $relation->multiplicity = (array_key_exists($framework_type, $this->relationsMultiplicityMap)) ? $this->relationsMultiplicityMap[$framework_type] : null;
                 $relation->mandatory = (array_key_exists($framework_type, $this->relationsMandatoryMap)) ? $this->relationsMandatoryMap[$framework_type] : false;
-                $relation->key = null;
+                $relation->key = $model.'.'.$function;
                 $rel = $mod->$function();
                 $relref = $ref->getMethod($function);
                 $relation->file = $relref?->getFileName() ?? null;
@@ -315,7 +315,7 @@ class ApiController extends BaseController
                 foreach ($key_parts as &$part) {
                     $part = $relation->{$part};
                 }
-                $relation->key = implode('.', $key_parts);
+                $relation->relationship_key = implode('.', $key_parts);
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
             $data->relations_count = count($data->relations) ?? 0;
