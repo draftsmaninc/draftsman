@@ -79,7 +79,7 @@ class ApiController extends BaseController
 
     // mandatory details https://www.red-gate.com/blog/crow-s-foot-notation
     protected $relationsMandatoryMap = [
-        'BelongsTo' => 'from',
+        'BelongsTo' => 'from_attribute',
         'BelongsToMany' => false,
         'HasMany' => true,
         'HasManyThrough' => true,
@@ -300,14 +300,12 @@ class ApiController extends BaseController
                     $relation->{'morph_key'} = $related.'.'.$to_attribute.'.'.$relation->{'morph_attribute'};
                 }
                 if (is_string($relation->mandatory)) {
-                    if ($relation->mandatory === 'from') {
-                        $nullable_col = 'nullable';
-                        $from_attr_schema = collect($mod->getConnection()->getSchemaBuilder()->getColumns($mod->getTable()))
-                            ->filter(function ($schema) use ($relation) {
-                                return $relation->from_attribute === $schema['name'];
-                            })->last();
-                        $relation->mandatory = (array_key_exists($nullable_col, $from_attr_schema)) ? $from_attr_schema[$nullable_col] : false;
-                    }
+                    $nullable_col = 'nullable';
+                    $from_attr_schema = collect($mod->getConnection()->getSchemaBuilder()->getColumns($mod->getTable()))
+                        ->filter(function ($schema) use ($relation) {
+                            return $relation->{$relation->mandatory} === $schema['name'];
+                        })->last();
+                    $relation->mandatory = (array_key_exists($nullable_col, $from_attr_schema)) ? $from_attr_schema[$nullable_col] : false;
                 }
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
