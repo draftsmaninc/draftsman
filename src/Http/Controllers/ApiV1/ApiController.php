@@ -51,9 +51,9 @@ class ApiController extends BaseController
     ];
 
     protected $relationsTypeMap = [
-        'BelongsTo' => 'one',
+        'BelongsTo' => 'one_to_many',
         'BelongsToMany' => 'one',
-        'HasMany' => 'many',
+        'HasMany' => 'one_to_many',
         'HasManyThrough' => 'many',
         'HasOne' => 'one',
         'HasOneThrough' => 'one',
@@ -232,11 +232,11 @@ class ApiController extends BaseController
                 $relation->connection = (array_key_exists($framework_type, $this->relationsConnectionMap)) ? $this->relationsConnectionMap[$framework_type] : null;
                 $relation->multiplicity = (array_key_exists($framework_type, $this->relationsMultiplicityMap)) ? $this->relationsMultiplicityMap[$framework_type] : null;
                 $relation->mandatory = (array_key_exists($framework_type, $this->relationsMandatoryMap)) ? $this->relationsMandatoryMap[$framework_type] : false;
+                $relation->key = null;
                 $rel = $mod->$function();
                 $relref = $ref->getMethod($function);
                 $relation->file = $relref?->getFileName() ?? null;
                 $relation->line = $relref?->getStartLine() ?? null;
-                $relation->key = $model.'.'.$function;
                 $from_attribute = null;
                 $to_attribute = null;
                 $pivot_attributes = [];
@@ -306,6 +306,16 @@ class ApiController extends BaseController
                     $mandatory_attr = collect($keyed_attributes[$check_attr])->toArray();
                     $relation->mandatory = (array_key_exists($nullable_col, $mandatory_attr)) ? $mandatory_attr[$nullable_col] : false;
                 }
+                $key_parts = [ 'connection', 'type' ];
+                if ($relation->from < $relation->to) {
+                    $key_parts = array_merge($key_parts, [ 'from', 'from_attribute', 'to', 'to_attribute']);
+                } else {
+                    $key_parts = array_merge($key_parts, [ 'to', 'to_attribute', 'from', 'from_attribute']);
+                }
+                foreach ($key_parts as &$part) {
+                    $part = $relation->{$part};
+                }
+                $relation->key = implode('.', $key_parts);
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
             $data->relations_count = count($data->relations) ?? 0;
