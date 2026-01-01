@@ -63,6 +63,19 @@ class ApiController extends BaseController
         'MorphToMany' => 'many',
     ];
 
+    protected $relationshipKeyPieces = [
+        'BelongsTo' => [ 'to', 'to_attribute', 'from', 'from_attribute'],
+        'BelongsToMany' => [],
+        'HasMany' => [ 'from', 'from_attribute', 'to', 'to_attribute'],
+        'HasManyThrough' => [],
+        'HasOne' => [],
+        'HasOneThrough' => [],
+        'MorphMany' => [],
+        'MorphOne' => [],
+        'MorphTo' => [],
+        'MorphToMany' => [],
+    ];
+
     // multiplicity details https://www.red-gate.com/blog/crow-s-foot-notation
     protected $relationsMultiplicityMap = [
         'BelongsTo' => 'many',
@@ -307,10 +320,8 @@ class ApiController extends BaseController
                     $relation->mandatory = (array_key_exists($nullable_col, $mandatory_attr)) ? $mandatory_attr[$nullable_col] : false;
                 }
                 $key_parts = [ 'connection', 'type' ];
-                if ($relation->from < $relation->to) {
-                    $key_parts = array_merge($key_parts, [ 'from', 'from_attribute', 'to', 'to_attribute']);
-                } else {
-                    $key_parts = array_merge($key_parts, [ 'to', 'to_attribute', 'from', 'from_attribute']);
+                if (array_key_exists($framework_type, $this->relationshipKeyPieces)) {
+                    $key_parts = array_merge($key_parts, $this->relationshipKeyPieces[$framework_type]);
                 }
                 foreach ($key_parts as &$part) {
                     $part = $relation->{$part};
