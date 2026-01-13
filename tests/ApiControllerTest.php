@@ -4,6 +4,7 @@ use Draftsman\Draftsman\Actions\GetDraftsmanConfig;
 use Draftsman\Draftsman\Actions\UpdateDraftsmanConfig;
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 it('returns config JSON on getConfig success', function () {
     $controller = new ApiController;
@@ -78,6 +79,33 @@ it('returns full config sections (front, presentation, graph) on getConfig', fun
             'bg_color' => 'bg-sky-500',
             'text_color' => 'text-sky-500',
         ]);
+});
+
+it('returns config without presentation if missing in getConfig', function () {
+    $controller = new ApiController;
+
+    $mock = \Mockery::mock(GetDraftsmanConfig::class);
+    $expected = [
+        'config' => [
+            'package' => [
+                'update_env' => true,
+            ],
+            'front' => [
+                'history_length' => 200,
+            ],
+            'graph' => [
+                'show_grid' => true,
+            ],
+        ],
+    ];
+    $mock->shouldReceive('handle')->once()->andReturn($expected);
+
+    $response = $controller->getConfig($mock);
+
+    $data = $response->getData(true);
+    expect($response->getStatusCode())->toBe(200)
+        ->and($data)->toMatchArray($expected)
+        ->and($data['config'])->not->toHaveKey('presentation');
 });
 
 it('returns 500 JSON on getConfig failure', function () {
@@ -222,9 +250,7 @@ it('reflects env updates when update_env=true and existing DRAFTSMAN_ keys are u
     $payload = [
         'package' => [
             'update_env' => true,
-        ],
-        'env_map' => [
-            'DRAFTSMAN_EDITOR' => 'php-storm',
+            'editor' => 'php-storm',
         ],
     ];
 
@@ -253,16 +279,15 @@ it('reflects env updates when update_env=true and existing DRAFTSMAN_ keys are u
         ->and($data['env_updated'])->toBeTrue();
 });
 
-it('does not add new DRAFTSMAN_ keys to .env (env_updated=false case)', function () {
+it('does not add new DRAFTSMAN_ keys to .env (add_env=false case)', function () {
     $controller = new ApiController;
 
     $payload = [
         'package' => [
             'update_env' => true,
+            'add_env' => false,
         ],
-        'env_map' => [
-            'DRAFTSMAN_NEW_KEY' => 'should-not-be-added',
-        ],
+        'new_setting' => 'should-not-be-added-to-env',
     ];
 
     $request = Request::create(
@@ -288,6 +313,114 @@ it('does not add new DRAFTSMAN_ keys to .env (env_updated=false case)', function
     $data = $response->getData(true);
     expect($response->getStatusCode())->toBe(200)
         ->and($data['env_updated'])->toBeFalse();
+});
+
+it('adds new DRAFTSMAN_ keys to .env when add_env=true', function () {
+    $controller = new ApiController;
+
+    $payload = [
+        'package' => [
+            'update_env' => true,
+            'add_env' => true,
+        ],
+        'new_setting' => 'should-be-added-to-env',
+    ];
+
+    $request = Request::create(
+        '/api/draftsman/config',
+        'POST',
+        server: [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+        ],
+        content: json_encode(['config' => $payload])
+    );
+
+    $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
+    $result = [
+        'message' => 'Draftsman configuration updated successfully.',
+        'config' => $payload,
+        'env_updated' => true,
+    ];
+    $mock->shouldReceive('handle')->once()->with($payload)->andReturn($result);
+
+    $response = $controller->updateConfig($request, $mock);
+
+    $data = $response->getData(true);
+    expect($response->getStatusCode())->toBe(200)
+        ->and($data['env_updated'])->toBeTrue();
+});
+
+it('GetDraftsmanConfig handles missing storage config file', function () {
+    $storagePath = storage_path('draftsman/config.php');
+    if (File::exists($storagePath)) {
+        File::delete($storagePath);
+    }
+
+    $action = new GetDraftsmanConfig();
+    $result = $action->handle();
+
+    expect($result)->toHaveKey('config')
+        ->and($result['config'])->not->toHaveKey('presentation');
+});
+
+it('GetDraftsmanConfig includes presentation when storage config exists', function () {
+    $storageDir = storage_path('draftsman');
+    $storagePath = $storageDir . '/config.php';
+
+    if (!File::exists($storageDir)) {
+        File::makeDirectory($storageDir, 0755, true);
+    }
+
+    $presentation = [
+        'App\\Models\\User' => [
+            'icon' => 'heroicon-o-user',
+        ],
+    ];
+
+    File::put($storagePath, "<?php\n\nreturn ['presentation' => " . var_export($presentation, true) . "];");
+
+    $action = new GetDraftsmanConfig();
+    $result = $action->handle();
+
+    expect($result['config'])->toHaveKey('presentation')
+        ->and($result['config']['presentation'])->toBe($presentation);
+
+    File::delete($storagePath);
+});
+
+it('UpdateDraftsmanConfig creates storage directory and file', function () {
+    $storageDir = storage_path('draftsman');
+    $storagePath = $storageDir . '/config.php';
+
+    if (File::exists($storagePath)) {
+        File::delete($storagePath);
+    }
+    // We don't necessarily delete the directory as other things might be there,
+    // but the test should ensure it works even if it's missing.
+    // To be thorough, let's try to delete it if it's empty or just ensure it's handled.
+
+    $payload = [
+        'presentation' => [
+            'App\\Models\\Post' => [
+                'icon' => 'heroicon-o-document',
+            ],
+        ],
+        'package' => [
+            'update_env' => false,
+        ],
+    ];
+
+    $action = new UpdateDraftsmanConfig();
+    $action->handle($payload);
+
+    expect(File::exists($storagePath))->toBeTrue();
+
+    $savedConfig = include $storagePath;
+    expect($savedConfig)->toHaveKey('presentation')
+        ->and($savedConfig['presentation'])->toHaveKey('App\\Models\\Post');
+
+    File::delete($storagePath);
 });
 
 it('returns 422 JSON on updateConfig invalid payload', function () {
