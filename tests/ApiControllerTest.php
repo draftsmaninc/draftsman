@@ -357,7 +357,7 @@ it('GetDraftsmanConfig handles missing storage config file', function () {
         File::delete($storagePath);
     }
 
-    $action = new GetDraftsmanConfig();
+    $action = new GetDraftsmanConfig;
     $result = $action->handle();
 
     expect($result)->toHaveKey('config')
@@ -366,9 +366,9 @@ it('GetDraftsmanConfig handles missing storage config file', function () {
 
 it('GetDraftsmanConfig includes presentation when storage config exists', function () {
     $storageDir = storage_path('draftsman');
-    $storagePath = $storageDir . '/config.php';
+    $storagePath = $storageDir.'/config.php';
 
-    if (!File::exists($storageDir)) {
+    if (! File::exists($storageDir)) {
         File::makeDirectory($storageDir, 0755, true);
     }
 
@@ -378,9 +378,9 @@ it('GetDraftsmanConfig includes presentation when storage config exists', functi
         ],
     ];
 
-    File::put($storagePath, "<?php\n\nreturn ['presentation' => " . var_export($presentation, true) . "];");
+    File::put($storagePath, "<?php\n\nreturn ['presentation' => ".var_export($presentation, true).'];');
 
-    $action = new GetDraftsmanConfig();
+    $action = new GetDraftsmanConfig;
     $result = $action->handle();
 
     expect($result['config'])->toHaveKey('presentation')
@@ -391,7 +391,7 @@ it('GetDraftsmanConfig includes presentation when storage config exists', functi
 
 it('UpdateDraftsmanConfig creates storage directory and file', function () {
     $storageDir = storage_path('draftsman');
-    $storagePath = $storageDir . '/config.php';
+    $storagePath = $storageDir.'/config.php';
 
     if (File::exists($storagePath)) {
         File::delete($storagePath);
@@ -411,7 +411,7 @@ it('UpdateDraftsmanConfig creates storage directory and file', function () {
         ],
     ];
 
-    $action = new UpdateDraftsmanConfig();
+    $action = new UpdateDraftsmanConfig;
     $action->handle($payload);
 
     expect(File::exists($storagePath))->toBeTrue();
