@@ -2,7 +2,6 @@
 
 namespace Draftsman\Draftsman\Actions;
 
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
 class GetDraftsmanConfig

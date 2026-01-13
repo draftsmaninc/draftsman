@@ -2,7 +2,6 @@
 
 namespace Draftsman\Draftsman\Actions;
 
-use Illuminate\Container\Container;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -64,7 +63,7 @@ class UpdateDraftsmanConfig
             'presentation' => $presentation,
         ];
 
-        $contents = "<?php\n\nreturn " . $this->exportArray($data, 0, $modelsPath) . ";\n";
+        $contents = "<?php\n\nreturn ".$this->exportArray($data, 0, $modelsPath).";\n";
 
         File::put($path, $contents);
     }
@@ -79,9 +78,9 @@ class UpdateDraftsmanConfig
             $output .= $nextIndent;
             if (is_string($key)) {
                 if ($this->isModelClass($key, $modelsPath)) {
-                    $output .= $key . '::class';
+                    $output .= $key.'::class';
                 } else {
-                    $output .= "'" . $key . "'";
+                    $output .= "'".$key."'";
                 }
                 $output .= ' => ';
             }
@@ -89,7 +88,7 @@ class UpdateDraftsmanConfig
             if (is_array($value)) {
                 $output .= $this->exportArray($value, $level + 1, $modelsPath);
             } elseif (is_string($value)) {
-                $output .= "'" . addslashes($value) . "'";
+                $output .= "'".addslashes($value)."'";
             } elseif (is_bool($value)) {
                 $output .= $value ? 'true' : 'false';
             } elseif (is_null($value)) {
@@ -101,7 +100,7 @@ class UpdateDraftsmanConfig
             $output .= ",\n";
         }
 
-        $output .= $indent . "]";
+        $output .= $indent.']';
 
         return $output;
     }
@@ -122,11 +121,11 @@ class UpdateDraftsmanConfig
             $namespace = 'App';
             foreach ($parts as $part) {
                 if ($part) {
-                    $namespace .= '\\' . ucfirst($part);
+                    $namespace .= '\\'.ucfirst($part);
                 }
             }
 
-            if (str_starts_with(strtolower($key), strtolower($namespace) . '\\')) {
+            if (str_starts_with(strtolower($key), strtolower($namespace).'\\')) {
                 return true;
             }
         }
