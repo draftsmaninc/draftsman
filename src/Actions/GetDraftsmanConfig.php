@@ -17,15 +17,7 @@ class GetDraftsmanConfig
     {
         $publishedConfigPath = base_path('config/draftsman.php');
         $vendorConfigPath = base_path('vendor/draftsmaninc/draftsman/config/draftsman.php');
-
-        // Ensure published config exists; if missing, attempt to publish
-        if (! File::exists($publishedConfigPath)) {
-            try {
-                Artisan::call('vendor:publish', ['--tag' => 'draftsman-config']);
-            } catch (\Throwable $e) {
-                // ignore publish failures; we'll fall back to vendor
-            }
-        }
+        $storageConfigPath = storage_path('draftsman/config.php');
 
         $config = [];
         if (File::exists($publishedConfigPath)) {
@@ -34,6 +26,13 @@ class GetDraftsmanConfig
         } elseif (File::exists($vendorConfigPath)) {
             $loaded = include $vendorConfigPath;
             $config = is_array($loaded) ? $loaded : [];
+        }
+
+        if (File::exists($storageConfigPath)) {
+            $storageConfig = include $storageConfigPath;
+            if (is_array($storageConfig) && isset($storageConfig['presentation'])) {
+                $config['presentation'] = $storageConfig['presentation'];
+            }
         }
 
         return [

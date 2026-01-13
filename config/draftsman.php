@@ -75,23 +75,4 @@ return [
         'gutter_min_width' => env('DRAFTSMAN_GRAPH_GUTTER_MIN_WIDTH', 50),
         'gutter_max_width' => env('DRAFTSMAN_GRAPH_GUTTER_TO_MAX', 50),
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Model Presentation
-    |--------------------------------------------------------------------------
-    |
-    | This section manages how specific Eloquent models are displayed
-    | within Draftsman's graph interface. Customize the options of
-    | each model, defining its unique icon, and setting the text
-    | colors to distinguish it from others, enhancing clarity.
-    |
-    */
-    'presentation' => [
-        // Examples:
-        App\Models\User::class => [
-            'icon' => 'heroicon-o-user',
-            'class' => 'bg-sky-500 text-sky-100',
-        ],
-    ],
 ];
