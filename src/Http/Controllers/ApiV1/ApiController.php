@@ -65,15 +65,15 @@ class ApiController extends BaseController
 
     protected $relationshipKeyPieces = [
         'BelongsTo' => [ 'to', 'to_attribute', 'from', 'from_attribute' ],
-        'BelongsToMany' => [],
+        'BelongsToMany' => [ 'to', 'to_attribute', 'from', 'from_attribute' ], // todo
         'HasMany' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],
-        'HasManyThrough' => [],
+        'HasManyThrough' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],  // todo
         'HasOne' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],
-        'HasOneThrough' => [],
-        'MorphMany' => [],
-        'MorphOne' => [],
-        'MorphTo' => [],
-        'MorphToMany' => [],
+        'HasOneThrough' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],  // todo
+        'MorphMany' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],  // todo
+        'MorphOne' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],  // todo
+        'MorphTo' => [ 'to', 'to_attribute', 'from', 'from_attribute' ],  // todo
+        'MorphToMany' => [ 'to', 'to_attribute', 'from', 'from_attribute' ],  // todo
     ];
 
     // multiplicity details https://www.red-gate.com/blog/crow-s-foot-notation
