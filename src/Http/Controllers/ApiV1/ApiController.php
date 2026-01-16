@@ -51,9 +51,9 @@ class ApiController extends BaseController
     ];
 
     protected $relationsTypeMap = [
-        'BelongsTo' => 'one_to_many',
-        'BelongsToMany' => 'one',
-        'HasMany' => 'one_to_many',
+        'BelongsTo' => 'one',
+        'BelongsToMany' => 'many',
+        'HasMany' => 'many',
         'HasManyThrough' => 'many',
         'HasOne' => 'one',
         'HasOneThrough' => 'one',
