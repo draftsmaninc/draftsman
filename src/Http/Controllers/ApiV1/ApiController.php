@@ -324,7 +324,7 @@ class ApiController extends BaseController
                         $relation->mandatory = false;
                     }
                 }
-                $key_parts = [ 'connection', 'type' ];
+                $key_parts = [ ];
                 if (array_key_exists($framework_type, $this->relationshipKeyPieces)) {
                     $key_parts = array_merge($key_parts, $this->relationshipKeyPieces[$framework_type]);
                 }
