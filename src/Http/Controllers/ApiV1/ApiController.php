@@ -64,11 +64,11 @@ class ApiController extends BaseController
     ];
 
     protected $relationshipKeyPieces = [
-        'BelongsTo' => [ 'to', 'to_attribute', 'from', 'from_attribute'],
+        'BelongsTo' => [ 'to', 'to_attribute', 'from', 'from_attribute' ],
         'BelongsToMany' => [],
-        'HasMany' => [ 'from', 'from_attribute', 'to', 'to_attribute'],
+        'HasMany' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],
         'HasManyThrough' => [],
-        'HasOne' => [],
+        'HasOne' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],
         'HasOneThrough' => [],
         'MorphMany' => [],
         'MorphOne' => [],
