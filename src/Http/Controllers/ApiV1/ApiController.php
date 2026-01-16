@@ -64,16 +64,16 @@ class ApiController extends BaseController
     ];
 
     protected $relationshipKeyPieces = [
-        'BelongsTo' => [ 'to', 'to_attribute', 'from', 'from_attribute' ],
-        'BelongsToMany' => [ 'to', 'to_attribute', 'from', 'from_attribute' ], // todo
-        'HasMany' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],
-        'HasManyThrough' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],  // todo
-        'HasOne' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],
-        'HasOneThrough' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],  // todo
-        'MorphMany' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],  // todo
-        'MorphOne' => [ 'from', 'from_attribute', 'to', 'to_attribute' ],  // todo
-        'MorphTo' => [ 'to', 'to_attribute', 'from', 'from_attribute' ],  // todo
-        'MorphToMany' => [ 'to', 'to_attribute', 'from', 'from_attribute' ],  // todo
+        'BelongsTo' => ['to', 'to_attribute', 'from', 'from_attribute'],
+        'BelongsToMany' => ['to', 'to_attribute', 'from', 'from_attribute'], // todo
+        'HasMany' => ['from', 'from_attribute', 'to', 'to_attribute'],
+        'HasManyThrough' => ['from', 'from_attribute', 'to', 'to_attribute'],  // todo
+        'HasOne' => ['from', 'from_attribute', 'to', 'to_attribute'],
+        'HasOneThrough' => ['from', 'from_attribute', 'to', 'to_attribute'],  // todo
+        'MorphMany' => ['from', 'from_attribute', 'to', 'to_attribute'],  // todo
+        'MorphOne' => ['from', 'from_attribute', 'to', 'to_attribute'],  // todo
+        'MorphTo' => ['to', 'to_attribute', 'from', 'from_attribute'],  // todo
+        'MorphToMany' => ['to', 'to_attribute', 'from', 'from_attribute'],  // todo
     ];
 
     // multiplicity details https://www.red-gate.com/blog/crow-s-foot-notation
@@ -324,7 +324,7 @@ class ApiController extends BaseController
                         $relation->mandatory = false;
                     }
                 }
-                $key_parts = [ ];
+                $key_parts = [];
                 if (array_key_exists($framework_type, $this->relationshipKeyPieces)) {
                     $key_parts = array_merge($key_parts, $this->relationshipKeyPieces[$framework_type]);
                 }
