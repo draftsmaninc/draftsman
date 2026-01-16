@@ -315,9 +315,14 @@ class ApiController extends BaseController
                 }
                 if (is_string($relation->mandatory)) {
                     $nullable_col = 'nullable';
-                    $check_attr = $relation->{$relation->mandatory};
-                    $mandatory_attr = collect($keyed_attributes[$check_attr])->toArray();
-                    $relation->mandatory = (array_key_exists($nullable_col, $mandatory_attr)) ? $mandatory_attr[$nullable_col] : false;
+                    $check_attr = $relation->{$relation->mandatory} ?? null;
+                    $keyed_attr = $keyed_attributes[$check_attr] ?? null;
+                    if ($check_attr && $keyed_attr) {
+                        $mandatory_attr = collect($keyed_attributes[$check_attr])->toArray();
+                        $relation->mandatory = (array_key_exists($nullable_col, $mandatory_attr)) ? $mandatory_attr[$nullable_col] : false;
+                    } else {
+                        $relation->mandatory = false;
+                    }
                 }
                 $key_parts = [ 'connection', 'type' ];
                 if (array_key_exists($framework_type, $this->relationshipKeyPieces)) {
