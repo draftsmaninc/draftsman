@@ -10,6 +10,7 @@ class DraftsmanController extends Controller
     protected $index_file = 'resources/front/index.html';
 
     protected $next_dir = 'resources/front/_next/';
+
     protected $front_dir = 'resources/front/';
 
     protected $package_root_path = '/../../../';
@@ -60,7 +61,6 @@ class DraftsmanController extends Controller
             }
         }
     }
-
 
     /**
      * Pass the font end nextjs resources.
