@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('draftsman')->group(function () {
     Route::get('', [DraftsmanController::class, 'index'])->name('draftsman.index');
 
-    Route::prefix('front')->group(function ($request) {
+    Route::prefix('_next')->group(function ($request) {
         Route::get(
             '/{slug0?}/{slug1?}/{slug2?}/{slug3?}/{slug4?}/{slug5?}/{slug6?}/{slug7?}/{slug8?}/{slug9?}',
-            [DraftsmanController::class, 'front']
-        )->name('draftsman.front');
+            [DraftsmanController::class, 'next']
+        )->name('draftsman.next');
     });
     Route::prefix('api')->group(function () {
         Route::get('models/presorted', [ModelsController::class, 'presorted']);

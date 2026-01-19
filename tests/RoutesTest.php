@@ -7,7 +7,7 @@ it('defaults to the layout', function () {
 });
 
 it('gets a js file from _next ', function () {
-    $base_url = '/draftsman/front/_next/static/chunks/';
+    $base_url = '/draftsman/_next/static/chunks/';
     $next_dir = 'resources/front/_next/static/chunks/';
     $package_root_path = '/../';
     $pattern = '*.js';
@@ -21,24 +21,10 @@ it('gets a js file from _next ', function () {
 });
 
 it('gets a css file from _next ', function () {
-    $base_url = '/draftsman/front/_next/static/chunks/';
-    $next_dir = 'resources/front/_next/static/chunks/';
+    $base_url = '/draftsman/_next/static/css/';
+    $next_dir = 'resources/front/_next/static/css/';
     $package_root_path = '/../';
     $pattern = '*.css';
-    $dir = $package_root_path.$next_dir;
-    $dir = __DIR__.implode(DIRECTORY_SEPARATOR, explode('/', $dir));
-    $files = glob($dir.$pattern);
-    $file = $files[array_rand($files)];
-    $name = basename($file);
-    $response = $this->get($base_url.$name);
-    $response->assertStatus(200);
-});
-
-it('gets a txt file from front root ', function () {
-    $base_url = '/draftsman/front/';
-    $next_dir = 'resources/front/';
-    $package_root_path = '/../';
-    $pattern = '*.txt';
     $dir = $package_root_path.$next_dir;
     $dir = __DIR__.implode(DIRECTORY_SEPARATOR, explode('/', $dir));
     $files = glob($dir.$pattern);
