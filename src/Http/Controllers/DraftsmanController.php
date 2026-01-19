@@ -10,6 +10,7 @@ class DraftsmanController extends Controller
     protected $index_file = 'resources/front/index.html';
 
     protected $next_dir = 'resources/front/_next/';
+    protected $front_dir = 'resources/front/';
 
     protected $package_root_path = '/../../../';
 
@@ -23,6 +24,43 @@ class DraftsmanController extends Controller
 
         return $front;
     }
+
+    /**
+     * Pass the front end stuff resources.
+     */
+    public function front(Request $request)
+    {
+        $uri = $request->path();
+        $prefix = 'draftsman/';
+        if (substr($uri, 0, strlen($prefix)) === $prefix) {
+            $uri = $this->front_dir.substr($uri, strlen($prefix));
+            $file = __DIR__.$this->osSafe($this->package_root_path.$uri);
+            if (file_exists($file)) {
+                $content = file_get_contents($file);
+                $ext = pathinfo($file, PATHINFO_EXTENSION);
+                $mime = mime_content_type($file);
+                if ($mime === 'text/plain') {
+                    switch ($ext) {
+                        case 'css':
+                            $mime = 'text/css';
+                            break;
+                        case 'html':
+                            $mime = 'text/html';
+                            break;
+                        case 'js':
+                            $mime = 'application/javascript';
+                            break;
+                        case 'json':
+                            $mime = 'application/json';
+                            break;
+                    }
+
+                    return response()->file($file, ['Content-Type' => $mime]);
+                }
+            }
+        }
+    }
+
 
     /**
      * Pass the font end nextjs resources.

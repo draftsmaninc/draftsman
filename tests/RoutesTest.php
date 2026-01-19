@@ -33,3 +33,17 @@ it('gets a css file from _next ', function () {
     $response = $this->get($base_url.$name);
     $response->assertStatus(200);
 });
+
+it('gets a txt file from front root ', function () {
+    $base_url = '/draftsman/';
+    $next_dir = 'resources/front/';
+    $package_root_path = '/../';
+    $pattern = '*.txt';
+    $dir = $package_root_path.$next_dir;
+    $dir = __DIR__.implode(DIRECTORY_SEPARATOR, explode('/', $dir));
+    $files = glob($dir.$pattern);
+    $file = $files[array_rand($files)];
+    $name = basename($file);
+    $response = $this->get($base_url.$name);
+    $response->assertStatus(200);
+});

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('draftsman')->group(function () {
     Route::get('', [DraftsmanController::class, 'index'])->name('draftsman.index');
+    Route::get('/__next.{slug}', [DraftsmanController::class, 'front'])->name('draftsman.front');
 
     Route::prefix('_next')->group(function ($request) {
         Route::get(
