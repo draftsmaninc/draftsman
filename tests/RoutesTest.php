@@ -21,8 +21,8 @@ it('gets a js file from _next ', function () {
 });
 
 it('gets a css file from _next ', function () {
-    $base_url = '/draftsman/_next/static/css/';
-    $next_dir = 'resources/front/_next/static/css/';
+    $base_url = '/draftsman/_next/static/chunks/';
+    $next_dir = 'resources/front/_next/static/chunks/';
     $package_root_path = '/../';
     $pattern = '*.css';
     $dir = $package_root_path.$next_dir;
