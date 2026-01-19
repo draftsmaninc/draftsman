@@ -9,7 +9,7 @@ class DraftsmanController extends Controller
 {
     protected $index_file = 'resources/front/index.html';
 
-    protected $next_dir = 'resources/front/_next/';
+    protected $front_dir = 'resources/front/';
 
     protected $package_root_path = '/../../../';
 
@@ -25,14 +25,14 @@ class DraftsmanController extends Controller
     }
 
     /**
-     * Pass the font end nextjs resources.
+     * Pass the font end resources.
      */
-    public function next(Request $request)
+    public function front(Request $request)
     {
         $uri = $request->path();
-        $prefix = 'draftsman/_next/';
+        $prefix = 'draftsman/front/';
         if (substr($uri, 0, strlen($prefix)) === $prefix) {
-            $uri = $this->next_dir.substr($uri, strlen($prefix));
+            $uri = $this->front_dir.substr($uri, strlen($prefix));
             $file = __DIR__.$this->osSafe($this->package_root_path.$uri);
             if (file_exists($file)) {
                 $content = file_get_contents($file);
