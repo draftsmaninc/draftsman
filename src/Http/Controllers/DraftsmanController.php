@@ -19,9 +19,8 @@ class DraftsmanController extends Controller
     public function index()
     {
         $file = __DIR__.$this->osSafe($this->package_root_path.$this->index_file);
-        $front = file_get_contents($file);
-
-        return $front;
+        $index = file_get_contents($file);
+        return $index;
     }
 
     /**
