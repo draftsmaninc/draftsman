@@ -55,9 +55,9 @@ class DraftsmanController extends Controller
                             $mime = 'application/json';
                             break;
                     }
-
-                    return response()->file($file, ['Content-Type' => $mime]);
                 }
+
+                return response()->file($file, ['Content-Type' => $mime]);
             }
         }
     }
@@ -91,9 +91,9 @@ class DraftsmanController extends Controller
                             $mime = 'application/json';
                             break;
                     }
-
-                    return response()->file($file, ['Content-Type' => $mime]);
                 }
+
+                return response()->file($file, ['Content-Type' => $mime]);
             }
         }
     }
