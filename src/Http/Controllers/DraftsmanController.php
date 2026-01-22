@@ -20,6 +20,7 @@ class DraftsmanController extends Controller
     {
         $file = __DIR__.$this->osSafe($this->package_root_path.$this->index_file);
         $index = file_get_contents($file);
+
         return $index;
     }
 
