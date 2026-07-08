@@ -224,6 +224,7 @@ class ApiController extends BaseController
             $data->attributes_count = count($data->attributes) ?? 0;
             $data->relations_count = count($data->relations) ?? 0;
             $keyed_attributes = collect($data->attributes)->keyBy('name');
+            $realated_models = [];
 
             foreach ($data->relations as &$relation) {
                 if (in_array($relation->type, $this->relationsOmitList)) {
@@ -238,6 +239,8 @@ class ApiController extends BaseController
                 }
                 $function = $relation->name;
                 $related = $relation->related;
+                $realated_models[$related] ??= 0;
+                $realated_models[$related]++;
                 $framework_type = $relation->type;
                 unset($relation->related);
                 $relation->framework_type = $framework_type;
@@ -335,6 +338,8 @@ class ApiController extends BaseController
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
             $data->relations_count = count($data->relations) ?? 0;
+            arsort($realated_models);
+            $data->related_models = array_keys($realated_models);
 
             return $data;
         }
