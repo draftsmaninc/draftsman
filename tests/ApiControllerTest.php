@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 it('returns config JSON on getConfig success', function () {
     $controller = new ApiController;
 
-    $mock = \Mockery::mock(GetDraftsmanConfig::class);
+    $mock = Mockery::mock(GetDraftsmanConfig::class);
     $expected = ['config' => ['foo' => 'bar']];
     $mock->shouldReceive('handle')->once()->andReturn($expected);
 
@@ -23,7 +23,7 @@ it('returns config JSON on getConfig success', function () {
 it('returns full config sections (front, presentation, graph) on getConfig', function () {
     $controller = new ApiController;
 
-    $mock = \Mockery::mock(GetDraftsmanConfig::class);
+    $mock = Mockery::mock(GetDraftsmanConfig::class);
     $expected = [
         'config' => [
             'package' => [
@@ -84,7 +84,7 @@ it('returns full config sections (front, presentation, graph) on getConfig', fun
 it('returns config without presentation if missing in getConfig', function () {
     $controller = new ApiController;
 
-    $mock = \Mockery::mock(GetDraftsmanConfig::class);
+    $mock = Mockery::mock(GetDraftsmanConfig::class);
     $expected = [
         'config' => [
             'package' => [
@@ -111,7 +111,7 @@ it('returns config without presentation if missing in getConfig', function () {
 it('returns 500 JSON on getConfig failure', function () {
     $controller = new ApiController;
 
-    $mock = \Mockery::mock(GetDraftsmanConfig::class);
+    $mock = Mockery::mock(GetDraftsmanConfig::class);
     $mock->shouldReceive('handle')->once()->andThrow(new Exception('boom'));
 
     $response = $controller->getConfig($mock);
@@ -143,7 +143,7 @@ it('updates config and returns JSON on updateConfig success', function () {
         content: json_encode(['config' => $payload])
     );
 
-    $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
+    $mock = Mockery::mock(UpdateDraftsmanConfig::class);
     $result = [
         'message' => 'Draftsman configuration updated successfully.',
         'config' => $payload,
@@ -201,7 +201,7 @@ it('updates all config sections (front, presentation, graph) and returns JSON', 
         content: json_encode(['config' => $payload])
     );
 
-    $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
+    $mock = Mockery::mock(UpdateDraftsmanConfig::class);
     $result = [
         'message' => 'Draftsman configuration updated successfully.',
         'config' => $payload,
@@ -232,7 +232,7 @@ it('returns 500 JSON on updateConfig failure', function () {
         content: json_encode(['config' => $payload])
     );
 
-    $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
+    $mock = Mockery::mock(UpdateDraftsmanConfig::class);
     $mock->shouldReceive('handle')->once()->with($payload)->andThrow(new Exception('cannot write'));
 
     $response = $controller->updateConfig($request, $mock);
@@ -264,7 +264,7 @@ it('reflects env updates when update_env=true and existing DRAFTSMAN_ keys are u
         content: json_encode(['config' => $payload])
     );
 
-    $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
+    $mock = Mockery::mock(UpdateDraftsmanConfig::class);
     $result = [
         'message' => 'Draftsman configuration updated successfully.',
         'config' => $payload,
@@ -300,7 +300,7 @@ it('does not add new DRAFTSMAN_ keys to .env (add_env=false case)', function () 
         content: json_encode(['config' => $payload])
     );
 
-    $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
+    $mock = Mockery::mock(UpdateDraftsmanConfig::class);
     $result = [
         'message' => 'Draftsman configuration updated successfully.',
         'config' => $payload,
@@ -336,7 +336,7 @@ it('adds new DRAFTSMAN_ keys to .env when add_env=true', function () {
         content: json_encode(['config' => $payload])
     );
 
-    $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
+    $mock = Mockery::mock(UpdateDraftsmanConfig::class);
     $result = [
         'message' => 'Draftsman configuration updated successfully.',
         'config' => $payload,
@@ -437,7 +437,7 @@ it('returns 422 JSON on updateConfig invalid payload', function () {
         content: json_encode(['config' => 'invalid'])
     );
 
-    $mock = \Mockery::mock(UpdateDraftsmanConfig::class);
+    $mock = Mockery::mock(UpdateDraftsmanConfig::class);
     $mock->shouldNotReceive('handle');
 
     $response = $controller->updateConfig($request, $mock);

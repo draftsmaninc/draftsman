@@ -2,6 +2,8 @@
 
 namespace Draftsman\Draftsman;
 
+use Draftsman\Draftsman\Commands\DraftsmanInstallCommand;
+use Draftsman\Draftsman\Commands\DraftsmanSnapshotCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -19,8 +21,8 @@ class DraftsmanServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasRoute('web')
             ->hasCommands([
-                \Draftsman\Draftsman\Commands\DraftsmanInstallCommand::class,
-                \Draftsman\Draftsman\Commands\DraftsmanSnapshotCommand::class,
+                DraftsmanInstallCommand::class,
+                DraftsmanSnapshotCommand::class,
             ]);
     }
 }
