@@ -7,6 +7,11 @@
 
 A graphical tool that diagrams and edits Laravel eloquent models.
 
+## Requirements
+
+- PHP 8.3+
+- Laravel 12 or 13
+
 ## Installation
 
 Because this package hasn't been published yet on Packagist you'll 
@@ -151,8 +156,7 @@ Details coming
 
 ## Testing
 
-For Laravel 11 support we have to keep the relevant tests Pest 3 compatible.
-Laravel 12+ are Pest 4 compatible. 
+The test suite runs on Pest 4 against Laravel 12 and 13.
 
 ```bash
 composer test
