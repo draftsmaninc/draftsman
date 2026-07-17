@@ -7,6 +7,11 @@
 
 A graphical tool that diagrams and edits Laravel eloquent models.
 
+## Requirements
+
+- PHP 8.3+
+- Laravel 12 or 13
+
 ## Installation
 
 Because this package hasn't been published yet on Packagist you'll 
@@ -150,6 +155,8 @@ php artisan draftsman:launch
 Details coming
 
 ## Testing
+
+The test suite runs on Pest 4 against Laravel 12 and 13.
 
 ```bash
 composer test
