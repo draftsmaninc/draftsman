@@ -17,7 +17,7 @@ composer format               # fix code style with Laravel Pint
 composer analyse              # PHPStan (vendor/bin/phpstan analyse)
 ```
 
-Requires PHP ^8.3. CI tests against Laravel 10–13 on Ubuntu and Windows — avoid PHP features newer than 8.3 and keep file paths OS-safe (see `osSafe()` in `DraftsmanController`).
+Requires PHP ^8.3. CI tests against Laravel 12–13 on Ubuntu and Windows — avoid PHP features newer than 8.3 and keep file paths OS-safe (see `osSafe()` in `DraftsmanController`).
 
 A GitHub Action runs Pint on every push and auto-commits a "Fix styling" commit; run `composer format` before pushing to avoid churn.
 
