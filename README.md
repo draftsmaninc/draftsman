@@ -151,6 +151,9 @@ Details coming
 
 ## Testing
 
+For Laravel 11 support we have to keep the relevant tests Pest 3 compatible.
+Laravel 12+ are Pest 4 compatible. 
+
 ```bash
 composer test
 ```
