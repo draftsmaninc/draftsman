@@ -161,6 +161,7 @@ Then use a symlink to replace it with a connection to your local repo.
 cd vendor/draftsmaninc
 mv draftsman xxxdraftsman
 ln -s ../../../draftsman
+cd ../..
 ```
 
 
