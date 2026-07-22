@@ -216,7 +216,16 @@ it('drops MorphTo relations entirely — the target is runtime data, not schema'
     $note = $api->getModelShow('App\\Models\\Note');
 
     expect($note->relations)->toBe([])
-        ->and($note->relations_count)->toBe(0);
+        ->and($note->relations_count)->toBe(0)
+        ->and($note->related_models)->toBe([]);
+});
+
+it('keeps a self-referential MorphToMany — same endpoints is not the same as degenerate', function () {
+    $relations = fixtureRelations();
+
+    expect($relations)->toHaveKey('App\\Models\\Tag.relatedTags')
+        ->and($relations['App\\Models\\Tag.relatedTags']->relationship_key)
+        ->toBe('direct:App\\Models\\Tag.id.App\\Models\\Tag.id');
 });
 
 it('scopes a through shortcut apart from the direct pair over the same endpoints', function () {

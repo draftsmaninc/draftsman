@@ -187,9 +187,23 @@ class ApiController extends BaseController
         ],
     ];
 
+    /**
+     * Relation types dropped when they degenerate into a self-reference
+     * (from === to && from_attribute === to_attribute). Introduced (5ab8be8)
+     * to bring MorphTo back out of relationsOmitList while filtering the
+     * junk case — but model:show can never resolve a MorphTo's real target
+     * (it's runtime data in the *_type column) and always reports the
+     * declaring model itself, so in practice EVERY MorphTo trips this guard
+     * and none are emitted. That's acceptable: the morph OWNER side
+     * (MorphOne/MorphMany/MorphToMany) fully describes each edge.
+     * MorphToMany used to be listed here too, but was inert (its to_attribute
+     * was a pivot key, so the attributes never matched) — and once
+     * relationsToAttribute reported real parent keys for it, keeping it would
+     * have dropped legitimate self-referential relations (e.g. User.follows
+     * via morphToMany(User::class)), so it was removed.
+     */
     protected $relationsMorphSkipDefintions = [
         'MorphTo',
-        'MorphToMany',
     ];
 
     public function getPrivateProperty($object, $property)
@@ -253,8 +267,6 @@ class ApiController extends BaseController
                 }
                 $function = $relation->name;
                 $related = $relation->related;
-                $realated_models[$related] ??= 0;
-                $realated_models[$related]++;
                 $framework_type = $relation->type;
                 unset($relation->related);
                 $relation->framework_type = $framework_type;
@@ -314,6 +326,10 @@ class ApiController extends BaseController
                         continue;
                     }
                 }
+                // count AFTER the skip above, so dropped relations don't
+                // register phantom related_models (Note listing itself)
+                $realated_models[$related] ??= 0;
+                $realated_models[$related]++;
                 if ($pivot_attributes) {
                     foreach ($pivot_attributes as $pivot_key => $pivot_attribute) {
                         $relation->{'pivot_'.$pivot_key} = $pivot_attribute;
