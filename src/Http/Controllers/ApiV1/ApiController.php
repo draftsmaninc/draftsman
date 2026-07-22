@@ -63,17 +63,31 @@ class ApiController extends BaseController
         'MorphToMany' => 'many',
     ];
 
-    protected $relationshipKeyPieces = [
-        'BelongsTo' => ['to', 'to_attribute', 'from', 'from_attribute'],
-        'BelongsToMany' => ['to', 'to_attribute', 'from', 'from_attribute'], // todo
-        'HasMany' => ['from', 'from_attribute', 'to', 'to_attribute'],
-        'HasManyThrough' => ['from', 'from_attribute', 'to', 'to_attribute'],  // todo
-        'HasOne' => ['from', 'from_attribute', 'to', 'to_attribute'],
-        'HasOneThrough' => ['from', 'from_attribute', 'to', 'to_attribute'],  // todo
-        'MorphMany' => ['from', 'from_attribute', 'to', 'to_attribute'],  // todo
-        'MorphOne' => ['from', 'from_attribute', 'to', 'to_attribute'],  // todo
-        'MorphTo' => ['to', 'to_attribute', 'from', 'from_attribute'],  // todo
-        'MorphToMany' => ['to', 'to_attribute', 'from', 'from_attribute'],  // todo
+    /**
+     * relationship_key is "<scope>:<endpoints>" — the two "Model.attribute"
+     * endpoints joined by '.' in alphabetical order, so the key is
+     * direction-indifferent and mirrored declarations emit the identical key.
+     * The scope keeps semantically different categories of connection between
+     * the same two endpoints distinct — a through shortcut (e.g. owned teams
+     * via memberships) never dedups against the direct pair it parallels
+     * (e.g. belongsToMany team membership). Unlisted types scope as 'direct'.
+     * (MorphTo is listed for completeness but never emits: its target is
+     * runtime data, so relationsMorphSkipDefintions drops it.)
+     * Deliberately independent of $relationsConnectionMap: connection drives
+     * rendering, and the two may diverge (morph types may get their own key
+     * scope later while still reporting a direct connection).
+     */
+    protected $relationshipKeyScopeMap = [
+        'BelongsTo' => 'direct',
+        'BelongsToMany' => 'direct',
+        'HasMany' => 'direct',
+        'HasManyThrough' => 'through',
+        'HasOne' => 'direct',
+        'HasOneThrough' => 'through',
+        'MorphMany' => 'direct',
+        'MorphOne' => 'direct',
+        'MorphTo' => 'direct',
+        'MorphToMany' => 'direct',
     ];
 
     // multiplicity details https://www.red-gate.com/blog/crow-s-foot-notation
@@ -127,7 +141,7 @@ class ApiController extends BaseController
         'MorphMany' => 'getForeignKeyName',
         'MorphOne' => 'getForeignKeyName',
         'MorphTo' => 'getForeignKeyName',
-        'MorphToMany' => 'getRelatedPivotKeyName',
+        'MorphToMany' => 'getRelatedKeyName',
     ];
 
     protected $relationsPivotsAttributes = [
@@ -327,14 +341,12 @@ class ApiController extends BaseController
                         $relation->mandatory = false;
                     }
                 }
-                $key_parts = [];
-                if (array_key_exists($framework_type, $this->relationshipKeyPieces)) {
-                    $key_parts = array_merge($key_parts, $this->relationshipKeyPieces[$framework_type]);
-                }
-                foreach ($key_parts as &$part) {
-                    $part = $relation->{$part};
-                }
-                $relation->relationship_key = implode('.', $key_parts);
+                $key_parts = [
+                    $relation->from.'.'.$relation->from_attribute,
+                    $relation->to.'.'.$relation->to_attribute,
+                ];
+                sort($key_parts, SORT_STRING);
+                $relation->relationship_key = ($this->relationshipKeyScopeMap[$framework_type] ?? 'direct').':'.implode('.', $key_parts);
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
             $data->relations_count = count($data->relations) ?? 0;
