@@ -152,7 +152,17 @@ php artisan draftsman:launch
 
 ## Local Dev
 
-Details coming
+Keep both the draftsman repo and the dev site in the same directory.
+Then install draftsman normally in the dev site.
+Then rename or delete the 'vendor/draftsmaninc/draftsman' directory.
+Then use a symlink to replace it with a connection to your local repo.
+
+```bash
+cd vendor/draftsmaninc
+mv draftsman xxxdraftsman
+ln -s ../../../draftsman
+```
+
 
 ## Testing
 
