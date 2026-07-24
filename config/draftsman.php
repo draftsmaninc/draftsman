@@ -30,6 +30,10 @@ return [
         'models_path' => env('DRAFTSMAN_MODELS_PATH', app_path('Models')),
         // Path (relative to project storage) where snapshots are saved.
         'snapshot_path' => env('DRAFTSMAN_SNAPSHOT_PATH', storage_path('draftsman/snapshots/')),
+        // Path where graph documents are saved. Lives in the project root
+        // (not storage/) so graphs are version-controlled with the code,
+        // mirroring Laravel Blueprint's draft-in-repo pattern.
+        'graphs_path' => env('DRAFTSMAN_GRAPHS_PATH', base_path('draftsman')),
         // Updates any ENV values set along with default config values.
         'update_env' => env('DRAFTSMAN_UPDATE_ENV', true),
     ],
