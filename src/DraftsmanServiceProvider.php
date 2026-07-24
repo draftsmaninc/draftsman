@@ -19,6 +19,7 @@ class DraftsmanServiceProvider extends PackageServiceProvider
         $package
             ->name('draftsman')
             ->hasConfigFile()
+            ->hasViews()
             ->hasRoute('web')
             ->hasCommands([
                 DraftsmanInstallCommand::class,

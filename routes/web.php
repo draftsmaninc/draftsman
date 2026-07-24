@@ -22,6 +22,8 @@ Route::prefix('draftsman')->group(function () {
         Route::delete('graphs/{slug}', [GraphsController::class, 'destroy']);
     });
 
+    Route::get('render/{slug}', [GraphsController::class, 'render'])->name('draftsman.render');
+
     Route::get(
         '/{slug0?}/{slug1?}/{slug2?}/{slug3?}/{slug4?}/{slug5?}/{slug6?}/{slug7?}/{slug8?}/{slug9?}',
         [DraftsmanController::class, 'front']
