@@ -2,7 +2,6 @@
 
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Schema;
 
 /**
  * Contract: relationship_key is direction-indifferent — the two endpoints
@@ -11,19 +10,9 @@ use Illuminate\Support\Facades\Schema;
  * must therefore emit the identical key, which is what lets consumers
  * de-duplicate edges.
  *
- * The fixture models in tests/Fixtures/Models are copied into the Testbench
- * skeleton's app path so getModelsList()/getModelShow() discover them exactly
- * as they would in a host app. model:show reads the schema, so each fixture
- * gets a real sqlite table.
+ * Fixture zoo + helpers (FIXTURE_MODELS, installFixtureModels,
+ * fixtureRelations) live in Pest.php, shared with ConnectionTest.
  */
-const FIXTURE_MODELS = [
-    'App\\Models\\Membership',
-    'App\\Models\\Note',
-    'App\\Models\\Profile',
-    'App\\Models\\Tag',
-    'App\\Models\\Team',
-    'App\\Models\\User',
-];
 
 /**
  * Types migrated to the alpha-sorted contract so far, with the scope each
@@ -44,52 +33,6 @@ const MIGRATED_TYPE_SCOPES = [
     'MorphToMany' => 'direct',
 ];
 
-function installFixtureModels(): void
-{
-    $target = app_path('Models');
-    File::deleteDirectory($target);
-    File::copyDirectory(__DIR__.'/Fixtures/Models', $target);
-    foreach (File::allFiles($target) as $file) {
-        require_once $file->getRealPath();
-    }
-
-    Schema::create('teams', function ($table) {
-        $table->id();
-        $table->timestamps();
-    });
-    Schema::create('users', function ($table) {
-        $table->id();
-        $table->foreignId('current_team_id')->nullable();
-        $table->timestamps();
-    });
-    Schema::create('memberships', function ($table) {
-        $table->id();
-        $table->foreignId('user_id');
-        $table->foreignId('team_id');
-        $table->timestamps();
-    });
-    Schema::create('profiles', function ($table) {
-        $table->id();
-        $table->foreignId('user_id');
-        $table->timestamps();
-    });
-    Schema::create('notes', function ($table) {
-        $table->id();
-        $table->morphs('notable');
-        $table->timestamps();
-    });
-    Schema::create('tags', function ($table) {
-        $table->id();
-        $table->timestamps();
-    });
-    Schema::create('taggables', function ($table) {
-        $table->id();
-        $table->foreignId('tag_id');
-        $table->morphs('taggable');
-        $table->timestamps();
-    });
-}
-
 function alphaSortedKey(object $relation): string
 {
     $endpoints = [
@@ -99,22 +42,6 @@ function alphaSortedKey(object $relation): string
     sort($endpoints, SORT_STRING);
 
     return MIGRATED_TYPE_SCOPES[$relation->framework_type].':'.implode('.', $endpoints);
-}
-
-/** @return array<string, object> relations keyed by "Model.relationName" */
-function fixtureRelations(): array
-{
-    $api = new ApiController;
-    $relations = [];
-    foreach (FIXTURE_MODELS as $model) {
-        $show = $api->getModelShow($model);
-        expect($show)->not->toBeNull();
-        foreach ($show->relations as $relation) {
-            $relations[$model.'.'.$relation->name] = $relation;
-        }
-    }
-
-    return $relations;
 }
 
 beforeEach(function () {

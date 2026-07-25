@@ -37,9 +37,20 @@ class ApiController extends BaseController
 
     protected $relationsRestrictToList = [];
 
+    /**
+     * `connection` names the topology of a relation — what, if anything, the
+     * edge traverses between its endpoints — 1:1 with the metadata it carries:
+     *   direct  — plain FK link, no intermediate
+     *   pivot   — traverses a join table (a model only when ->using());
+     *             carries pivot_class / pivot_from / pivot_to
+     *   through — traverses an intermediate model; carries through_class /
+     *             through_from / through_to
+     * Renderers use this to spot shortcut edges that parallel a path through a
+     * model already on the graph (contract-tested in ConnectionTest).
+     */
     protected $relationsConnectionMap = [
         'BelongsTo' => 'direct',
-        'BelongsToMany' => 'direct',
+        'BelongsToMany' => 'pivot',
         'HasMany' => 'direct',
         'HasManyThrough' => 'through',
         'HasOne' => 'direct',
@@ -47,7 +58,7 @@ class ApiController extends BaseController
         'MorphMany' => 'direct',
         'MorphOne' => 'direct',
         'MorphTo' => 'direct',
-        'MorphToMany' => 'direct',
+        'MorphToMany' => 'pivot',
     ];
 
     protected $relationsTypeMap = [
@@ -74,8 +85,9 @@ class ApiController extends BaseController
      * (MorphTo is listed for completeness but never emits: its target is
      * runtime data, so relationsMorphSkipDefintions drops it.)
      * Deliberately independent of $relationsConnectionMap: connection drives
-     * rendering, and the two may diverge (morph types may get their own key
-     * scope later while still reporting a direct connection).
+     * rendering, and the two DO diverge — many-to-many types report a 'pivot'
+     * connection but keep the 'direct' key scope, so relationship keys (and
+     * every saved graph built on them) never move.
      */
     protected $relationshipKeyScopeMap = [
         'BelongsTo' => 'direct',
