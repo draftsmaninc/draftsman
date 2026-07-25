@@ -22,7 +22,13 @@ class RenderGraphPage
      * with an ellipsis, matching the live canvas.
      */
     protected const SHORT_TYPE_LABELS = [
+        // varchar is 7 chars raw, so it needs a mapping to dodge the ellipsis;
+        // the text sizes get the same letter-prefix shape as the int family.
+        'varchar' => 'vchar',
         'text' => 'text',
+        'tinytext' => 't text',
+        'mediumtext' => 'm text',
+        'longtext' => 'l text',
         'integer' => 'int',
         'integer unsigned' => 'u int',
         'int' => 'int',
@@ -73,7 +79,6 @@ class RenderGraphPage
         }
 
         $document = json_decode(File::get($path), true);
-        $pad = 56;
 
         $nodes = collect($document['nodes'] ?? [])->map(function (array $node) use ($document) {
             $fields = collect($node['data']['fields'] ?? [])->map(fn (array $field) => [
@@ -103,21 +108,72 @@ class RenderGraphPage
             ->map(fn (array $edge) => ['d' => $edge['data']['path']])
             ->values();
 
-        $minX = (int) floor(min([0, ...$nodes->pluck('x')]));
-        $minY = (int) floor(min([0, ...$nodes->pluck('y')]));
-        $maxX = (int) ceil(max([0, ...$nodes->map(fn ($n) => $n['x'] + $n['width'])]));
-        $maxY = (int) ceil(max([0, ...$nodes->map(fn ($n) => $n['y'] + $n['height'])]));
+        $frame = $this->frame($document);
 
         return view('draftsman::graph-render', [
             'name' => $document['name'] ?? $slug,
             'nodes' => $nodes,
             'edges' => $edges,
+            'width' => $frame['width'],
+            'height' => $frame['height'],
+            'offsetX' => $frame['offsetX'],
+            'offsetY' => $frame['offsetY'],
+            'css' => File::get(dirname(__DIR__, 2).'/resources/render/draftsman-render.css'),
+        ])->render();
+    }
+
+    /**
+     * The rendered page's pixel dimensions for a saved graph, or null when it
+     * doesn't exist. Callers that rasterize the page (pdf paper sizing) need
+     * these WITHOUT parsing them back out of the HTML.
+     *
+     * @return array{width: int, height: int}|null
+     */
+    public function dimensions(string $slug): ?array
+    {
+        if (preg_match('/^[a-z0-9][a-z0-9_-]*$/', $slug) !== 1) {
+            return null;
+        }
+
+        $path = $this->directory().DIRECTORY_SEPARATOR.$slug.'.json';
+
+        if (! File::exists($path)) {
+            return null;
+        }
+
+        $frame = $this->frame(json_decode(File::get($path), true));
+
+        return ['width' => $frame['width'], 'height' => $frame['height']];
+    }
+
+    /**
+     * Canvas frame for a graph document: the nodes' bounding box plus padding,
+     * and the offset that shifts content into it. Single source of truth for
+     * both the blade's container size and dimensions().
+     *
+     * @return array{width: int, height: int, offsetX: int, offsetY: int}
+     */
+    protected function frame(array $document): array
+    {
+        $pad = 56;
+        $nodes = collect($document['nodes'] ?? [])->map(fn (array $node) => [
+            'x' => $node['position']['x'] ?? 0,
+            'y' => $node['position']['y'] ?? 0,
+            'width' => $node['dimensions']['width'] ?? ($document['layout']['columnWidth'] ?? 308),
+            'height' => $node['dimensions']['height'] ?? 168,
+        ]);
+
+        $minX = (int) floor(min([0, ...$nodes->pluck('x')]));
+        $minY = (int) floor(min([0, ...$nodes->pluck('y')]));
+        $maxX = (int) ceil(max([0, ...$nodes->map(fn ($n) => $n['x'] + $n['width'])]));
+        $maxY = (int) ceil(max([0, ...$nodes->map(fn ($n) => $n['y'] + $n['height'])]));
+
+        return [
             'width' => $maxX - $minX + 2 * $pad,
             'height' => $maxY - $minY + 2 * $pad,
             'offsetX' => $pad - $minX,
             'offsetY' => $pad - $minY,
-            'css' => File::get(dirname(__DIR__, 2).'/resources/render/draftsman-render.css'),
-        ])->render();
+        ];
     }
 
     public function directory(): string

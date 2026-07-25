@@ -84,3 +84,62 @@ function fixtureRelations(): array
 
     return $relations;
 }
+
+/** A graph document the way frontv saves one: node geometry + data, and each
+ *  edge carrying its rendered SVG path (data.path) alongside the gutter route. */
+function renderableGraphDocument(): array
+{
+    return [
+        'version' => 1,
+        'name' => 'Teams',
+        'layout' => ['columnWidth' => 308, 'gutterWidth' => 168],
+        'nodes' => [
+            [
+                'id' => 'App\Models\User',
+                'position' => ['x' => 168, 'y' => 0],
+                'dimensions' => ['width' => 308, 'height' => 420],
+                'data' => [
+                    'label' => 'User',
+                    'namespace' => 'App\Models',
+                    'fields' => [
+                        ['name' => 'id', 'type' => 'bigint unsigned', 'key' => 'primary', 'required' => true],
+                        ['name' => 'current_team_id', 'type' => 'bigint unsigned', 'key' => 'foreign'],
+                        ['name' => 'email_verified_at', 'type' => 'timestamp'],
+                        ['name' => 'name', 'type' => 'varchar(255)', 'required' => true],
+                    ],
+                ],
+            ],
+            [
+                'id' => 'App\Models\Team',
+                'position' => ['x' => 644, 'y' => 0],
+                'dimensions' => ['width' => 308, 'height' => 280],
+                'data' => [
+                    'label' => 'Team',
+                    'namespace' => 'App\Models',
+                    'fields' => [
+                        ['name' => 'id', 'type' => 'bigint unsigned', 'key' => 'primary', 'required' => true],
+                    ],
+                ],
+            ],
+        ],
+        'edges' => [
+            [
+                'id' => 'direct:App\Models\Team.id.App\Models\User.current_team_id',
+                'source' => 'App\Models\User',
+                'target' => 'App\Models\Team',
+                'type' => 'gutter',
+                'data' => [
+                    'gutter' => ['srcOffset' => 0, 'dstOffset' => 0, 'hwyY' => null, 'corner' => 'smoothstep'],
+                    'path' => 'M476,42 L560,42 L560,70 L644,70',
+                ],
+            ],
+            [
+                'id' => 'pathless-edge',
+                'source' => 'App\Models\User',
+                'target' => 'App\Models\Team',
+                'type' => 'gutter',
+                'data' => ['gutter' => ['srcOffset' => 0, 'dstOffset' => 0, 'hwyY' => null, 'corner' => 'smoothstep']],
+            ],
+        ],
+    ];
+}

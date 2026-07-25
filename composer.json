@@ -20,6 +20,9 @@
         "spatie/laravel-package-tools": "^1.16",
         "illuminate/contracts": "^12.0||^13.0"
     },
+    "suggest": {
+        "spatie/browsershot": "Enables png, jpeg and pdf output from draftsman:render (also needs Puppeteer/Chrome)"
+    },
     "require-dev": {
         "laravel/pint": "^1.14",
         "nunomaduro/collision": "^8.1.1",

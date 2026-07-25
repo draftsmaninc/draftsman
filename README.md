@@ -150,6 +150,66 @@ php artisan vendor:publish --tag="draftsman-views"
 php artisan draftsman:launch
 ```
 
+## Rendering graphs
+
+Any graph saved from the Draftsman UI (stored as `<graphs_path>/<slug>.json`,
+`draftsman/` by default) can be rendered to a self-contained file:
+
+```bash
+php artisan draftsman:render teams                 # draftsman/teams.html
+php artisan draftsman:render teams --format=png    # needs Browsershot, see below
+php artisan draftsman:render teams --path=docs/erd.html
+```
+
+| Format | Needs | Notes |
+| ------ | ----- | ----- |
+| `html` | nothing | Static, no JavaScript — safe to commit or serve anywhere |
+| `png` / `jpeg` / `pdf` | [Browsershot](https://github.com/spatie/browsershot) | Headless-Chrome capture of the same page |
+| `svg` | — | Not available yet |
+
+The `html` format works everywhere with zero extra dependencies. For image and
+PDF output, opt in to Browsershot in the host app:
+
+```bash
+composer require spatie/browsershot
+npm install puppeteer
+npx puppeteer browsers install chrome-headless-shell   # the browser it drives
+```
+
+### Keeping a rendered diagram in CI
+
+Rendering the committed graph document on every push keeps a diagram in your
+repo (or build artifacts) that never drifts from the saved graph:
+
+```yaml
+# .github/workflows/erd.yml
+name: Render ERD
+on:
+  push:
+    paths: ['draftsman/*.json']
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3' }
+      - run: composer install --no-interaction --prefer-dist
+      - run: php artisan draftsman:render teams --path=docs/erd.html
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with: { commit_message: 'Update rendered ERD' }
+```
+
+For png/pdf in CI, add Browsershot and Puppeteer before the render step:
+
+```yaml
+      - run: composer require spatie/browsershot
+      - run: npm install puppeteer
+      - run: npx puppeteer browsers install chrome-headless-shell
+      - run: php artisan draftsman:render teams --format=png --path=docs/erd.png
+```
+
 ## Local Dev
 
 Keep both the draftsman repo and the dev site in the same directory.
