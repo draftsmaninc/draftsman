@@ -1,11 +1,37 @@
 <?php
 
+use Draftsman\Draftsman\Actions\RenderGraphImage;
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
 use Draftsman\Draftsman\Tests\TestCase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 
 uses(TestCase::class)->in(__DIR__);
+
+/**
+ * Records what callers asked for instead of driving a real headless Chrome —
+ * Browsershot isn't installed in the package (it's a `suggest`), so the real
+ * action's available() is false here and its handle() could never run.
+ * Binding this into the container IS the "Browsershot installed" scenario.
+ * Shared by RenderCommandTest, ApiControllerTest and GraphsApiTest.
+ */
+class FakeRenderGraphImage extends RenderGraphImage
+{
+    /** @var array{html: string, format: string, path: string, size: array|null}|null */
+    public ?array $rendered = null;
+
+    public function available(): bool
+    {
+        return true;
+    }
+
+    public function handle(string $html, string $format, string $path, ?array $size = null): void
+    {
+        $this->rendered = compact('html', 'format', 'path', 'size');
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, "fake-{$format}");
+    }
+}
 
 /*
  * Shared fixture zoo: the models in tests/Fixtures/Models copied into the

@@ -33,6 +33,15 @@ class RenderGraphImage
     {
         $shot = Browsershot::html($html)->showBackground();
 
+        // Web servers often run with a minimal PATH that misses version-managed
+        // node (nvm, Herd, volta) — honor explicit binaries when configured.
+        if ($node = config('draftsman.package.node_binary')) {
+            $shot->setNodeBinary($node);
+        }
+        if ($npm = config('draftsman.package.npm_binary')) {
+            $shot->setNpmBinary($npm);
+        }
+
         if ($format === 'pdf') {
             // One page sized to the canvas — Chrome otherwise prints to default
             // paper and slices a large graph across pages.

@@ -3,6 +3,7 @@
 namespace Draftsman\Draftsman\Http\Controllers\ApiV1;
 
 use Draftsman\Draftsman\Actions\GetDraftsmanConfig;
+use Draftsman\Draftsman\Actions\RenderGraphImage;
 use Draftsman\Draftsman\Actions\UpdateDraftsmanConfig;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
@@ -228,11 +229,31 @@ class ApiController extends BaseController
      * Return the current Draftsman config (config/draftsman.php) as JSON.
      * If the published config file does not exist, attempt to publish it,
      * then fall back to the vendor default if still unavailable.
+     *
+     * Alongside the stored config, `capabilities` reports what this backend
+     * can DO right now — computed per request, never persisted. Frontends
+     * shape their UI on it (e.g. the download menu offers pdf only when
+     * render/{slug}?format=pdf would actually work).
      */
-    public function getConfig(GetDraftsmanConfig $action)
+    public function getConfig(GetDraftsmanConfig $action, RenderGraphImage $imageRenderer)
     {
         try {
             $data = $action->handle();
+            $data['capabilities'] = [
+                'render' => [
+                    'formats' => $imageRenderer->available()
+                        ? ['html', ...RenderGraphImage::FORMATS]
+                        : ['html'],
+                ],
+            ];
+            // The host app's `artisan about` report (versions, drivers,
+            // environment) — for frontends to show current-stack info. Same
+            // call pattern as getModelShow's model:show: trust the output
+            // only when the command exits 0.
+            $data['about'] = [];
+            if (Artisan::call('about', ['--json' => true]) === 0) {
+                $data['about'] = json_decode(Artisan::output(), true) ?? [];
+            }
 
             return response()->json($data);
         } catch (\Throwable $e) {

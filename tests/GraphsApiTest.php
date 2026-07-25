@@ -1,5 +1,6 @@
 <?php
 
+use Draftsman\Draftsman\Actions\RenderGraphImage;
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
@@ -121,4 +122,51 @@ it('deletes a saved graph', function () {
 
     expect($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json')->not->toBeFile();
     $this->getJson('/draftsman/api/graphs/teams')->assertNotFound();
+});
+
+// ── Render endpoint formats ─────────────────────────────────────────────────
+// GET render/{slug} serves the html page (existing behavior); ?format=png|
+// jpeg|pdf streams a Browsershot-produced binary as a download. Frontends gate
+// these on the config endpoint's capabilities.render.formats.
+
+it('streams a pdf download when Browsershot is available', function () {
+    File::ensureDirectoryExists($this->graphsDir);
+    File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
+    app()->instance(RenderGraphImage::class, new FakeRenderGraphImage);
+
+    $response = $this->get('/draftsman/render/teams?format=pdf');
+
+    $response->assertOk()
+        ->assertDownload('teams.pdf');
+    expect($response->streamedContent())->toBe('fake-pdf');
+});
+
+it('serves the html page when no format is asked for', function () {
+    File::ensureDirectoryExists($this->graphsDir);
+    File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
+
+    $this->get('/draftsman/render/teams')
+        ->assertOk()
+        ->assertSee('flow-schema-node', false);
+});
+
+it('answers 501 for image formats when Browsershot is missing', function () {
+    File::ensureDirectoryExists($this->graphsDir);
+    File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
+
+    $this->get('/draftsman/render/teams?format=pdf')->assertStatus(501);
+});
+
+it('rejects unknown render formats with 400', function () {
+    File::ensureDirectoryExists($this->graphsDir);
+    File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
+    app()->instance(RenderGraphImage::class, new FakeRenderGraphImage);
+
+    $this->get('/draftsman/render/teams?format=webp')->assertStatus(400);
+});
+
+it('still 404s an unsaved graph regardless of format', function () {
+    app()->instance(RenderGraphImage::class, new FakeRenderGraphImage);
+
+    $this->get('/draftsman/render/nope?format=pdf')->assertNotFound();
 });

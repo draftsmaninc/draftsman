@@ -2,6 +2,7 @@
 
 namespace Draftsman\Draftsman\Http\Controllers\ApiV1;
 
+use Draftsman\Draftsman\Actions\RenderGraphImage;
 use Draftsman\Draftsman\Actions\RenderGraphPage;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -69,13 +70,35 @@ class GraphsController extends BaseController
      * The static render page for a saved graph — see Actions\RenderGraphPage,
      * which the draftsman:render command shares.
      */
-    public function render(string $slug, RenderGraphPage $renderer)
+    public function render(string $slug, Request $request, RenderGraphPage $renderer, RenderGraphImage $imageRenderer)
     {
+        $format = strtolower((string) $request->query('format', 'html'));
+        if ($format === 'jpg') {
+            $format = 'jpeg';
+        }
+
+        if ($format !== 'html' && ! in_array($format, RenderGraphImage::FORMATS, true)) {
+            abort(400, "Unknown render format \"{$format}\".");
+        }
+
+        // 501: the format exists, this backend just can't produce it — the
+        // config endpoint's capabilities tell frontends before they ask.
+        if ($format !== 'html' && ! $imageRenderer->available()) {
+            abort(501, 'This backend cannot render images — install spatie/browsershot (see the Draftsman README).');
+        }
+
         $html = $renderer->handle($slug);
 
         abort_if($html === null, 404);
 
-        return response($html);
+        if ($format === 'html') {
+            return response($html);
+        }
+
+        $path = tempnam(sys_get_temp_dir(), 'draftsman-render').'.'.$format;
+        $imageRenderer->handle($html, $format, $path, $renderer->dimensions($slug));
+
+        return response()->download($path, $slug.'.'.$format)->deleteFileAfterSend();
     }
 
     public function destroy(string $slug)
