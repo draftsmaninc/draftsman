@@ -597,7 +597,157 @@ class ApiController extends BaseController
             }
         }
 
-        return $data;
+        return array_merge($data, $this->pivotTableShows($data));
+    }
+
+    /**
+     * Pseudo-models for GENERIC pivot tables — a BelongsToMany/MorphToMany
+     * declared without ->using() traverses a join table no model represents
+     * (pivot_class "<base class>.<table>"). Emitting the table as a model of
+     * its own lets the graph draw it as a real junction node, exactly like a
+     * model-backed pivot (Membership) already appears.
+     *
+     * One entry per TABLE (several base classes can name the same table —
+     * Pivot.taggables and MorphPivot.taggables — the alphabetically first
+     * dotted id wins), skipping tables a scanned model already owns.
+     * Attributes come from the schema; relations are the two underlying
+     * halves of each traversal as BelongsTo records (pivot column ->
+     * endpoint key), deduped by relationship_key across mirror declarations —
+     * plus a targetless MorphTo per morph column pair, exactly like a morph
+     * child model, so the *_id/*_type columns badge correctly.
+     */
+    protected function pivotTableShows(array $shows): array
+    {
+        $ownedTables = [];
+        foreach ($shows as $show) {
+            $ownedTables[$show->table] = true;
+        }
+
+        // table => ['ids' => dotted classes seen, 'traversals' => relation records]
+        $tables = [];
+        foreach ($shows as $show) {
+            foreach ($show->relations as $relation) {
+                $pivotClass = $relation->pivot_class ?? null;
+                if (! $pivotClass || ! str_contains($pivotClass, '.')) {
+                    continue;
+                }
+                $table = substr($pivotClass, strpos($pivotClass, '.') + 1);
+                if (isset($ownedTables[$table])) {
+                    continue;
+                }
+                $tables[$table]['ids'][$pivotClass] = true;
+                $tables[$table]['traversals'][] = $relation;
+            }
+        }
+
+        $pivots = [];
+        foreach ($tables as $table => $info) {
+            if (! Schema::hasTable($table)) {
+                continue;
+            }
+            $class = min(array_keys($info['ids']));
+
+            $uniques = collect(Schema::getIndexes($table))
+                ->filter(fn ($i) => ($i['unique'] ?? false) && count($i['columns']) === 1)
+                ->map(fn ($i) => $i['columns'][0])
+                ->flip();
+            $attributes = collect(Schema::getColumns($table))->map(fn ($c) => (object) [
+                'name' => $c['name'],
+                'type' => $c['type'],
+                'increments' => (bool) ($c['auto_increment'] ?? false),
+                'nullable' => (bool) ($c['nullable'] ?? false),
+                'default' => $c['default'] ?? null,
+                'unique' => isset($uniques[$c['name']]),
+                'appended' => false,
+                'cast' => null,
+            ])->values();
+            $byName = $attributes->keyBy('name');
+            $mandatory = fn (string $column) => ! ($byName[$column]->nullable ?? false);
+
+            $relations = [];
+            $keyed = [];
+            foreach ($info['traversals'] as $traversal) {
+                // Each traversal decomposes into (pivot_from -> from) and
+                // (pivot_to -> to); mirror declarations produce the same
+                // halves, deduped by relationship_key.
+                $halves = [
+                    [$traversal->pivot_from, $traversal->from, $traversal->from_attribute],
+                    [$traversal->pivot_to, $traversal->to, $traversal->to_attribute],
+                ];
+                foreach ($halves as [$column, $to, $toAttribute]) {
+                    $key_parts = [$class.'.'.$column, $to.'.'.$toAttribute];
+                    sort($key_parts, SORT_STRING);
+                    $relationshipKey = 'direct:'.implode('.', $key_parts);
+                    if (isset($keyed[$relationshipKey])) {
+                        continue;
+                    }
+                    $keyed[$relationshipKey] = true;
+                    $relations[] = (object) [
+                        'name' => str_replace('_id', '', $column),
+                        'framework_type' => 'BelongsTo',
+                        'type' => 'one',
+                        'connection' => 'direct',
+                        'multiplicity' => 'many',
+                        'mandatory' => $mandatory($column),
+                        'key' => $class.'.'.$column.'->'.$to,
+                        'file' => null,
+                        'line' => null,
+                        'from' => $class,
+                        'from_attribute' => $column,
+                        'to' => $to,
+                        'to_attribute' => $toAttribute,
+                        'relationship_key' => $relationshipKey,
+                    ];
+                }
+
+                // Morph pivots also carry the *_id/*_type pair — emit the
+                // targetless MorphTo so the columns badge like a morph child.
+                $morphType = $traversal->morph_attribute ?? null;
+                if ($morphType) {
+                    $morphId = str_replace('_type', '_id', $morphType);
+                    $morphKey = $class.'.'.$morphId.'.'.$morphType;
+                    if (! isset($keyed['morph:'.$morphKey])) {
+                        $keyed['morph:'.$morphKey] = true;
+                        $relations[] = (object) [
+                            'name' => str_replace('_type', '', $morphType),
+                            'framework_type' => 'MorphTo',
+                            'type' => 'one',
+                            'connection' => 'direct',
+                            'multiplicity' => 'many',
+                            'mandatory' => $mandatory($morphId),
+                            'key' => $class.'.'.$morphId.'->morph',
+                            'file' => null,
+                            'line' => null,
+                            'from' => $class,
+                            'from_attribute' => $morphId,
+                            'to' => null,
+                            'to_attribute' => null,
+                            'morph_attribute' => $morphType,
+                            'morph_key' => $morphKey,
+                            'relationship_key' => 'morph:'.$morphKey,
+                        ];
+                    }
+                }
+            }
+
+            $related = array_values(array_unique(array_filter(array_map(fn ($r) => $r->to, $relations))));
+
+            $pivots[] = (object) [
+                'class' => $class,
+                'database' => config('database.default'),
+                'table' => $table,
+                'policy' => null,
+                'attributes' => $attributes->all(),
+                'relations' => $relations,
+                'namespace' => substr($class, 0, strrpos($class, '\\')),
+                'file' => null,
+                'attributes_count' => $attributes->count(),
+                'relations_count' => count($relations),
+                'related_models' => $related,
+            ];
+        }
+
+        return $pivots;
     }
 
     public function getModelsList(): array
