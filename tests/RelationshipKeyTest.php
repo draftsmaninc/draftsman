@@ -138,12 +138,17 @@ it('keys MorphToMany by the parent keys on both sides, like BelongsToMany', func
         ->toBe('direct:App\\Models\\Tag.id.App\\Models\\Team.id');
 });
 
-it('drops MorphTo relations entirely — the target is runtime data, not schema', function () {
+it('emits MorphTo targetless — the target is runtime data, not schema', function () {
+    // Formerly dropped outright; now the record survives with to/to_attribute
+    // null so the child keeps its morph column pair (full shape contract in
+    // MorphChildTest). related_models stays empty: a fabricated self-target
+    // must not register a phantom relative.
     $api = new ApiController;
     $note = $api->getModelShow('App\\Models\\Note');
 
-    expect($note->relations)->toBe([])
-        ->and($note->relations_count)->toBe(0)
+    expect($note->relations_count)->toBe(1)
+        ->and($note->relations[0]->framework_type)->toBe('MorphTo')
+        ->and($note->relations[0]->to)->toBeNull()
         ->and($note->related_models)->toBe([]);
 });
 

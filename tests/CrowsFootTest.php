@@ -23,8 +23,9 @@ use Illuminate\Support\Facades\File;
  * the from end via `multiplicity`, the to end via `type`; 'many' ends draw
  * zero-or-many, 'one' ends draw exactly-one / zero-or-one by `mandatory`.
  *
- * MorphTo is absent: it never emits (relationsMorphSkipDefintions — the morph
- * owner side fully describes each edge), so it has no observable contract.
+ * MorphTo emits as a targetless morph-child record (see MorphChildTest); its
+ * crow's-foot fields behave like BelongsTo's — 'many' from end, FK-checked
+ * mandatory — since it IS the FK-holder side of its edges.
  */
 const MULTIPLICITY_BY_TYPE = [
     'BelongsTo' => 'many',
@@ -35,6 +36,7 @@ const MULTIPLICITY_BY_TYPE = [
     'HasOneThrough' => 'one',
     'MorphMany' => 'one',
     'MorphOne' => 'one',
+    'MorphTo' => 'many',
     'MorphToMany' => 'many',
 ];
 
@@ -93,4 +95,7 @@ it('derives mandatory from the FK column nullability when it is checkable', func
     expect($relations['App\\Models\\Membership.user']->mandatory)->toBeTrue();
     expect($relations['App\\Models\\Membership.team']->mandatory)->toBeTrue();
     expect($relations['App\\Models\\Profile.user']->mandatory)->toBeTrue();
+
+    // MorphTo's key is on the declarer too — morphs() columns are non-null
+    expect($relations['App\\Models\\Note.notable']->mandatory)->toBeTrue();
 });

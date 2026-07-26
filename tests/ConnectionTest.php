@@ -27,6 +27,7 @@ const CONNECTION_BY_TYPE = [
     'HasOneThrough' => 'through',
     'MorphMany' => 'direct',
     'MorphOne' => 'direct',
+    'MorphTo' => 'direct',
     'MorphToMany' => 'pivot',
 ];
 

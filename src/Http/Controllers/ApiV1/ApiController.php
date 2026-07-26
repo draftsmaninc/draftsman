@@ -83,8 +83,8 @@ class ApiController extends BaseController
      * the same two endpoints distinct — a through shortcut (e.g. owned teams
      * via memberships) never dedups against the direct pair it parallels
      * (e.g. belongsToMany team membership). Unlisted types scope as 'direct'.
-     * (MorphTo is listed for completeness but never emits: its target is
-     * runtime data, so relationsMorphSkipDefintions drops it.)
+     * (MorphTo bypasses this map entirely: it emits targetless, keyed
+     * 'morph:<its morph_key>' — see relationsMorphSkipDefintions.)
      * Deliberately independent of $relationsConnectionMap: connection drives
      * rendering, and the two DO diverge — many-to-many types report a 'pivot'
      * connection but keep the 'direct' key scope, so relationship keys (and
@@ -111,9 +111,8 @@ class ApiController extends BaseController
      * is the many side; a HasMany's declarer is the one side. Note this is the
      * INVERSE of the relation's return cardinality ($relationsTypeMap), so a
      * renderer can decorate both ends of an edge from one relation record:
-     * from end via multiplicity, to end via type.
-     * (MorphTo is listed for completeness but never emits — see
-     * relationsMorphSkipDefintions.)
+     * from end via multiplicity, to end via type. (MorphTo emits targetless —
+     * no edge — but carries the fields like any FK-holder record.)
      */
     protected $relationsMultiplicityMap = [
         'BelongsTo' => 'many',
@@ -219,14 +218,14 @@ class ApiController extends BaseController
     ];
 
     /**
-     * Relation types dropped when they degenerate into a self-reference
-     * (from === to && from_attribute === to_attribute). Introduced (5ab8be8)
-     * to bring MorphTo back out of relationsOmitList while filtering the
-     * junk case — but model:show can never resolve a MorphTo's real target
-     * (it's runtime data in the *_type column) and always reports the
-     * declaring model itself, so in practice EVERY MorphTo trips this guard
-     * and none are emitted. That's acceptable: the morph OWNER side
-     * (MorphOne/MorphMany/MorphToMany) fully describes each edge.
+     * Relation types whose degenerate self-reference (from === to &&
+     * from_attribute === to_attribute) marks an UNRESOLVABLE target: model:show
+     * can never resolve a MorphTo's real target (it's runtime data in the
+     * *_type column) and always reports the declaring model itself, so every
+     * MorphTo trips this. Such records used to be dropped outright; they now
+     * emit TARGETLESS (to/to_attribute null, morph fields intact, morph_key
+     * matching the owner side's) so the child keeps knowledge of its own
+     * morph column pair — see MorphChildTest.
      * MorphToMany used to be listed here too, but was inert (its to_attribute
      * was a pivot key, so the attributes never matched) — and once
      * relationsToAttribute reported real parent keys for it, keeping it would
@@ -372,15 +371,23 @@ class ApiController extends BaseController
                 $relation->to_attribute = $to_attribute;
                 if (in_array($framework_type, $this->relationsMorphSkipDefintions)) {
                     if (($relation->from === $relation->to) && ($relation->from_attribute === $relation->to_attribute)) {
-                        $relation = null;
-
-                        continue;
+                        // model:show can't resolve a MorphTo's target (runtime
+                        // data in the *_type column) and reports the declaring
+                        // model itself. Emit the record TARGETLESS rather than
+                        // dropping it: the child keeps knowledge of its own
+                        // morph column pair (so renderers can badge notable_id
+                        // as a key even with every owner off-graph), and the
+                        // morph_key below joins it to its owner edges.
+                        $relation->to = null;
+                        $relation->to_attribute = null;
                     }
                 }
-                // count AFTER the skip above, so dropped relations don't
-                // register phantom related_models (Note listing itself)
-                $realated_models[$related] ??= 0;
-                $realated_models[$related]++;
+                // targetless records skip the count, so a fabricated morph
+                // self-target can't register a phantom related_model
+                if ($relation->to !== null) {
+                    $realated_models[$related] ??= 0;
+                    $realated_models[$related]++;
+                }
                 if ($pivot_attributes) {
                     foreach ($pivot_attributes as $pivot_key => $pivot_attribute) {
                         $relation->{'pivot_'.$pivot_key} = $pivot_attribute;
@@ -395,7 +402,13 @@ class ApiController extends BaseController
                     foreach ($morph_attributes as $morph_key => $morph_attribute) {
                         $relation->{'morph_'.$morph_key} = $morph_attribute;
                     }
-                    $relation->{'morph_key'} = $related.'.'.$to_attribute.'.'.$relation->{'morph_attribute'};
+                    // morph_key always names the CHILD's column pair — the
+                    // owner side reaches it via related/to_attribute, the
+                    // targetless child via its own from side — so both sides
+                    // of one morph emit the identical key (MorphChildTest).
+                    $relation->{'morph_key'} = ($relation->to === null)
+                        ? $relation->from.'.'.$relation->from_attribute.'.'.$relation->{'morph_attribute'}
+                        : $related.'.'.$to_attribute.'.'.$relation->{'morph_attribute'};
                 }
                 if (is_string($relation->mandatory)) {
                     $check_attr = $relation->{$relation->mandatory} ?? null;
@@ -410,12 +423,20 @@ class ApiController extends BaseController
                         $relation->mandatory = true;
                     }
                 }
-                $key_parts = [
-                    $relation->from.'.'.$relation->from_attribute,
-                    $relation->to.'.'.$relation->to_attribute,
-                ];
-                sort($key_parts, SORT_STRING);
-                $relation->relationship_key = ($this->relationshipKeyScopeMap[$framework_type] ?? 'direct').':'.implode('.', $key_parts);
+                if ($relation->to === null) {
+                    // No second endpoint to sort against — scope the key to
+                    // the child's own column pair. 'morph:' never collides
+                    // with the owner edges' keys, and a second MorphTo on the
+                    // same model gets its own.
+                    $relation->relationship_key = 'morph:'.$relation->morph_key;
+                } else {
+                    $key_parts = [
+                        $relation->from.'.'.$relation->from_attribute,
+                        $relation->to.'.'.$relation->to_attribute,
+                    ];
+                    sort($key_parts, SORT_STRING);
+                    $relation->relationship_key = ($this->relationshipKeyScopeMap[$framework_type] ?? 'direct').':'.implode('.', $key_parts);
+                }
             }
             $data->relations = array_values(array_filter($data->relations)) ?? [];
             $data->relations_count = count($data->relations) ?? 0;
