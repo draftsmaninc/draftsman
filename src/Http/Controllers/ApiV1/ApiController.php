@@ -7,11 +7,14 @@ use Draftsman\Draftsman\Actions\RenderGraphImage;
 use Draftsman\Draftsman\Actions\UpdateDraftsmanConfig;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 
 class ApiController extends BaseController
 {
@@ -291,10 +294,28 @@ class ApiController extends BaseController
         return get_class($value);
     }
 
+    /**
+     * model:show invokes every relation method with no per-method rescue, so a
+     * single throwing relation (spatie/laravel-medialibrary's Media::
+     * temporaryUploads() throws unless the pro package is installed — found
+     * live on BHE, 2026-07-26) kills the whole model's introspection. When it
+     * throws, fall back to introspecting ourselves: attributes from the schema,
+     * relations enumerated by reflection with a per-method try/catch — the
+     * grumpy relation costs itself, not the model.
+     */
     public function getModelShow($model): ?\stdClass
     {
-        if (Artisan::call('model:show', ['model' => $model, '--json' => true]) === 0) {
-            $data = json_decode(Artisan::output());
+        try {
+            $shown = Artisan::call('model:show', ['model' => $model, '--json' => true]) === 0;
+        } catch (\Throwable) {
+            $shown = false;
+            $fallback = $this->showFromSchema($model);
+        }
+        if ($shown || isset($fallback)) {
+            $data = $shown ? json_decode(Artisan::output()) : $fallback;
+            if (! $data) {
+                return null;
+            }
             $mod = new $model;
             $ref = new \ReflectionClass($model);
             $data->namespace = substr($data->class, 0, strrpos($data->class, '\\'));
@@ -347,7 +368,12 @@ class ApiController extends BaseController
                     foreach ($pivot_attributes as $pivot_key => $pivot_attribute) {
                         $pivot_attributes[$pivot_key] = $rel->$pivot_attribute();
                     }
-                    if ($pivot_attributes['class'] === Pivot::class) {
+                    // Both BASE pivot classes mean "generic join table, no
+                    // model" — dot-join the table so the payload names it
+                    // (and the bare class can't masquerade as a real model).
+                    // MorphPivot arrives via ->using(MorphPivot::class), the
+                    // spatie/laravel-tags shape.
+                    if (in_array($pivot_attributes['class'], [Pivot::class, MorphPivot::class])) {
                         $pivot_attributes['class'] .= '.'.$rel->getTable();
                     }
                 }
@@ -454,23 +480,123 @@ class ApiController extends BaseController
         return $this->getModelShow($model);
     }
 
+    /**
+     * Hand-rolled stand-in for model:show's JSON, used when model:show itself
+     * throws (see getModelShow). Attributes come from the live schema;
+     * relations are enumerated by reflection — public zero-parameter methods
+     * with a Relation return type — each invoked inside its own try/catch, so
+     * a throwing relation method is skipped instead of sinking the model.
+     * Same shape as the model:show payload, so the enrichment loop runs on it
+     * unchanged.
+     */
+    protected function showFromSchema(string $model): ?\stdClass
+    {
+        try {
+            $mod = new $model;
+            $table = $mod->getTable();
+            if (! Schema::hasTable($table)) {
+                return null;
+            }
+
+            $uniques = collect(Schema::getIndexes($table))
+                ->filter(fn ($i) => ($i['unique'] ?? false) && count($i['columns']) === 1)
+                ->map(fn ($i) => $i['columns'][0])
+                ->flip();
+
+            $attributes = collect(Schema::getColumns($table))->map(fn ($c) => (object) [
+                'name' => $c['name'],
+                'type' => $c['type'],
+                'increments' => (bool) ($c['auto_increment'] ?? false),
+                'nullable' => (bool) ($c['nullable'] ?? false),
+                'default' => $c['default'] ?? null,
+                'unique' => isset($uniques[$c['name']]),
+                'fillable' => $mod->isFillable($c['name']),
+                'hidden' => in_array($c['name'], $mod->getHidden()),
+                'appended' => false,
+                'cast' => null,
+            ])->values()->all();
+
+            $relations = [];
+            foreach ((new \ReflectionClass($model))->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+                if ($method->isStatic() || $method->getNumberOfParameters() > 0) {
+                    continue;
+                }
+                $return = $method->getReturnType();
+                if (! $return instanceof \ReflectionNamedType || ! is_subclass_of($return->getName(), Relation::class)) {
+                    continue;
+                }
+                try {
+                    $rel = $mod->{$method->getName()}();
+                } catch (\Throwable) {
+                    continue; // the throwing relation costs itself, not the model
+                }
+                $relations[] = (object) [
+                    'name' => $method->getName(),
+                    'type' => class_basename($rel),
+                    'related' => get_class($rel->getRelated()),
+                ];
+            }
+
+            return (object) [
+                'class' => $model,
+                'database' => $mod->getConnection()->getName(),
+                'table' => $table,
+                'policy' => null,
+                'attributes' => $attributes,
+                'relations' => $relations,
+            ];
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * All models the graph needs: the app_path() scan, PLUS every model those
+     * relations reach that the scan can't see — package models (Spatie
+     * Activity/Media, Cashier Subscription, DatabaseNotification, …), flagged
+     * `vendor: true`. Followed transitively (a queue with a seen-set: vendor
+     * models relate onward, e.g. Subscription -> SubscriptionItem), because a
+     * mature Laravel app leans on dozens of these and every un-followed
+     * target is a silently missing edge. Un-introspectable targets (no table,
+     * abstract, not a model) are skipped like any other failed show.
+     */
     public function getModels(): array
     {
         $data = [];
-        foreach ($this->getModelsList() as $model) {
+        $queue = $this->getModelsList();
+        $appModels = array_flip($queue);
+        $seen = $appModels;
+
+        while ($queue) {
+            $model = array_shift($queue);
             $show = $this->getModelShow($model);
             if (! $show) {
                 continue;
             }
+            if (! isset($appModels[$model])) {
+                $show->vendor = true;
+            }
             $data[] = $show;
+
+            foreach ($show->relations as $relation) {
+                // to = the far endpoint; pivot/through = the traversed model.
+                // class_exists screens out generic pivots ("…\Pivot.<table>")
+                // and MorphTo's null target without special-casing either.
+                $targets = [
+                    $relation->to ?? null,
+                    $relation->pivot_class ?? null,
+                    $relation->through_class ?? null,
+                ];
+                foreach ($targets as $target) {
+                    if (! $target || isset($seen[$target]) || ! class_exists($target)) {
+                        continue;
+                    }
+                    $seen[$target] = true;
+                    $queue[] = $target;
+                }
+            }
         }
 
-        // rev sort attributes_count
-        /*
-        usort($data, function($a, $b) {
-            return $b->attributes_count - $a->attributes_count;
-        });
-        */
         return $data;
     }
 

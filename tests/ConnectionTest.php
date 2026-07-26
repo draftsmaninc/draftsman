@@ -53,6 +53,17 @@ it('reports the connection topology for every emitted relation type', function (
     }
 });
 
+it('suffixes generic morph pivots with their table, like plain pivots', function () {
+    // A MorphToMany with ->using(MorphPivot::class) — the spatie/laravel-tags
+    // shape — must report "<base class>.<table>" exactly like a plain generic
+    // pivot, or the bare class name leaks into the payload as a phantom
+    // zero-attribute vendor model (and table-based shortcut suppression can
+    // never match it).
+    $rel = fixtureRelations()['App\\Models\\Tag.relatedTags'];
+
+    expect($rel->pivot_class)->toBe('Illuminate\\Database\\Eloquent\\Relations\\MorphPivot.taggables');
+});
+
 it('pairs each connection value with its metadata shape', function () {
     foreach (fixtureRelations() as $name => $relation) {
         $hasPivot = property_exists($relation, 'pivot_class');
