@@ -103,32 +103,50 @@ class ApiController extends BaseController
         'MorphToMany' => 'direct',
     ];
 
-    // multiplicity details https://www.red-gate.com/blog/crow-s-foot-notation
+    /**
+     * The crow's-foot fields (https://www.red-gate.com/blog/crow-s-foot-notation/).
+     *
+     * multiplicity — the cardinality glyph at the FROM model's own end of the
+     * edge: how many from-rows one related row can have. A BelongsTo's declarer
+     * is the many side; a HasMany's declarer is the one side. Note this is the
+     * INVERSE of the relation's return cardinality ($relationsTypeMap), so a
+     * renderer can decorate both ends of an edge from one relation record:
+     * from end via multiplicity, to end via type.
+     * (MorphTo is listed for completeness but never emits — see
+     * relationsMorphSkipDefintions.)
+     */
     protected $relationsMultiplicityMap = [
         'BelongsTo' => 'many',
         'BelongsToMany' => 'many',
         'HasMany' => 'one',
         'HasManyThrough' => 'one',
-        'HasOne' => 'many',
-        'HasOneThrough' => 'many',
+        'HasOne' => 'one',
+        'HasOneThrough' => 'one',
         'MorphMany' => 'one',
-        'MorphOne' => 'many',
+        'MorphOne' => 'one',
         'MorphTo' => 'many',
-        'MorphToMany' => 'one',
+        'MorphToMany' => 'many',
     ];
 
-    // mandatory details https://www.red-gate.com/blog/crow-s-foot-notation
+    /**
+     * mandatory — whether the edge's "one" side is required. A string names the
+     * relation field holding the FK column to check for nullability (possible
+     * only when the FK lives on the DECLARING model: BelongsTo/MorphTo; other
+     * types' FKs sit on the related model, which isn't loaded in this pass, so
+     * they assume the conventional non-null FK). false for the *ToMany types,
+     * which have no "one" side.
+     */
     protected $relationsMandatoryMap = [
         'BelongsTo' => 'from_attribute',
         'BelongsToMany' => false,
         'HasMany' => true,
         'HasManyThrough' => true,
-        'HasOne' => false,
-        'HasOneThrough' => false,
+        'HasOne' => true,
+        'HasOneThrough' => true,
         'MorphMany' => true,
-        'MorphOne' => false,
-        'MorphTo' => false,
-        'MorphToMany' => true,
+        'MorphOne' => true,
+        'MorphTo' => 'from_attribute',
+        'MorphToMany' => false,
     ];
 
     protected $relationsFromAttribute = [
@@ -380,14 +398,16 @@ class ApiController extends BaseController
                     $relation->{'morph_key'} = $related.'.'.$to_attribute.'.'.$relation->{'morph_attribute'};
                 }
                 if (is_string($relation->mandatory)) {
-                    $nullable_col = 'nullable';
                     $check_attr = $relation->{$relation->mandatory} ?? null;
                     $keyed_attr = $keyed_attributes[$check_attr] ?? null;
                     if ($check_attr && $keyed_attr) {
-                        $mandatory_attr = collect($keyed_attributes[$check_attr])->toArray();
-                        $relation->mandatory = (array_key_exists($nullable_col, $mandatory_attr)) ? $mandatory_attr[$nullable_col] : false;
+                        $mandatory_attr = collect($keyed_attr)->toArray();
+                        // mandatory is the NEGATION of the column's nullable flag
+                        $relation->mandatory = ! ($mandatory_attr['nullable'] ?? false);
                     } else {
-                        $relation->mandatory = false;
+                        // column not introspectable — assume the conventional
+                        // non-null FK, matching the static entries above
+                        $relation->mandatory = true;
                     }
                 }
                 $key_parts = [
