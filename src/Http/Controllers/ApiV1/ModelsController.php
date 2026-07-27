@@ -3,10 +3,6 @@
 namespace Draftsman\Draftsman\Http\Controllers\ApiV1;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class ModelsController extends ApiController
 {
