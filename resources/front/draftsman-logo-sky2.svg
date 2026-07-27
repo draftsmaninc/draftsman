@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="Layer_2"
+   viewBox="0 0 220 220"
+   version="1.1"
+   sodipodi:docname="draftsman-logo-sky2.svg"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   width="220"
+   height="220"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="4.4"
+     inkscape:cx="102.38636"
+     inkscape:cy="106.47727"
+     inkscape:window-width="1864"
+     inkscape:window-height="1186"
+     inkscape:window-x="1803"
+     inkscape:window-y="70"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="f4c755be-c176-4896-94c5-9e7c0bc137a2_4" />
+  <g
+     id="Components">
+    <g
+       id="f4c755be-c176-4896-94c5-9e7c0bc137a2_4">
+      <path
+         d="M 110,220 C 54.8594,220 10,175.1406 10,120 V 0 h 200 v 120 c 0,55.1406 -44.8594,100 -100,100 z M 30,20 v 100 c 0,44.1123 35.8877,80 80,80 44.1123,0 80,-35.8877 80,-80 V 20 Z"
+         id="path2"
+         style="fill:#226bcb;fill-opacity:1" />
+      <rect
+         x="80"
+         y="40"
+         width="20"
+         height="70"
+         id="rect2"
+         style="fill:#226bc0;fill-opacity:1" />
+      <rect
+         x="120"
+         y="40"
+         width="20"
+         height="70"
+         id="rect3"
+         style="fill:#226bc0;fill-opacity:1" />
+      <polygon
+         points="56.249,122.1924 100,157.21 143.751,122.1924 156.249,137.8076 100,182.8271 43.751,137.8076 "
+         id="polygon3"
+         style="fill:#226bc0;fill-opacity:1"
+         transform="translate(10)" />
+    </g>
+  </g>
+</svg>

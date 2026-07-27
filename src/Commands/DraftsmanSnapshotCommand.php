@@ -30,7 +30,7 @@ class DraftsmanSnapshotCommand extends Command
         parent::configure();
         $available = implode(', ', array_keys(self::SECTIONS));
 
-        $defaultPath = (string) (config('draftsman.config.snapshot_path') ?? 'storage/draftsman/snapshots');
+        $defaultPath = (string) (config('draftsman.package.snapshot_path') ?? 'storage/draftsman/snapshots');
         $this->setHelp("Exclude one or more sections. Available: $available\n".
             "Options:\n".
             "  --exclude=SECTION   Repeatable or comma-separated list to exclude sections.\n".
@@ -319,7 +319,7 @@ class DraftsmanSnapshotCommand extends Command
      * Saves the provided snapshot array as a JSON file.
      * If $outputPath is a directory, file will be named draftsman_snapshot_<YYYY-MM-DD_HH-mm-ss>.json in that directory.
      * If $outputPath is a file path ending with .json, it will be used directly.
-     * If $outputPath is null, uses config('draftsman.snapshot_path') as directory.
+     * If $outputPath is null, uses config('draftsman.package.snapshot_path') as directory.
      *
      * @return string Full path to the saved file
      */
@@ -327,7 +327,7 @@ class DraftsmanSnapshotCommand extends Command
     {
         // Determine base path: option or config default
         if ($outputPath === null || $outputPath === '') {
-            $outputPath = (string) (config('draftsman.snapshot_path') ?? storage_path('draftsman/snapshots'));
+            $outputPath = (string) (config('draftsman.package.snapshot_path') ?? storage_path('draftsman/snapshots'));
         }
 
         $outputPath = rtrim($outputPath, '\\/');

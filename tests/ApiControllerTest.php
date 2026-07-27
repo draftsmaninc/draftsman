@@ -1,6 +1,7 @@
 <?php
 
 use Draftsman\Draftsman\Actions\GetDraftsmanConfig;
+use Draftsman\Draftsman\Actions\RenderGraphImage;
 use Draftsman\Draftsman\Actions\UpdateDraftsmanConfig;
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ it('returns config JSON on getConfig success', function () {
     $expected = ['config' => ['foo' => 'bar']];
     $mock->shouldReceive('handle')->once()->andReturn($expected);
 
-    $response = $controller->getConfig($mock);
+    $response = $controller->getConfig($mock, new RenderGraphImage);
 
     expect($response->getStatusCode())->toBe(200)
         ->and($response->getData(true))
@@ -58,7 +59,7 @@ it('returns full config sections (front, presentation, graph) on getConfig', fun
     ];
     $mock->shouldReceive('handle')->once()->andReturn($expected);
 
-    $response = $controller->getConfig($mock);
+    $response = $controller->getConfig($mock, new RenderGraphImage);
 
     $data = $response->getData(true);
     expect($response->getStatusCode())->toBe(200)
@@ -100,7 +101,7 @@ it('returns config without presentation if missing in getConfig', function () {
     ];
     $mock->shouldReceive('handle')->once()->andReturn($expected);
 
-    $response = $controller->getConfig($mock);
+    $response = $controller->getConfig($mock, new RenderGraphImage);
 
     $data = $response->getData(true);
     expect($response->getStatusCode())->toBe(200)
@@ -114,7 +115,7 @@ it('returns 500 JSON on getConfig failure', function () {
     $mock = Mockery::mock(GetDraftsmanConfig::class);
     $mock->shouldReceive('handle')->once()->andThrow(new Exception('boom'));
 
-    $response = $controller->getConfig($mock);
+    $response = $controller->getConfig($mock, new RenderGraphImage);
 
     $data = $response->getData(true);
     expect($response->getStatusCode())->toBe(500)

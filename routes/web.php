@@ -1,6 +1,7 @@
 <?php
 
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ApiController;
+use Draftsman\Draftsman\Http\Controllers\ApiV1\GraphsController;
 use Draftsman\Draftsman\Http\Controllers\ApiV1\ModelsController;
 use Draftsman\Draftsman\Http\Controllers\ApiV1\RelationsController;
 use Draftsman\Draftsman\Http\Controllers\DraftsmanController;
@@ -15,6 +16,11 @@ Route::prefix('draftsman')->group(function () {
         Route::apiResource('relations', RelationsController::class);
         Route::get('config', [ApiController::class, 'getConfig']);
         Route::post('config', [ApiController::class, 'updateConfig']);
+        Route::get('graphs', [GraphsController::class, 'index']);
+        Route::get('graphs/{slug}', [GraphsController::class, 'show']);
+        Route::put('graphs/{slug}', [GraphsController::class, 'store']);
+        Route::delete('graphs/{slug}', [GraphsController::class, 'destroy']);
+        Route::get('render/{slug}', [GraphsController::class, 'render'])->name('draftsman.render');
     });
 
     Route::get(
