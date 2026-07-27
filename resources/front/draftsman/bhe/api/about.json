@@ -1,0 +1,2 @@
+{"environment":{"application_name":"Blue Horse Entries - [LOCAL]","laravel_version":"10.48.23","php_version":"8.3.30","composer_version":"2.10.1","environment":"local","debug_mode":false,"url":"dev-bhe.test","maintenance_mode":false},"cache":{"config":false,"events":false,"routes":false,"views":true},"drivers":{"broadcasting":"log","cache":"file","database":"mysql","logs":["single","bugsnag"],"mail":"smtp","queue":"redis","session":"database"}}
+

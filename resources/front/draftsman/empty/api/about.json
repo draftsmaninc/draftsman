@@ -1,0 +1,2 @@
+{"environment":{"application_name":"Laravel","laravel_version":"12.37.0","php_version":"8.4.19","composer_version":"2.10.1","environment":"local","debug_mode":true,"url":"dev-empty.test","maintenance_mode":false,"timezone":"UTC","locale":"en"},"cache":{"config":false,"events":false,"routes":false,"views":true},"drivers":{"broadcasting":"log","cache":"database","database":"mysql","logs":["single"],"mail":"smtp","queue":"database","session":"database"},"storage":{"\/users\/ronald\/projects\/dev-empty\/public\/storage":false}}
+

@@ -1,1 +1,1196 @@
-<!DOCTYPE html><!--yGLRC5hzonmSCjKXlFrIu--><html lang="en" class="light"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/draftsman/_next/static/chunks/2b0f64d4e9cfa847.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/draftsman/_next/static/chunks/556c8b59b4c9a879.js"/><script src="/draftsman/_next/static/chunks/d4f5e7760a5047dd.js" async=""></script><script src="/draftsman/_next/static/chunks/ac86648cc1c1e00d.js" async=""></script><script src="/draftsman/_next/static/chunks/turbopack-22a88c80ea6b77a3.js" async=""></script><script src="/draftsman/_next/static/chunks/ff1a16fafef87110.js" async=""></script><script src="/draftsman/_next/static/chunks/d2be314c3ece3fbe.js" async=""></script><script src="/draftsman/_next/static/chunks/b3765391e6af1219.js" async=""></script><script src="/draftsman/_next/static/chunks/f348982c5b905378.js" async=""></script><script src="/draftsman/_next/static/chunks/cb6384582d66461e.js" async=""></script><title>Draftsman Editor</title><meta name="description" content="A reactflow based application designed to help build laravel apps."/><meta name="robots" content="noindex, nofollow"/><link rel="icon" href="https://draftsman.dev/favicon-32x32.png"/><script src="/draftsman/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body><div hidden=""><!--$--><!--/$--></div><svg style="position:absolute;width:0;height:0"><defs><marker id="step-forward-marker" viewBox="0 0 24 24" markerWidth="15" markerHeight="15" orient="auto" refX="20" refY="12"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-player-play "><path d="M7 4v16l13 -8l-13 -8"></path></svg></marker></defs></svg><div data-slot="sidebar-wrapper" style="--sidebar-width:16rem;--sidebar-width-icon:3rem" class="group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full"><main class="flex h-screen w-full flex-col overflow-hidden"><header class="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4"><button class="rounded-md p-2 mr-1 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"><img alt="Draftman" loading="lazy" width="24" height="26" decoding="async" data-nimg="1" class="-mt-1 -mb-1" style="color:transparent" src="https://draftsman.dev/images/logo-full-color-rgb.svg"/></button><div data-orientation="vertical" role="none" data-slot="separator" class="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mr-2 h-4"></div><div class="dm_date-persistence-tools"><button title="save" class="rounded-md p-2 mr-1 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-device-floppy w-5 h-5 shrink-0"><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"></path><path d="M10 14a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M14 4l0 4l-6 0l0 -4"></path></svg></button><button title="restore" class="rounded-md p-2 mr-1 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-restore w-5 h-5 shrink-0"><path d="M3.06 13a9 9 0 1 0 .49 -4.087"></path><path d="M3 4.001v5h5"></path><path d="M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path></svg></button><button class="rounded-md p-2 mr-1 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-reload w-5 h-5 shrink-0"><path d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747"></path><path d="M20 4v5h-5"></path></svg></button></div><div class="dm_line-tools overflow-x-auto flex items-center gap-2 ml-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-line w-5 h-5 shrink-0 ml-2"><title>select line</title><path d="M4 18a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M16 6a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M7.5 16.5l9 -9"></path></svg><button type="button" role="combobox" aria-controls="radix-_R_18lbtb_" aria-expanded="false" aria-autocomplete="none" dir="ltr" data-state="closed" data-slot="select-trigger" data-size="default" class="border-input data-[placeholder]:text-muted-foreground [&amp;_svg:not([class*=&#x27;text-&#x27;])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex items-center justify-between gap-2 rounded-md bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 w-[58px] border-0"><span data-slot="select-value" style="pointer-events:none"></span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down size-4 opacity-50" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><select aria-hidden="true" tabindex="-1" style="position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal"></select></div><div class="ml-auto"><button class="rounded-md p-2 mr-1 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" title="Lock interactive mode"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock-open w-4 h-4 shrink-0" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg></button><button class="rounded-md p-2 mr-1 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell w-4 h-4 shrink-0" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg></button><button class="rounded-md p-2 mr-1 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-_R_1qlbtb_" data-state="closed" data-slot="dialog-trigger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal w-4 h-4 shrink-0" aria-hidden="true"><path d="M10 5H3"></path><path d="M12 19H3"></path><path d="M14 3v4"></path><path d="M16 17v4"></path><path d="M21 12h-9"></path><path d="M21 19h-5"></path><path d="M21 5h-7"></path><path d="M8 10v4"></path><path d="M8 12H3"></path></svg></button><button data-slot="sidebar-trigger" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-7 rotate-180" data-sidebar="trigger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-left" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M9 3v18"></path></svg><span class="sr-only">Toggle Sidebar</span></button></div></header><div class="" style="width:100vw;height:100vh"><div data-testid="rf__wrapper" draggable="true" style="width:100%;height:100%;overflow:hidden;position:relative;z-index:0" class="react-flow light" role="application"><div class="react-flow__renderer" style="position:absolute;width:100%;height:100%;top:0;left:0"><div class="react-flow__pane draggable" style="position:absolute;width:100%;height:100%;top:0;left:0"><div class="react-flow__viewport xyflow__viewport react-flow__container" style="transform:translate(0px,0px) scale(1)"><div class="react-flow__edges"></div><div class="react-flow__edgelabel-renderer"></div><div class="react-flow__nodes" style="position:absolute;width:100%;height:100%;top:0;left:0"></div><div class="react-flow__viewport-portal"></div></div></div></div><svg class="react-flow__background" style="position:absolute;width:100%;height:100%;top:0;left:0" data-testid="rf__background"><pattern id="pattern-1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="translate(-11,-11)"><circle cx="0.5" cy="0.5" r="0.5" class="react-flow__background-pattern dots"></circle></pattern><rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-1)"></rect></svg><div class="react-flow__panel flex text-foreground rounded-md gap-1 p-1 bg-card border bottom left"><button data-slot="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-9"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus h-4 w-4" aria-hidden="true"><path d="M5 12h14"></path></svg></button><span dir="ltr" data-orientation="horizontal" aria-disabled="false" data-slot="slider" class="relative flex touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col w-[140px]" style="--radix-slider-thumb-transform:translateX(-50%)"><span data-orientation="horizontal" data-slot="slider-track" class="bg-muted relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"><span data-orientation="horizontal" data-slot="slider-range" class="bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full" style="left:0%;right:50.02501250625313%"></span></span><span style="transform:var(--radix-slider-thumb-transform);position:absolute;left:calc(0% + 0px)"><span role="slider" aria-valuemin="0.001" aria-valuemax="2" aria-orientation="horizontal" data-orientation="horizontal" tabindex="0" data-slot="slider-thumb" class="border-primary bg-background ring-ring/50 block size-4 shrink-0 rounded-full border shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50" style="display:none" data-radix-collection-item=""></span><input style="display:none"/></span></span><button data-slot="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-9"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus h-4 w-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button><button data-slot="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 px-4 py-2 has-[&gt;svg]:px-3 min-w-20 tabular-nums">100<!-- -->%</button><button data-slot="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-9"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-maximize h-4 w-4" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg></button></div><div id="react-flow__node-desc-1" style="display:none">Press enter or space to select a node. You can then use the arrow keys to move the node around. Press delete to remove it and escape to cancel.</div><div id="react-flow__edge-desc-1" style="display:none">Press enter or space to select an edge. You can then press delete to remove it or escape to cancel.</div><div id="react-flow__aria-live-1" aria-live="assertive" aria-atomic="true" style="position:absolute;width:1px;height:1px;margin:-1px;border:0;padding:0;overflow:hidden;clip:rect(0px, 0px, 0px, 0px);clip-path:inset(100%)"></div></div></div></main><div class="group peer text-sidebar-foreground hidden md:block" data-state="expanded" data-collapsible="" data-variant="sidebar" data-side="right" data-slot="sidebar"><div data-slot="sidebar-gap" class="relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear group-data-[collapsible=offcanvas]:w-0 group-data-[side=right]:rotate-180 group-data-[collapsible=icon]:w-(--sidebar-width-icon)"></div><div data-slot="sidebar-container" class="fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l border-r-0"><div data-sidebar="sidebar" data-slot="sidebar-inner" class="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"><div data-slot="sidebar-header" data-sidebar="header" class="flex flex-col gap-2 p-2 py-0 border-b -mt-0.25"><div class="flex gap-2 px-1 h-12 items-center"><div class="font-extrabold"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info size-4" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></div><span class="truncate font-semibold">Details</span></div></div><div class="p-2 py-4"><div class="px-2 text-gray-500">Select a node or edge to view details</div></div><div data-slot="sidebar-content" data-sidebar="content" class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden"><div data-slot="sidebar-group" data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2 mt-auto"><div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm"><ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-1"><li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative"></li></ul></div></div></div><button data-sidebar="rail" data-slot="sidebar-rail" aria-label="Toggle Sidebar" tabindex="-1" title="Toggle Sidebar" class="hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize [[data-side=left][data-state=collapsed]_&amp;]:cursor-e-resize [[data-side=right][data-state=collapsed]_&amp;]:cursor-w-resize hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full [[data-side=left][data-collapsible=offcanvas]_&amp;]:-right-2 [[data-side=right][data-collapsible=offcanvas]_&amp;]:-left-2"></button></div></div></div></div><!--$--><!--/$--><script src="/draftsman/_next/static/chunks/556c8b59b4c9a879.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[47257,[\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"/draftsman/_next/static/chunks/d2be314c3ece3fbe.js\"],\"ClientPageRoot\"]\n4:I[52683,[\"/draftsman/_next/static/chunks/b3765391e6af1219.js\",\"/draftsman/_next/static/chunks/f348982c5b905378.js\",\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"/draftsman/_next/static/chunks/cb6384582d66461e.js\"],\"default\"]\n7:I[97367,[\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"/draftsman/_next/static/chunks/d2be314c3ece3fbe.js\"],\"OutletBoundary\"]\n8:\"$Sreact.suspense\"\na:I[97367,[\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"/draftsman/_next/static/chunks/d2be314c3ece3fbe.js\"],\"ViewportBoundary\"]\nc:I[97367,[\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"/draftsman/_next/static/chunks/d2be314c3ece3fbe.js\"],\"MetadataBoundary\"]\ne:I[68027,[\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"/draftsman/_next/static/chunks/d2be314c3ece3fbe.js\"],\"default\"]\n:HL[\"/draftsman/_next/static/chunks/2b0f64d4e9cfa847.css\",\"style\"]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"yGLRC5hzonmSCjKXlFrIu\",\"c\":[\"\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"__PAGE__\",{}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/draftsman/_next/static/chunks/2b0f64d4e9cfa847.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/draftsman/_next/static/chunks/b3765391e6af1219.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-1\",{\"src\":\"/draftsman/_next/static/chunks/f348982c5b905378.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[[\"$\",\"$L3\",null,{\"Component\":\"$4\",\"serverProvidedParams\":{\"searchParams\":{},\"params\":{},\"promises\":[\"$@5\",\"$@6\"]}}],[[\"$\",\"script\",\"script-0\",{\"src\":\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-1\",{\"src\":\"/draftsman/_next/static/chunks/cb6384582d66461e.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"$L7\",null,{\"children\":[\"$\",\"$8\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@9\"}]}]]}],{},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$La\",null,{\"children\":\"$Lb\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lc\",null,{\"children\":[\"$\",\"$8\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Ld\"}]}]}],null]}],false]],\"m\":\"$undefined\",\"G\":[\"$e\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"f:I[22011,[\"/draftsman/_next/static/chunks/b3765391e6af1219.js\",\"/draftsman/_next/static/chunks/f348982c5b905378.js\"],\"AppStoreProvider\"]\n12:I[39756,[\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"/draftsman/_next/static/chunks/d2be314c3ece3fbe.js\"],\"default\"]\n13:I[37457,[\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"/draftsman/_next/static/chunks/d2be314c3ece3fbe.js\"],\"default\"]\n10:[]\n11:[]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"$Lf\",null,{\"initialState\":{\"nodes\":[],\"edges\":[],\"colorMode\":\"light\",\"layout\":\"free\",\"interactiveMode\":true,\"edgeType\":\"smoothstep\",\"columnWidth\":365,\"gutterWidth\":100,\"rowpadHeight\":80,\"draggedNodes\":\"$Q10\",\"connectionSites\":\"$Q11\",\"potentialConnection\":\"$undefined\",\"selectedNode\":null,\"selectedEdge\":null,\"models\":[],\"relationships\":[],\"edgeRelationships\":[]},\"children\":[\"$\",\"html\",null,{\"lang\":\"en\",\"className\":\"light\",\"children\":[\"$\",\"body\",null,{\"children\":[[\"$\",\"svg\",null,{\"style\":{\"position\":\"absolute\",\"width\":0,\"height\":0},\"children\":[\"$\",\"defs\",null,{\"children\":[\"$\",\"marker\",null,{\"id\":\"step-forward-marker\",\"viewBox\":\"0 0 24 24\",\"markerWidth\":\"15\",\"markerHeight\":\"15\",\"orient\":\"auto\",\"refX\":\"20\",\"refY\":\"12\",\"children\":[\"$\",\"svg\",null,{\"ref\":\"$undefined\",\"xmlns\":\"http://www.w3.org/2000/svg\",\"width\":24,\"height\":24,\"viewBox\":\"0 0 24 24\",\"fill\":\"none\",\"stroke\":\"currentColor\",\"strokeWidth\":2,\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"className\":\"tabler-icon tabler-icon-player-play \",\"children\":[\"$undefined\",[\"$\",\"path\",\"svg-0\",{\"d\":\"M7 4v16l13 -8l-13 -8\"}],\"$undefined\"]}]}]}]}],[\"$\",\"$L12\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L13\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]}]}]\n"])</script><script>self.__next_f.push([1,"5:{}\n6:\"$0:f:0:1:1:children:0:props:children:0:props:serverProvidedParams:params\"\n"])</script><script>self.__next_f.push([1,"b:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"14:I[27201,[\"/draftsman/_next/static/chunks/ff1a16fafef87110.js\",\"/draftsman/_next/static/chunks/d2be314c3ece3fbe.js\"],\"IconMark\"]\n9:null\nd:[[\"$\",\"title\",\"0\",{\"children\":\"Draftsman Editor\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"A reactflow based application designed to help build laravel apps.\"}],[\"$\",\"meta\",\"2\",{\"name\":\"robots\",\"content\":\"noindex, nofollow\"}],[\"$\",\"link\",\"3\",{\"rel\":\"icon\",\"href\":\"https://draftsman.dev/favicon-32x32.png\"}],[\"$\",\"$L14\",\"4\",{}]]\n"])</script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/draftsman/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+      <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <title>frontv</title>
+    <script>
+      window._draftsman = null
+      window._draftsmanInit = {
+          debug: false,
+          loading: true,
+          fitViewOnInit: false,
+          history: true,
+          historyMaxSize: 50,
+          isLocked: false,
+          minZoom: 0.01,
+          zoomOnDoubleClick: false, // double-click is reserved for edit-in-place, not zoom
+
+          controls: true,
+          background: "none", // please use "none" because we build our own background stuff
+          snapToGrid: [28, 28],
+          viewportCulling: false,
+          nodes: [],
+          edges: [],
+      }
+    </script>
+    <script type="module" crossorigin src="/draftsman/assets/main-Cv_9cqJR.js"></script>
+    <link rel="modulepreload" crossorigin href="/draftsman/assets/preload-helper-gryCr1UA.js">
+    <link rel="stylesheet" crossorigin href="/draftsman/assets/main-DdbmsPhH.css">
+  </head>
+  <body>
+      <div class="relative flex w-full flow-schema-designer-frame" style="height: calc(100vh);"
+           x-data="{
+             sidebarWidth: 340,
+             sidebarSide: 'left',
+             resizing: false,
+             startResize(e) {
+               this.resizing = true;
+               const startX = e.clientX;
+               const startW = this.sidebarWidth;
+               const maxW = window.innerWidth / 2;
+               const onMove = (ev) => {
+                 const delta = this.sidebarSide === 'right' ? startX - ev.clientX : ev.clientX - startX;
+                 this.sidebarWidth = Math.min(maxW, Math.max(275, startW + delta));
+               };
+               const onUp = () => {
+                 this.resizing = false;
+                 document.removeEventListener('mousemove', onMove);
+                 document.removeEventListener('mouseup', onUp);
+                 document.body.style.userSelect = '';
+               };
+               document.addEventListener('mousemove', onMove);
+               document.addEventListener('mouseup', onUp);
+               document.body.style.userSelect = 'none';
+             },
+           }">
+          <div style="height: calc(100vh);" class="flow-container"
+               x-data="flowCanvas(window._draftsmanInit)" x-init="window._draftsman = $flow">
+              <div x-flow-loading class="loading-animation" style="display: none">
+                  <img src="/draftsman/extended-measuring-tape-sky2.svg" alt="Draftsman" style="width: 33%" />
+              </div>
+              <div x-flow-viewport>
+                  <template x-for="node in nodes" :key="node.id">
+                      <!-- Node width tracks the layout column width (see Settings). -->
+                      <div x-flow-node="node" x-flow-schema :style="'width: ' + $draftsman.layout.columnWidth + 'px'"></div>
+                  </template>
+              </div>
+              <!-- Locked watermark. The lock also blocks interaction with the graph
+                   (see .draftsman-locked in alpineflow-theme.css); without a visible
+                   cue an unresponsive canvas just reads as broken. Sits outside
+                   x-flow-viewport so the hit-test block doesn't apply to it, and is
+                   pointer-events-none regardless so it can never swallow a click. -->
+              <!-- Backend-down watermark: only when there's also nothing to look at
+                   (a populated canvas keeps showing its last good graph and the
+                   sidebar banner alone carries the warning). Pure signage — the
+                   actionable Retry lives in the sidebar banner. -->
+              <!-- style="display: none" (not just x-cloak): the cloak CSS arrives via
+                   Vite's JS-injected stylesheet, so markup can paint before it lands. -->
+              <div x-show="$draftsman.backend.down && !$flow.nodes.length" x-cloak x-transition.opacity
+                   style="display: none"
+                   class="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-3">
+                  <span class="icon-[lucide--triangle-alert] size-40 text-amber-400/40"></span>
+                  <span class="text-lg font-medium text-amber-700/60"
+                        x-text="$draftsman.backend.reason === 'unreachable'
+                            ? 'Project backend is not responding'
+                            : 'Project backend is erroring'"></span>
+                  <span class="text-sm text-muted-foreground/70">Nothing to draw yet — fix the backend, then Retry in the sidebar.</span>
+              </div>
+              <div x-show="!$flow.isInteractive" x-cloak x-transition.opacity style="display: none"
+                   class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+                  <!-- Only the glyph takes pointer events, not the full-canvas wrapper:
+                       an overlay-wide click target would unlock on any stray click. -->
+                  <button type="button" title="Click to unlock the canvas"
+                          @click="$flow.toggleInteractive()"
+                          class="pointer-events-auto cursor-pointer rounded-full p-4 text-draftsman/25 transition hover:text-draftsman/40 focus:outline-none">
+                      <span class="icon-[lucide--lock] size-48"></span>
+                  </button>
+              </div>
+          </div>
+          <aside
+                  x-data="{
+                    currentProject: 'Teams',
+                    currentGraph: 'Models',
+                    projects: ['BHE', 'Elevate', 'Empty', 'Large', 'Teams', 'Webapp'],
+                    repoGraphs: {},
+                    // Graphs created in this browser but not yet saved to the repo,
+                    // keyed by project. They join the menu until a save lands them
+                    // in the API listing.
+                    newGraphs: {},
+                    // The graph-switcher rows for the current project: saved graphs
+                    // from the API, then browser-only creations not yet listed, or
+                    // the implicit graph when the project has neither.
+                    get projectGraphs() {
+                        const saved = this.repoGraphs[this.currentProject] ?? [];
+                        const drafts = (this.newGraphs[this.currentProject] ?? [])
+                            .filter((d) => !saved.some((s) => s.slug === d.slug));
+                        const rows = [...saved, ...drafts];
+                        return rows.length ? rows : [{ slug: 'models', name: 'Models', unsaved: true }];
+                    },
+                    userName: 'Ron Northrip',
+                    userEmail: 'user@example.com',
+                    userInitials: 'RN',
+                    get canvas() {
+                        const el = document.querySelector('.flow-container');
+                        return el ? Alpine.$data(el) : null;
+                    },
+                    get hasSelection() {
+                        const c = this.canvas;
+                        return !!(c?.selectedNodes?.size || c?.selectedRows?.size || c?.selectedEdges?.size);
+                    },
+                    // Serialized graph for dirty-tracking: node positions + data and
+                    // edges only. Excludes measured `dimensions` (not user-authored) and
+                    // the viewport (panning shouldn't count as a change), and reads the
+                    // reactive nodes/edges so any bound expression re-evaluates on edit.
+                    savedGraph: '',
+                    graphState() {
+                        const c = this.canvas;
+                        // Reads the reactive nodes/edges/viewport, so any bound expression
+                        // re-evaluates on edit OR pan/zoom (see graph-dirty.ts for what's compared).
+                        return c ? window.graphFingerprint(c.nodes, c.edges, c.viewport) : '';
+                    },
+                    // Save is offered only when the graph differs from the last saved /
+                    // restored / loaded baseline. A fresh graph with no snapshot keeps an
+                    // empty baseline, so its first save is always available.
+                    get canSave() { return this.graphState() !== this.savedGraph; },
+                    // Sidebar search over model names + attribute names. Results are
+                    // {kind, nodeId, field?, label, sub}; picking one calls
+                    // $draftsman.revealNode to select + reveal it.
+                    searchOpen: false,
+                    searchQuery: '',
+                    searchScope: 'all', // 'all' | 'models' | 'attributes'
+                    get searchResults() {
+                        const c = this.canvas;
+                        const q = this.searchQuery.trim().toLowerCase();
+                        if (!c || !q) return [];
+                        const scope = this.searchScope;
+                        // Mirror the Show-namespace setting (Settings > Edge): when it is
+                        // hidden the container carries .draftsman-hide-namespace, so drop the
+                        // namespace from model results too.
+                        const hideNs = !!c._container?.classList?.contains('draftsman-hide-namespace');
+                        // Models first, then attributes; filtered by the scope menu.
+                        const models = [], fields = [];
+                        for (const n of c.nodes) {
+                            const label = n.data?.label ?? '';
+                            if (scope !== 'attributes' && label.toLowerCase().includes(q)) models.push({ kind: 'model', nodeId: n.id, label, sub: hideNs ? '' : (n.data?.namespace ?? '') });
+                            if (scope !== 'models') {
+                                for (const f of (n.data?.fields ?? [])) {
+                                    if ((f.name ?? '').toLowerCase().includes(q)) fields.push({ kind: 'field', nodeId: n.id, field: f.name, label: f.name, sub: label });
+                                }
+                            }
+                        }
+                        models.sort((a, b) => a.label.localeCompare(b.label));
+                        fields.sort((a, b) => a.label.localeCompare(b.label) || a.sub.localeCompare(b.sub));
+                        return [...models, ...fields].slice(0, 50);
+                    },
+                }"
+                  x-init="currentProject = $draftsman.lastUsedProject(projects, currentProject);
+                          $draftsman.setProject(currentProject);
+                          $draftsman.graphLists(projects).then((lists) => {
+                              repoGraphs = lists;
+                              currentGraph = $draftsman.lastUsedGraph(lists[currentProject]?.length ? lists[currentProject][0].name : 'Models');
+                              $draftsman.load(currentGraph).then(() => { savedGraph = $draftsman.snapshotFingerprint(currentGraph) });
+                          });
+                          $watch('savedGraph', () => $draftsman.graphLists(projects).then((lists) => repoGraphs = lists))"
+                  @keydown.window.meta.k.prevent="searchOpen = true; searchQuery = ''"
+                  @keydown.window.ctrl.k.prevent="searchOpen = true; searchQuery = ''"
+                  :style="'width: ' + sidebarWidth + 'px'"
+                  :class="sidebarSide === 'left' ? 'order-first border-r' : 'order-last border-l'"
+                  class="flex shrink-0 flex-col overflow-hidden border-sidebar-border bg-sidebar text-sidebar-foreground"
+          >
+              <!-- ===== Sidebar header: logo + graph switcher ===== -->
+              <div class="flex flex-col gap-1 border-sidebar-border p-2">
+                  <span class="flex items-center gap-2 rounded-md -ml-1.5 px-2 py-1.5">
+                      <img src="/draftsman/draftsman-tape-logo-sky2-sm.svg" alt="Draftsman" class="flex size-7" />
+                      <span class="grid flex-1 text-left text-[1.25rem] -mt-1">
+                          <span class="font-lexend font-light text-draftsman tracking-wider">Draftsman</span>
+                      </span>
+                      <!-- Search models + attributes -->
+                      <button
+                              type="button"
+                              @click="searchOpen = true; searchQuery = ''"
+                              title="Search models and attributes (⌘K)"
+                              class="flex size-7 -mt-1 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      >
+                          <span class="icon-[tabler--search] size-4 relative top-px"></span>
+                      </button>
+                      <!-- Move the sidebar to the left or right side -->
+                      <button
+                              type="button"
+                              @click="sidebarSide = sidebarSide === 'left' ? 'right' : 'left'"
+                              :title="sidebarSide === 'left' ? 'Move sidebar to right' : 'Move sidebar to left'"
+                              class="flex size-7 -mt-1 -mr-1 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      >
+                          <span class="size-4" :class="sidebarSide === 'left' ? 'icon-[lucide--panel-right]' : 'icon-[lucide--panel-left]'"></span>
+                      </button>
+                  </span>
+
+                  <!-- ===== Search dialog: models + attributes =====
+                       A fixed overlay (escapes the sidebar). Typing filters searchResults
+                       (model names + attribute names); picking one calls revealNode to
+                       select it and pan to it if offscreen, keeping the current zoom. -->
+                  <div x-show="searchOpen" x-cloak style="display: none"
+                       x-effect="if (searchOpen) $nextTick(() => $refs.searchInput?.focus())"
+                       @keydown.escape.window="searchOpen = false"
+                       class="fixed inset-0 z-50 flex items-start justify-center bg-black/30 pt-[15vh]">
+                      <div @click.outside="searchOpen = false"
+                           class="w-[34rem] max-w-[90vw] rounded-lg border border-sidebar-border bg-sidebar shadow-2xl">
+                          <div class="flex items-center gap-2 border-b border-sidebar-border px-3">
+                              <span class="icon-[tabler--search] size-4 shrink-0 text-sidebar-foreground/50"></span>
+                              <input
+                                      x-ref="searchInput"
+                                      x-model="searchQuery"
+                                      type="text"
+                                      placeholder="Search..."
+                                      @keydown.enter="if (searchResults.length) { $draftsman.revealNode(searchResults[0].nodeId, searchResults[0].field); searchOpen = false }"
+                                      class="w-full bg-transparent py-3 text-sm text-sidebar-foreground placeholder:text-sidebar-foreground/40 focus:outline-none"
+                              >
+                              <kbd class="shrink-0 rounded border border-sidebar-border px-1 text-[10px] text-sidebar-foreground/40">esc</kbd>
+                              <!-- Scope menu: what to search — All / Models / Attributes. -->
+                              <div x-data="{ scopeOpen: false }" class="relative shrink-0">
+                                  <button
+                                          type="button"
+                                          @click="scopeOpen = !scopeOpen"
+                                          :class="scopeOpen ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground/70'"
+                                          class="flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                  >
+                                      <span x-text="searchScope === 'all' ? 'Everything' : searchScope === 'models' ? 'Models' : 'Attributes'"></span>
+                                      <span class="icon-[lucide--chevron-down] size-3 opacity-60"></span>
+                                  </button>
+                                  <div
+                                          x-show="scopeOpen"
+                                          x-cloak
+                                          style="display: none"
+                                          @click.outside="scopeOpen = false"
+                                          class="absolute right-0 top-full z-10 mt-1 min-w-[8.5rem] overflow-hidden rounded-md border border-sidebar-border bg-sidebar py-1 shadow-lg"
+                                  >
+                                      <template x-for="opt in [{ v: 'all', l: 'Everything' }, { v: 'models', l: 'Models' }, { v: 'attributes', l: 'Attributes' }]" :key="opt.v">
+                                          <button
+                                                  type="button"
+                                                  @click="searchScope = opt.v; scopeOpen = false"
+                                                  class="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-xs text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                          >
+                                              <span class="size-3.5 shrink-0" :class="searchScope === opt.v ? 'icon-[lucide--check]' : 'invisible'"></span>
+                                              <span x-text="opt.l"></span>
+                                          </button>
+                                      </template>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="max-h-[50vh] overflow-y-auto rounded-b-lg p-1">
+                              <template x-for="r in searchResults" :key="r.kind + ':' + r.nodeId + ':' + (r.field ?? '')">
+                                  <button
+                                          type="button"
+                                          @click="$draftsman.revealNode(r.nodeId, r.field); searchOpen = false"
+                                          class="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                  >
+                                      <span class="size-4 shrink-0 text-sidebar-foreground/60"
+                                            :class="r.kind === 'model' ? 'icon-[lucide--hexagon]' : 'icon-[lucide--rectangle-horizontal]'"></span>
+                                      <span class="truncate" x-text="r.label"></span>
+                                      <span class="ml-auto shrink-0 truncate pl-3 text-xs text-sidebar-foreground/40" x-text="r.sub"></span>
+                                  </button>
+                              </template>
+                              <div x-show="searchQuery.trim() && searchResults.length === 0"
+                                   class="px-2.5 py-5 text-center text-xs text-sidebar-foreground/40">No matches</div>
+                              <div x-show="!searchQuery.trim()"
+                                   class="px-2.5 py-5 text-center text-xs text-sidebar-foreground/40">Type to search models and attributes</div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Project switcher dropdown: which backend app we're diagramming.
+                       A dev-harness concept — hidden in production builds
+                       ($draftsman.embedded) until it returns as a real feature. -->
+                  <div x-data="{ open: false }" x-show="!$draftsman.embedded" x-cloak style="display: none" class="relative mt-4">
+                      <button
+                              type="button"
+                              @click="open = !open"
+                              :class="open ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''"
+                              class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      >
+                          <span class="icon-[lucide--folder-cog] size-4.5 shrink-0"></span>
+                          <span class="flex-1 truncate text-left" x-text="currentProject"></span>
+                          <span class="icon-[lucide--chevrons-up-down] ml-auto size-4 opacity-50"></span>
+                      </button>
+                      <div
+                              x-show="open"
+                              x-cloak
+                              style="display: none"
+                              @click.outside="open = false"
+                              @keydown.escape.window="open = false"
+                              x-transition.origin.top.left
+                              class="absolute left-0 top-full z-30 mt-1 w-full min-w-56 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md"
+                      >
+                          <div class="px-2 py-1.5 text-xs text-muted-foreground">Projects</div>
+                          <template x-for="project in projects" :key="project">
+                              <button
+                                      type="button"
+                                      @click="open = false; if (project !== currentProject) { currentProject = project; $draftsman.setProject(project); $draftsman.rememberProject(project); currentGraph = repoGraphs[project]?.length ? repoGraphs[project][0].name : 'Models'; $draftsman.rememberGraph(currentGraph); $draftsman.load(currentGraph).then(() => { savedGraph = $draftsman.snapshotFingerprint(currentGraph) }) }"
+                                      class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+                              >
+                                  <span x-text="project"></span>
+                                  <!-- 'offline' when the project's backend didn't answer the graphs
+                                       API (null). Graph-level state (unsaved) belongs to the graph
+                                       menu below, not here. -->
+                                  <span class="ml-auto text-xs text-muted-foreground"
+                                        x-text="repoGraphs[project] === null ? 'offline' : ''"></span>
+                                  <span class="icon-[lucide--check] size-4" x-show="project === currentProject"></span>
+                              </button>
+                          </template>
+                      </div>
+                  </div>
+
+                  <!-- Graph switcher dropdown: the selected project's graphs, listed
+                       from its graphs API (implicit unsaved graph before first save). -->
+                  <div x-data="{ open: false }" class="relative mt-1">
+                      <button
+                              type="button"
+                              @click="open = !open"
+                              :class="open ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''"
+                              class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      >
+                          <span class="icon-[tabler--chart-bar] size-4.5 rotate-180 shrink-0"></span>
+                          <span class="flex-1 truncate text-left" x-text="currentGraph"></span>
+                          <span class="icon-[lucide--chevrons-up-down] ml-auto size-4 opacity-50"></span>
+                      </button>
+                      <div
+                              x-show="open"
+                              x-cloak
+                              style="display: none"
+                              @click.outside="open = false"
+                              @keydown.escape.window="open = false"
+                              x-transition.origin.top.left
+                              class="absolute left-0 top-full z-30 mt-1 w-full min-w-56 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md"
+                      >
+                          <div class="px-2 py-1.5 text-xs text-muted-foreground">Graphs</div>
+                          <template x-for="entry in projectGraphs" :key="entry.slug">
+                              <button
+                                      type="button"
+                                      @click="open = false; if (entry.name !== currentGraph) { currentGraph = entry.name; $draftsman.rememberGraph(entry.name); $draftsman.load(entry.name).then(() => { savedGraph = $draftsman.snapshotFingerprint(entry.name) }) }"
+                                      class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+                              >
+                                  <span x-text="entry.name"></span>
+                                  <!-- 'unsaved': never saved to the repo (implicit browser-only
+                                       graph). 'changed': the loaded graph has edits the repo copy
+                                       doesn't. Only the loaded graph can report changes — the
+                                       others aren't in memory to compare. -->
+                                  <span class="ml-auto text-xs text-muted-foreground"
+                                        x-text="entry.unsaved ? 'unsaved' : (entry.name === currentGraph && canSave ? 'changed' : '')"></span>
+                                  <span class="icon-[lucide--check] size-4" x-show="entry.name === currentGraph"></span>
+                              </button>
+                          </template>
+                          <div class="my-1 h-px bg-border"></div>
+                          <!-- New Graph: names a fresh graph in this project (fresh auto-layout
+                               from the project's models). Browser-only until its first Save —
+                               that's what moves it from newGraphs into the API listing. -->
+                          <div x-data="{ creating: false, newName: '' }">
+                              <button
+                                      type="button"
+                                      x-show="!creating"
+                                      @click="creating = true; newName = ''; $nextTick(() => $refs.newGraphName.focus())"
+                                      class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+                              >
+                                  <span class="icon-[lucide--plus] size-4"></span>
+                                  <span class="text-muted-foreground">New Graph</span>
+                              </button>
+                              <form
+                                      x-show="creating"
+                                      @submit.prevent="const slug = $draftsman.graphSlug(newName); if (!slug || projectGraphs.some((g) => g.slug === slug)) return; const name = newName.trim(); (newGraphs[currentProject] ??= []).push({ slug, name, unsaved: true }); currentGraph = name; $draftsman.rememberGraph(name); creating = false; open = false; $draftsman.load(name).then(() => { savedGraph = $draftsman.snapshotFingerprint(name) })"
+                                      class="flex items-center gap-1 px-1 py-1"
+                              >
+                                  <input
+                                          x-ref="newGraphName"
+                                          x-model="newName"
+                                          type="text"
+                                          placeholder="Graph name"
+                                          @keydown.escape.stop="creating = false"
+                                          class="w-full min-w-0 rounded-sm border border-border bg-transparent px-2 py-1 text-sm focus:outline-none focus:border-draftsman"
+                                  />
+                                  <button
+                                          type="submit"
+                                          :disabled="!$draftsman.graphSlug(newName) || projectGraphs.some((g) => g.slug === $draftsman.graphSlug(newName))"
+                                          class="rounded-sm px-2 py-1 text-sm text-draftsman hover:bg-accent disabled:pointer-events-none disabled:opacity-50"
+                                  >Create</button>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Backend trouble banner. With people AND agents editing the host
+                       app's files, a broken models API is routine, not exceptional —
+                       so this warns and offers Retry instead of the GUI dying. Driven
+                       by $draftsman.backend (reactive), set by load/rebuild. -->
+                  <div x-show="$draftsman.backend.down" x-cloak x-transition.opacity
+                       style="display: none"
+                       class="mt-2 flex items-center gap-2 rounded-md border border-amber-400/50 bg-amber-50 px-2 py-1.5 text-xs text-amber-800">
+                      <span class="icon-[lucide--triangle-alert] size-4 shrink-0"></span>
+                      <!-- 'unreachable' = it never answered (server not running?);
+                           'error' = it answered brokenly (host app likely mid-edit). -->
+                      <span class="flex-1"
+                            x-text="$draftsman.backend.reason === 'unreachable'
+                                ? 'Project backend is not responding — is it running?'
+                                : 'Project backend is erroring — the app may be mid-edit.'"></span>
+                      <button type="button"
+                              @click="$draftsman.load(currentGraph).then(() => { savedGraph = $draftsman.snapshotFingerprint(currentGraph) })"
+                              class="rounded-sm px-1.5 py-0.5 font-medium hover:bg-amber-100">Retry</button>
+                  </div>
+
+                  <!-- Save / restore the selected graph's layout (repo-backed via the
+                       graphs API, keyed by graph), plus Rebuild and Export. Restore is
+                       disabled until that graph has a session baseline, and re-checks
+                       when the graph changes.
+
+                       The row is a @container, and its width is the sidebar minus 17px
+                       of padding — so the px breakpoints below map to sidebar widths:
+                         313px container  = 330px sidebar  → left group shows labels
+                         24rem  container = ~401px sidebar → Export shows its label
+                       Export needs the higher threshold because its label is the one
+                       that stops fitting first; staggering them keeps the row from ever
+                       overflowing. Below each threshold it's icons-only with tooltips. -->
+
+                  <div class="flex items-center gap-2 @container"
+                       x-data="{ hasSnapshot: false, saving: false, restoring: false, saveFailed: false }"
+                       x-init="hasSnapshot = $draftsman.hasDraft(currentGraph);
+                               $watch('currentGraph', (name) => hasSnapshot = $draftsman.hasDraft(name));
+                               $watch('savedGraph', () => hasSnapshot = $draftsman.hasDraft(currentGraph))"
+                       @keydown.window.ctrl.s.prevent="if (!saving) { saving = true; saveFailed = !(await $draftsman.saveDraft(currentGraph)); hasSnapshot = $draftsman.hasDraft(currentGraph); savedGraph = $draftsman.snapshotFingerprint(currentGraph); saving = false; if (saveFailed) setTimeout(() => saveFailed = false, 5000) }"
+                       @keydown.window.meta.s.prevent="if (!saving) { saving = true; saveFailed = !(await $draftsman.saveDraft(currentGraph)); hasSnapshot = $draftsman.hasDraft(currentGraph); savedGraph = $draftsman.snapshotFingerprint(currentGraph); saving = false; if (saveFailed) setTimeout(() => saveFailed = false, 5000) }">
+                      <!-- Graph-state actions, grouped flush left. Buttons are content-width
+                           (not flex-1), so they need their own horizontal padding. -->
+                      <div class="flex min-w-0 gap-2">
+                          <button
+                                  type="button"
+                                  :title="saving ? 'Saving…' : 'Save'"
+                                  @click="saving = true; saveFailed = !(await $draftsman.saveDraft(currentGraph)); hasSnapshot = $draftsman.hasDraft(currentGraph); savedGraph = $draftsman.snapshotFingerprint(currentGraph); saving = false; if (saveFailed) setTimeout(() => saveFailed = false, 5000)"
+                                  :disabled="!canSave || saving"
+                                  class="flex items-center justify-center gap-1.5 rounded-md bg-sidebar px-2.5 py-1.5 text-xs text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                          >
+                              <span class="size-4 shrink-0" :class="saving ? 'icon-[lucide--loader-circle] animate-spin' : 'icon-[lucide--save]'"></span>
+                              <span class="hidden @min-[313px]:inline" x-text="saving ? 'Saving…' : 'Save'"></span>
+                          </button>
+                          <button
+                                  type="button"
+                                  :title="restoring ? 'Restoring…' : 'Restore'"
+                                  @click="restoring = true; await $draftsman.restoreDraft(currentGraph); savedGraph = $draftsman.snapshotFingerprint(currentGraph); restoring = false"
+                                  :disabled="!hasSnapshot || !canSave || restoring"
+                                  class="flex items-center justify-center gap-1.5 rounded-md bg-sidebar px-2.5 py-1.5 text-xs text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                          >
+                              <span class="size-4 shrink-0" :class="restoring ? 'icon-[lucide--loader-circle] animate-spin' : 'icon-[lucide--rotate-ccw]'"></span>
+                              <span class="hidden @min-[313px]:inline" x-text="restoring ? 'Restoring…' : 'Restore'"></span>
+                          </button>
+                          <button
+                                  type="button"
+                                  title="Rebuild"
+                                  @click="$draftsman.rebuild(currentGraph)"
+                                  class="flex items-center justify-center gap-1.5 rounded-md bg-sidebar px-2.5 py-1.5 text-xs text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none"
+                          >
+                              <span class="icon-[tabler--hammer] size-4.5 opacity-80 shrink-0"></span>
+                              <span class="hidden @min-[313px]:inline">Rebuild</span>
+                          </button>
+                      </div>
+                      <!-- Transient save-failure notice: the baseline didn't advance, so the
+                           graph honestly still reads as changed and Save stays available. -->
+                      <span x-show="saveFailed" x-cloak x-transition.opacity style="display: none"
+                            class="text-xs text-red-600" title="The repo backend rejected the save or is unreachable — your work is still on the canvas; try again.">Save failed</span>
+                      <!-- Export sits apart from the graph-state group, pushed right by its own
+                           `ml-auto` (rather than the row using justify-between, so adding another
+                           left-side button later can't change where this lands). It's slow
+                           (seconds on a large graph) and blocks the main thread, so it shows a
+                           spinner and locks while running; exportImage() yields a couple of
+                           frames first so this state paints before the capture starts. -->
+                      <!-- Export split button: the left half exports immediately using the
+                           saved settings; the caret opens output options. Settings persist
+                           (localStorage), so the common case is a single click. `settings`
+                           is the same object as $draftsman.exportSettings, so mutating it
+                           here updates what exportImage() reads. -->
+                      <!-- `saved` = the output comes from the backend render of the repo copy
+                           (html/pdf always; png/jpeg when Source is As saved) — Area and
+                           Resolution don't apply there. -->
+                      <div class="relative ml-auto flex shrink-0"
+                           x-data="{ open: false, exporting: false, confirmExport: false,
+                                     settings: $draftsman.exportSettings, supported: $draftsman.supportedExportFormats,
+                                     get saved() { return ['html', 'pdf'].includes(this.settings.format)
+                                         || (['png', 'jpeg'].includes(this.settings.format) && this.settings.source === 'rendered') },
+                                     async runExport() { this.exporting = true; await $draftsman.exportImage(currentGraph); this.exporting = false } }">
+                          <button
+                                  type="button"
+                                  :title="exporting ? 'Exporting…' : settings.format === 'html' ? 'Export HTML — saved graph' : `Export ${settings.format.toUpperCase()} — ${settings.scope === 'all' ? 'whole graph' : 'current view'}${settings.format === 'svg' ? '' : `, ${settings.scale}×`}`"
+                                  :disabled="exporting"
+                                  @click="if (saved && canSave) { confirmExport = true } else { await runExport() }"
+                                  class="flex items-center justify-center gap-1.5 rounded-l-md bg-sidebar px-2 py-1.5 text-xs text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-60"
+                          >
+                              <!-- Icon tracks the format: image-down for raster/vector captures,
+                                   file-code when the download is the HTML render page. -->
+                              <span class="size-4 shrink-0" :class="exporting ? 'icon-[lucide--loader-circle] animate-spin' : settings.format === 'html' ? 'icon-[lucide--file-code]' : 'icon-[lucide--image-down]'"></span>
+                              <!-- Export's label needs a wider row than the left group's, so it
+                                   uses a higher breakpoint. Below it, icon-only — the spinner
+                                   still carries the exporting state. -->
+                              <span class="hidden @min-[24rem]:inline" x-text="exporting ? 'Exporting…' : 'Export'"></span>
+                          </button>
+                          <button
+                                  type="button"
+                                  title="Export options"
+                                  @click="open = !open"
+                                  :class="open ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'bg-sidebar'"
+                                  class="mr-1.5 flex items-center rounded-r-md px-0.5 py-1.5 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none"
+                          >
+                              <span class="icon-[lucide--chevron-down] size-3.5 shrink-0 opacity-70"></span>
+                          </button>
+                          <div
+                                  x-show="open"
+                                  x-cloak
+                                  style="display: none"
+                                  @click.outside="open = false"
+                                  @keydown.escape.window="open = false"
+                                  x-transition.origin.top.right
+                                  class="absolute right-0 top-full z-30 mt-1 w-48 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md"
+                          >
+                              <!-- Format first: it gates whether Resolution applies at all.
+                                   `supported` mirrors SUPPORTED_EXPORT_FORMATS — unsupported
+                                   formats stay visible but disabled rather than silently
+                                   exporting a PNG under a .svg/.jpeg name. -->
+                              <div class="px-2 py-1.5 text-xs text-muted-foreground">Format</div>
+                              <!-- SVG is flagged as large on purpose: html-to-image inlines every
+                                   element's computed style, so a busy graph exports tens of MB —
+                                   see the toImage format notes in the AlpineFlow docs. -->
+                              <!-- PDF is backend-rendered: it stays visible but disabled (with a
+                                   hint) when the active project's backend lacks Browsershot — the
+                                   config endpoint's capabilities drive backendCanRender. -->
+                              <template x-for="f in [{ v: 'svg', l: 'SVG', d: 'vector · large' }, { v: 'png', l: 'PNG', d: 'lossless' }, { v: 'jpeg', l: 'JPEG', d: 'smaller' }, { v: 'pdf', l: 'PDF', d: 'doc · from file' }, { v: 'html', l: 'HTML', d: 'page · from file' }]" :key="f.v">
+                                  <button
+                                          type="button"
+                                          :disabled="!supported.includes(f.v) || (f.v === 'pdf' && !$draftsman.backendCanRender('pdf'))"
+                                          :title="!supported.includes(f.v) ? 'Not supported yet'
+                                              : (f.v === 'pdf' && !$draftsman.backendCanRender('pdf') ? 'Project backend needs Browsershot — see the Draftsman README' : '')"
+                                          @click="settings.format = f.v; $draftsman.saveExportSettings()"
+                                          class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-inherit"
+                                  >
+                                      <span x-text="f.l"></span>
+                                      <span class="text-xs text-muted-foreground" x-text="f.d"></span>
+                                      <span class="icon-[lucide--check] ml-auto size-4" x-show="settings.format === f.v"></span>
+                                  </button>
+                              </template>
+                              <div class="my-1 h-px bg-border"></div>
+                              <!-- Source: where png/jpeg bytes come from. Canvas = client capture
+                                   of the LIVE graph; As saved = the backend's Browsershot render of
+                                   the repo copy. Only meaningful for png/jpeg — html/pdf are always
+                                   saved-side, svg always canvas — so the section dims otherwise. -->
+                              <div class="flex items-baseline gap-1.5 px-2 py-1.5 text-xs text-muted-foreground"
+                                   :class="['png', 'jpeg'].includes(settings.format) ? '' : 'opacity-40'">
+                                  <span>Source</span>
+                                  <span x-show="!['png', 'jpeg'].includes(settings.format)" class="text-[10px]" x-text="'fixed for ' + settings.format.toUpperCase()"></span>
+                              </div>
+                              <template x-for="o in [{ v: 'canvas', l: 'Canvas', d: 'live' }, { v: 'rendered', l: 'File', d: 'render' }]" :key="o.v">
+                                  <button
+                                          type="button"
+                                          :disabled="!['png', 'jpeg'].includes(settings.format)
+                                              || (o.v === 'rendered' && !$draftsman.backendCanRender(settings.format))"
+                                          :title="o.v === 'rendered' && ['png', 'jpeg'].includes(settings.format) && !$draftsman.backendCanRender(settings.format)
+                                              ? 'Project backend needs Browsershot — see the Draftsman README' : ''"
+                                          @click="settings.source = o.v; $draftsman.saveExportSettings()"
+                                          class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-inherit"
+                                  >
+                                      <span x-text="o.l"></span>
+                                      <span class="text-xs text-muted-foreground" x-text="o.d"></span>
+                                      <span class="icon-[lucide--check] ml-auto size-4" x-show="settings.source === o.v"></span>
+                                  </button>
+                              </template>
+                              <div class="my-1 h-px bg-border"></div>
+                              <!-- Area is fixed for backend-rendered output: the render always
+                                   shows the whole saved graph, so the section dims and disables. -->
+                              <div class="flex items-baseline gap-1.5 px-2 py-1.5 text-xs text-muted-foreground"
+                                   :class="saved ? 'opacity-40' : ''">
+                                  <span>Area</span>
+                                  <span x-show="saved" class="text-[10px]">whole graph from file</span>
+                              </div>
+                              <template x-for="o in [{ v: 'all', l: 'Whole graph' }, { v: 'viewport', l: 'Current view' }]" :key="o.v">
+                                  <button
+                                          type="button"
+                                          :disabled="saved"
+                                          @click="settings.scope = o.v; $draftsman.saveExportSettings()"
+                                          class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-inherit"
+                                  >
+                                      <span x-text="o.l"></span>
+                                      <span class="icon-[lucide--check] ml-auto size-4" x-show="settings.scope === o.v"></span>
+                                  </button>
+                              </template>
+                              <div class="my-1 h-px bg-border"></div>
+                              <!-- Resolution is meaningless for SVG (no raster multiplier) and for
+                                   backend-rendered output, so the section dims and disables. -->
+                              <div class="flex items-baseline gap-1.5 px-2 py-1.5 text-xs text-muted-foreground"
+                                   :class="settings.format === 'svg' || saved ? 'opacity-40' : ''">
+                                  <span>Resolution</span>
+                                  <span x-show="settings.format === 'svg' || saved" class="text-[10px]" x-text="settings.format === 'svg' ? 'n/a for SVG' : 'fixed by render'"></span>
+                              </div>
+                              <template x-for="s in [1, 2, 3]" :key="s">
+                                  <button
+                                          type="button"
+                                          :disabled="settings.format === 'svg' || saved"
+                                          @click="settings.scale = s; $draftsman.saveExportSettings()"
+                                          class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-inherit"
+                                  >
+                                      <span x-text="s + '×'"></span>
+                                      <span class="text-xs text-muted-foreground" x-text="s === 1 ? '1920×1080' : (s === 2 ? '3840×2160' : '5760×3240')"></span>
+                                      <span class="icon-[lucide--check] ml-auto size-4" x-show="settings.scale === s"></span>
+                                  </button>
+                              </template>
+                          </div>
+
+                          <!-- Unsaved-changes confirm — the app's one dialog. From-file formats
+                               (html/pdf, or png/jpeg with Source: File) render the REPO copy via
+                               the render command, so exporting with unsaved edits would silently
+                               produce a stale file. A clean graph exports without ceremony; only
+                               the dirty + from-file combination asks. -->
+                          <div x-show="confirmExport" x-cloak style="display: none"
+                               x-transition.opacity.duration.150ms
+                               @keydown.escape.window="confirmExport = false"
+                               @click="confirmExport = false"
+                               class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+                              <div @click.stop
+                                   x-show="confirmExport" x-transition
+                                   class="w-[26rem] max-w-[90vw] rounded-xl border border-border bg-popover p-5 text-popover-foreground shadow-2xl">
+                                  <div class="flex items-start gap-3.5">
+                                      <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-400/15">
+                                          <span class="icon-[lucide--save] size-5 text-amber-500"></span>
+                                      </span>
+                                      <div class="min-w-0">
+                                          <div class="text-sm font-medium">Unsaved changes</div>
+                                          <p class="mt-1 text-xs leading-relaxed text-muted-foreground">
+                                              The format you asked for is rendered from the saved file via
+                                              the render command. You have unsaved changes. Would you like
+                                              to save first?
+                                          </p>
+                                      </div>
+                                  </div>
+                                  <!-- pl matches the icon column (size-10 + gap-3.5), so Cancel's
+                                       left edge lines up with the heading text above. -->
+                                  <div class="mt-4 flex items-center gap-2 pl-[3.375rem]">
+                                      <button type="button"
+                                              @click="confirmExport = false"
+                                              class="-ml-3 mr-auto rounded-md px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground focus:outline-none">
+                                          Cancel
+                                      </button>
+                                      <button type="button"
+                                              @click="confirmExport = false; await runExport()"
+                                              class="rounded-md border border-border px-3 py-1.5 text-xs hover:bg-accent hover:text-accent-foreground focus:outline-none">
+                                          Download from Saved
+                                      </button>
+                                      <button type="button"
+                                              @click="confirmExport = false; saving = true;
+                                                      saveFailed = !(await $draftsman.saveDraft(currentGraph));
+                                                      hasSnapshot = $draftsman.hasDraft(currentGraph);
+                                                      savedGraph = $draftsman.snapshotFingerprint(currentGraph);
+                                                      saving = false;
+                                                      if (saveFailed) { setTimeout(() => saveFailed = false, 5000) } else { await runExport() }"
+                                              class="rounded-md bg-draftsman px-3 py-1.5 text-xs font-medium text-white hover:bg-draftsman/90 focus:outline-none">
+                                          Save
+                                      </button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- ===== Tabbed content: fixed tab bar above, scrollable panels below ===== -->
+              <!-- Selecting anything on the canvas jumps back to the Inspector, so the
+                   details appear without hunting for the tab. Two listeners because the
+                   library splits them: nodes and edges fire flow-selection-change, while
+                   rows fire only flow-row-selection-change (canvas-rows.ts) — listening to
+                   one would miss clicking a field, which is the most common case here.
+                   `.window` because the canvas is a sibling of this sidebar, so the events
+                   bubble past it rather than through it.
+                   Only a NON-EMPTY selection switches tabs: clearing a selection (clicking
+                   empty canvas) would otherwise yank you out of Settings mid-edit. -->
+              <div class="flex-1 mt-6 flex flex-col overflow-hidden"
+                   x-data="{ tab: 'inspector' }"
+                   @flow-selection-change.window="if ($event.detail?.nodes?.length || $event.detail?.edges?.length) tab = 'inspector'"
+                   @flow-row-selection-change.window="if ($event.detail?.selectedRows?.length) tab = 'inspector'">
+                  <!-- Tab bar: Inspector / Palette / Settings — fixed, outside the scroll area -->
+                  <div class="flex gap-1 border-sidebar-border p-1 shrink-0">
+                      <template x-for="t in [
+                                    { id: 'inspector', icon: 'icon-[lucide--square-mouse-pointer]' },
+                                    { id: 'palette', icon: 'icon-[lucide--palette]' },
+                                    { id: 'settings', icon: 'icon-[lucide--settings]' },
+                                ]" :key="t.id">
+                          <button
+                                  type="button"
+                                  @click="tab = t.id"
+                                  :class="tab === t.id ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/60'"
+                                  class="flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium capitalize"
+                          >
+                              <span class="size-4 shrink-0" :class="t.icon"></span>
+                              <span x-text="t.id"></span>
+                          </button>
+                      </template>
+                  </div>
+                  <!-- /Tab bar -->
+
+                  <!-- ===== Scrollable panels + inspector ===== -->
+                  <div class="flex-1 overflow-y-auto mt-2">
+
+                  <!-- ===== Inspector panel: node / row / edge details — only shown on the Inspector tab ===== -->
+                      <div x-show="tab === 'inspector'">
+
+                          <!-- Empty state: shown when nothing is selected on the canvas. -->
+                          <div x-show="!hasSelection" class="px-4 py-3 text-[11px] text-text-faint">
+                              <div x-show="canvas?.isInteractive === false" x-cloak style="display: none">
+                                  The canvas is locked
+                              </div>
+                              <!-- The select-something hint holds the fort only until the stack
+                                   card (below) has data — then the card IS the empty state. -->
+                              <div x-show="canvas?.isInteractive !== false && !Object.keys($draftsman.backendInfo.about).length">
+                                  Select a model, field, or relationship to inspect it.
+                              </div>
+
+                              <!-- Current-stack card: the host app's `artisan about` report,
+                                   served by the config endpoint (backendInfo.about). Replaces the
+                                   hint text as the empty state once a backend has answered.
+                                   Collapsed: a curated summary. Details: every section the report
+                                   carries, grouped under sub-headings. -->
+                              <div x-data="{ expanded: false,
+                                             get about() { return $draftsman.backendInfo.about },
+                                             // Title-case word-like keys (application_name → Application Name)
+                                             // but keep paths and URLs verbatim — CSS capitalize would
+                                             // rewrite /Users/ronald into /Users/Ronald.
+                                             label(k) { return /[\/.:]/.test(k) ? k : k.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase()) },
+                                             val(v) { return Array.isArray(v) ? v.join(', ') : String(v) } }"
+                                   x-show="Object.keys(about).length" x-cloak style="display: none">
+                                  <div class="mb-1.5 flex items-baseline gap-1.5">
+                                      <span class="text-xs font-medium text-sidebar-foreground" x-text="about.environment?.application_name"></span>
+                                      <span class="text-[10px]" x-text="about.environment?.environment"></span>
+                                      <button type="button"
+                                              :title="expanded ? 'Summary' : 'Details'"
+                                              class="ml-auto flex cursor-pointer items-center rounded p-0.5 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none"
+                                              @click="expanded = !expanded">
+                                          <span class="size-3.5" :class="expanded ? 'icon-[lucide--chevron-up]' : 'icon-[lucide--chevron-down]'"></span>
+                                      </button>
+                                  </div>
+                                  <!-- Curated summary — the numbers you glance for. -->
+                                  <div x-show="!expanded" class="space-y-0.5">
+                                      <template x-for="row in [
+                                                    ['Laravel', about.environment?.laravel_version],
+                                                    ['PHP', about.environment?.php_version],
+                                                    ['Database', about.drivers?.database],
+                                                    ['Cache', about.drivers?.cache],
+                                                    ['Queue', about.drivers?.queue],
+                                                ].filter((r) => r[1])" :key="row[0]">
+                                          <div class="flex justify-between gap-2">
+                                              <span x-text="row[0]"></span>
+                                              <span class="text-sidebar-foreground/80" x-text="row[1]"></span>
+                                          </div>
+                                      </template>
+                                  </div>
+                                  <!-- The whole report, section by section. -->
+                                  <div x-show="expanded" class="space-y-3">
+                                      <template x-for="[section, entries] in Object.entries(about)" :key="section">
+                                          <div>
+                                              <div class="mb-0.5 text-[10px] font-medium uppercase tracking-wide text-sidebar-foreground/60 capitalize" x-text="label(section)"></div>
+                                              <div class="space-y-0.5">
+                                                  <template x-for="[key, value] in Object.entries(entries)" :key="key">
+                                                      <div class="flex justify-between gap-2">
+                                                          <span class="min-w-0 truncate" :title="label(key)" x-text="label(key)"></span>
+                                                          <span class="min-w-0 shrink-0 truncate text-right text-sidebar-foreground/80" :title="val(value)" x-text="val(value)"></span>
+                                                      </div>
+                                                  </template>
+                                              </div>
+                                          </div>
+                                      </template>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <!-- Node inspector: click a node header / drag-select a node.
+                               READ-ONLY for now: the editing suite (add/remove/rename
+                               fields, delete relationships) lives on the `inspector`
+                               branch, awaiting reimplementation — nothing here may
+                               mutate the graph. -->
+                          <div x-schema-node-inspector class="text-[12px] text-text-body">
+                              <template x-if="selectedNode">
+                                  <div class="border-b border-border-subtle px-4 py-3">
+                                      <div class="mb-3 text-[13px] font-semibold" x-text="selectedNode.data.label"></div>
+                                      <div class="space-y-1">
+                                          <div class="flex justify-between gap-2">
+                                              <span class="text-text-faint">Namespace</span>
+                                              <span class="min-w-0 truncate text-right font-mono text-[11px]" :title="selectedNode.data.namespace" x-text="selectedNode.data.namespace"></span>
+                                          </div>
+                                          <div class="flex justify-between gap-2">
+                                              <span class="text-text-faint">Attributes</span>
+                                              <span class="font-mono text-[11px]" x-text="selectedNode.data.fields.length"></span>
+                                          </div>
+                                          <div class="flex justify-between gap-2">
+                                              <span class="text-text-faint">Relationships</span>
+                                              <span class="font-mono text-[11px]" x-text="$draftsman.edgeCount(selectedNode.id)"></span>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </template>
+                          </div>
+
+                          <!-- Row inspector: click a specific field row inside a model. Read-only:
+                               the attribute's name, its edge count, then every raw field entry
+                               we carry for it, one per line. -->
+                          <div x-schema-row-inspector class="text-[12px] text-text-body">
+                              <template x-if="selectedRow">
+                                  <div class="border-b border-border-subtle px-4 py-3">
+                                      <div class="mb-3 text-[13px] font-semibold" x-text="selectedRow.fieldName"></div>
+                                      <div class="space-y-1">
+                                          <div class="flex justify-between gap-2">
+                                              <span class="text-text-faint">Relationships</span>
+                                              <span class="font-mono text-[11px]" x-text="$draftsman.fieldEdgeCount(selectedRow.nodeId, selectedRow.fieldName)"></span>
+                                          </div>
+                                          <template x-for="[k, v] in Object.entries($draftsman.fieldData(selectedRow.nodeId, selectedRow.fieldName))" :key="k">
+                                              <div class="flex justify-between gap-2">
+                                                  <span class="text-text-faint" x-text="k"></span>
+                                                  <span class="min-w-0 truncate text-right font-mono text-[11px]" :title="String(v)" x-text="String(v)"></span>
+                                              </div>
+                                          </template>
+                                      </div>
+                                  </div>
+                              </template>
+                          </div>
+
+                          <!-- Edge inspector: click a relationship line between two nodes. Read-only. -->
+                          <div x-schema-edge-inspector class="text-[12px] text-text-body">
+                              <template x-if="selectedEdge">
+                                  <div class="px-4 py-3">
+                                      <div class="mb-3 text-[13px] font-semibold">Relationship</div>
+                                      <div class="rounded border border-border-subtle bg-surface-alt px-2 py-1 font-mono text-[10px] text-text-muted">
+                                          <span x-text="selectedEdge.source"></span>.<span x-text="selectedEdge.sourceHandle"></span>
+                                          <span class="text-text-faint">&rarr;</span>
+                                          <span x-text="selectedEdge.target"></span>.<span x-text="selectedEdge.targetHandle"></span>
+                                      </div>
+                                  </div>
+                              </template>
+                          </div>
+                      </div>
+                      <!-- /Inspector tab body -->
+
+                  <!-- ===== Palette panel ===== -->
+                  <div x-show="tab === 'palette'" x-cloak style="display: none">
+                  <!-- palette nav -->
+                  <div class="px-2 py-2 ">
+                      <div class="flex cursor-grab items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" x-flow-draggable="'node'">
+                          <span class="icon-[lucide--hexagon] size-4"></span>
+                          Model
+                      </div>
+                      <!-- Drag onto an existing model to append a field/row to it. -->
+                      <div class="flex cursor-grab items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" x-flow-draggable="'field'">
+                          <span class="icon-[lucide--rectangle-horizontal] size-4"></span>
+                          Attribute
+                      </div>
+                  </div>
+                  </div>
+                  <!-- /Palette panel -->
+
+                  <!-- ===== Settings panel ===== -->
+                  <!-- Three groups (Edge / Layout / App) split into sub-tabs to save
+                       vertical space; the sub-tab bar mirrors the main tab bar's
+                       markup/styling. -->
+                  <div x-show="tab === 'settings'" x-cloak style="display: none" class="px-4 py-4" x-data="{ sub: 'edge' }">
+                      <!-- Settings sub-tab bar — same button styling as the main
+                           Inspector / Palette / Settings bar above. -mx-4 cancels the
+                           panel's px-4 so the bar spans edge-to-edge like that bar. -->
+                      <div class="-mx-4 -mt-4 flex gap-1 border-sidebar-border p-1 mb-2">
+                          <template x-for="s in [
+                                        { id: 'edge', label: 'Elements', icon: 'icon-[lucide--component]' },
+                                        { id: 'layout', label: 'Graph', icon: 'icon-[lucide--drafting-compass]' },
+                                        { id: 'app', label: 'App', icon: 'icon-[lucide--sliders-horizontal]' },
+                                    ]" :key="s.id">
+                              <button
+                                      type="button"
+                                      @click="sub = s.id"
+                                      :class="sub === s.id ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/60'"
+                                      class="flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium capitalize"
+                              >
+                                  <span class="size-4 shrink-0" :class="s.icon"></span>
+                                  <span x-text="s.label"></span>
+                              </button>
+                          </template>
+                      </div>
+
+                      <!-- Edge appearance. Three axes over the shared
+                           $draftsman.edgeSettings object; a change re-applies via
+                           applyEdgeSettings (routing rebuilds, layering is CSS). -->
+                      <div class="space-y-2" x-show="sub === 'edge'" x-data="{ edge: $draftsman.edgeSettings }">
+                          <template x-for="f in [
+                                        { key: 'type', label: 'Edge', options: [
+                                            { v: 'smoothstep', l: 'Smoothstep' },
+                                            { v: 'straight', l: 'Straight' },
+                                            { v: 'bezier', l: 'Curved (Bezier)' },
+                                        ] },
+                                        { key: 'location', label: 'Location', options: [
+                                            { v: 'between', l: 'Between' },
+                                            { v: 'front', l: 'In Front' },
+                                            { v: 'behind', l: 'Behind' },
+                                        ] },
+                                        /* TEMP (2026-07-26): Dots + Feet hidden pending Ron's review —
+                                           the caps still work (edge-end-caps.ts untouched); to restore,
+                                           re-add { v: 'dots', l: 'Dots' }, { v: 'feet', l: 'Feet' } here. */
+                                        { key: 'endCap', label: 'End Cap', options: [
+                                            { v: 'none', l: 'None' },
+                                            { v: 'arrows', l: 'Arrows' },
+                                            { v: 'notation', l: 'Notation' },
+                                        ] },
+                                    ]" :key="f.key">
+                              <label class="flex items-center justify-between gap-2 text-sm text-sidebar-foreground">
+                                  <span x-text="f.label"></span>
+                                  <div class="relative">
+                                  <!-- x-effect is load-bearing: x-model assigns the value before
+                                       x-for has rendered the options, so the browser rejects it and
+                                       falls back to the first entry — leaving the menu showing
+                                       something the canvas isn't doing. This re-asserts it once the
+                                       options exist, and keeps it in sync afterwards. -->
+                                      <select
+                                              x-model="edge[f.key]"
+                                              x-effect="edge[f.key]; $nextTick(() => { $el.value = edge[f.key] })"
+                                              @change="$draftsman.applyEdgeSettings()"
+                                              class="w-40 cursor-pointer appearance-none rounded-md border border-sidebar-border bg-sidebar py-1 pl-2 pr-7 text-sm text-sidebar-foreground hover:bg-sidebar-accent focus:outline-none disabled:cursor-default disabled:opacity-40 disabled:hover:bg-sidebar"
+                                      >
+                                          <template x-for="o in f.options" :key="o.v">
+                                              <option :value="o.v" x-text="o.l"></option>
+                                          </template>
+                                      </select>
+                                      <span class="icon-[lucide--chevrons-up-down] pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 opacity-50"></span>
+                                  </div>
+                              </label>
+                          </template>
+                          <!-- Namespace subtitle visibility. Kept out of edgeSettings (it's a
+                               node-header concern, not an edge one) and applied live via a
+                               container class, so no relayout. Static options → no x-effect dance. -->
+                          <label class="flex items-center justify-between gap-2 text-sm text-sidebar-foreground"
+                                 x-data="{ ns: $draftsman.showNamespace ? 'show' : 'hide' }">
+                              <span>Namespace</span>
+                              <div class="relative">
+                                  <select
+                                          x-model="ns"
+                                          @change="$draftsman.setShowNamespace(ns === 'show', currentGraph)"
+                                          class="w-40 cursor-pointer appearance-none rounded-md border border-sidebar-border bg-sidebar py-1 pl-2 pr-7 text-sm text-sidebar-foreground hover:bg-sidebar-accent focus:outline-none"
+                                  >
+                                      <option value="show">Show</option>
+                                      <option value="hide">Hide</option>
+                                  </select>
+                                  <span class="icon-[lucide--chevrons-up-down] pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 opacity-50"></span>
+                              </div>
+                          </label>
+                      </div>
+
+                      <!-- Layout dimensions (px). Bind to the shared $draftsman.layout
+                           object; a change re-lays-out the graph via rebuild. -->
+                      <div class="space-y-2" x-show="sub === 'layout'" x-data="{ layout: $draftsman.layout }">
+                          <!-- Background: the frontv grid layer (grid-background.ts); switching
+                               re-installs it live. Static options, so no x-effect dance needed. -->
+                          <label class="flex items-center justify-between gap-2 text-sm text-sidebar-foreground"
+                                 x-data="{ bg: $draftsman.gridBackground }">
+                              <span>Background</span>
+                              <div class="relative">
+                                  <select
+                                          x-model="bg"
+                                          @change="$draftsman.setGridBackground(bg)"
+                                          class="w-40 cursor-pointer appearance-none rounded-md border border-sidebar-border bg-sidebar py-1 pl-2 pr-7 text-sm text-sidebar-foreground hover:bg-sidebar-accent focus:outline-none"
+                                  >
+                                      <option value="none">None</option>
+                                      <option value="dots">Dots</option>
+                                      <option value="cross">Cross</option>
+                                      <option value="lines">Lines</option>
+                                  </select>
+                                  <span class="icon-[lucide--chevrons-up-down] pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 opacity-50"></span>
+                              </div>
+                          </label>
+                          <!-- snap = grid module each field rounds UP to on commit; off = its
+                                phase within that module. All fields snap to the 28px grid; rowpad
+                                is a half-odd cell (≡14 mod 28) so header+rowpad stays whole and
+                                node corners land on grid. -->
+                          <template x-for="f in [
+                                        { key: 'columnWidth', label: 'Column width', snap: 28, off: 0 },
+                                        { key: 'gutterWidth', label: 'Gutter width', snap: 28, off: 0 },
+                                        { key: 'highwayHeight', label: 'Highway height', snap: 28, off: 0 },
+                                        { key: 'highwaysEvery', label: 'Highways every', snap: 28, off: 0 },
+                                        { key: 'rowpadHeight', label: 'Backfill padding', snap: 28, off: 14 },
+                                    ]" :key="f.key">
+                              <label class="flex items-center justify-between gap-2 text-sm text-sidebar-foreground">
+                                  <span x-text="f.label"></span>
+                                  <!-- Number field: the spinner arrows/keys step by the field's grid
+                                        module (min sets the phase, so rowpad steps on its half-odd
+                                        ladder). On commit (blur/tab/Enter) the same handler snaps
+                                        typed values UP to that module and relayouts. -->
+                                  <input
+                                          type="number"
+                                          :step="f.snap"
+                                          :min="f.off || f.snap"
+                                          :value="layout[f.key]"
+                                          @keydown.enter="$event.target.blur()"
+                                          @change="
+                                              let v = $draftsman.snapToGrid(parseInt($event.target.value, 10), f.snap, f.off);
+                                              if (v !== null && v !== layout[f.key]) {
+                                                  layout[f.key] = v;
+                                                  $draftsman.rebuild(currentGraph);
+                                              }
+                                              $event.target.value = layout[f.key];
+                                          "
+                                          class="w-20 rounded-md border border-sidebar-border bg-sidebar px-2 py-1 text-sm text-sidebar-foreground focus:outline-none"
+                                  >
+                              </label>
+                          </template>
+                          <!-- Forget this graph's saved layout and rebuild from its
+                                size tier's defaults (small/medium/large/xl by model
+                                count — see layout-settings.ts). -->
+                          <button
+                                  type="button"
+                                  title="Reset layout to this graph's size-tier defaults"
+                                  @click="$draftsman.resetLayoutDefaults(currentGraph)"
+                                  class="flex w-full items-center justify-center gap-1.5 rounded-md bg-sidebar px-2.5 py-1.5 text-xs text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none"
+                          >
+                              <span class="icon-[lucide--rotate-ccw] size-4 shrink-0"></span>
+                              <span>Reset to size defaults</span>
+                          </button>
+                      </div>
+
+                      <!-- App settings — application-wide preferences persisted in
+                           localStorage (vs the per-graph Elements/Graph groups). The
+                           panel mutates $draftsman.appSettings directly, then
+                           applyAppSettings() saves + applies (appearance and panel
+                           placement live; history depth on the next load). -->
+                      <div class="space-y-2" x-show="sub === 'app'" x-data="{ app: $draftsman.appSettings }">
+                          <template x-for="f in [
+                                        { key: 'appearance', label: 'Appearance', options: [
+                                            { v: 'light', l: 'Light' },
+                                            { v: 'dark', l: 'Dark' },
+                                            { v: 'system', l: 'System' },
+                                        ] },
+                                        { key: 'controlBar', label: 'Control Bar', options: [
+                                            { v: 'top-left', l: 'Top Left' },
+                                            { v: 'top-right', l: 'Top Right' },
+                                            { v: 'bottom-left', l: 'Bottom Left' },
+                                            { v: 'bottom-right', l: 'Bottom Right' },
+                                            { v: 'off', l: 'Off' },
+                                        ] },
+                                        { key: 'miniMap', label: 'Mini Map', options: [
+                                            { v: 'top-left', l: 'Top Left' },
+                                            { v: 'top-right', l: 'Top Right' },
+                                            { v: 'bottom-left', l: 'Bottom Left' },
+                                            { v: 'bottom-right', l: 'Bottom Right' },
+                                            { v: 'off', l: 'Off' },
+                                        ] },
+                                    ]" :key="f.key">
+                              <label class="flex items-center justify-between gap-2 text-sm text-sidebar-foreground">
+                                  <span x-text="f.label"></span>
+                                  <div class="relative">
+                                      <!-- x-effect: same dance as the Elements panel — x-model
+                                           assigns before x-for renders the options, so this
+                                           re-asserts the value once they exist. -->
+                                      <select
+                                              x-model="app[f.key]"
+                                              x-effect="app[f.key]; $nextTick(() => { $el.value = app[f.key] })"
+                                              @change="$draftsman.applyAppSettings()"
+                                              class="w-40 cursor-pointer appearance-none rounded-md border border-sidebar-border bg-sidebar py-1 pl-2 pr-7 text-sm text-sidebar-foreground hover:bg-sidebar-accent focus:outline-none"
+                                      >
+                                          <template x-for="o in f.options" :key="o.v">
+                                              <option :value="o.v" x-text="o.l"></option>
+                                          </template>
+                                      </select>
+                                      <span class="icon-[lucide--chevrons-up-down] pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 opacity-50"></span>
+                                  </div>
+                              </label>
+                          </template>
+                          <label class="flex items-center justify-between gap-2 text-sm text-sidebar-foreground">
+                              <span>History Depth</span>
+                              <!-- applyAppSettings clamps (1–500); write the clamped value
+                                   back so the field never shows something that wasn't kept. -->
+                              <input
+                                      type="text"
+                                      inputmode="numeric"
+                                      :value="app.historyDepth"
+                                      @change="
+                                          app.historyDepth = $event.target.value;
+                                          $draftsman.applyAppSettings();
+                                          $event.target.value = app.historyDepth;
+                                      "
+                                      class="w-20 rounded-md border border-sidebar-border bg-sidebar px-2 py-1 text-sm text-sidebar-foreground focus:outline-none"
+                              >
+                          </label>
+                          <p class="px-1 text-[11px] text-text-faint">History depth applies the next time the app loads.</p>
+                      </div>
+                  </div>
+
+
+                  </div>
+              <!-- /Scrollable panels + inspector -->
+              </div>
+              <!-- /tabbed content -->
+
+              <!-- ===== Sidebar footer: links + user menu ===== -->
+              <div class="mt-auto border-t border-sidebar-border p-2">
+                  <a href="https://draftsman.dev/pricing" target="_blank" rel="noopener noreferrer"
+                     class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                      <span class="icon-[lucide--key-round] size-4"></span>
+                      <span>Free Trial</span>
+                  </a>
+                  <a href="https://github.com/draftsmaninc/draftsman" target="_blank" rel="noopener noreferrer"
+                     class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                      <span class="icon-[lucide--folder-git-2] size-4"></span>
+                      <span>Repository</span>
+                  </a>
+                  <a href="https://draftsman.dev" target="_blank" rel="noopener noreferrer"
+                     class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                      <span class="icon-[lucide--book-open] size-4"></span>
+                      <span>Documentation</span>
+                  </a>
+
+                  <!-- User menu dropdown (opens upward) -->
+                  <div x-data="{ open: false }" class="relative mt-1">
+                      <!-- x-cloak: every visible label here is x-text-driven, so pre-Alpine
+                           this paints as an empty avatar rect. No x-show, so an inline
+                           display:none would stick — the cloak lifts itself at init. -->
+                      <button
+                              x-cloak
+                              type="button"
+                              @click="open = !open"
+                              :class="open ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''"
+                              class="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      >
+                          <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-[11px] font-medium text-sidebar-primary-foreground" x-text="userInitials"></span>
+                          <span class="grid flex-1 text-left leading-tight">
+                              <span class="truncate font-medium" x-text="userName"></span>
+                              <span class="truncate text-xs text-muted-foreground" x-text="userEmail"></span>
+                          </span>
+                          <span class="icon-[lucide--chevrons-up-down] ml-auto size-4"></span>
+                      </button>
+                      <div
+                              x-show="open"
+                              x-cloak
+                              style="display: none"
+                              @click.outside="open = false"
+                              @keydown.escape.window="open = false"
+                              x-transition.origin.bottom
+                              class="absolute bottom-full left-0 z-30 mb-1 w-full min-w-56 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md"
+                      >
+                          <div class="flex items-center gap-2 px-2 py-1.5 text-sm">
+                              <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-[11px] font-medium text-sidebar-primary-foreground" x-text="userInitials"></span>
+                              <span class="grid flex-1 leading-tight">
+                                  <span class="truncate font-medium" x-text="userName"></span>
+                                  <span class="truncate text-xs text-muted-foreground" x-text="userEmail"></span>
+                              </span>
+                          </div>
+                          <div class="my-1 h-px bg-border"></div>
+                          <a href="#" class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground">
+                              <span class="icon-[lucide--settings] size-4"></span>
+                              <span>Settings</span>
+                          </a>
+                          <div class="my-1 h-px bg-border"></div>
+                          <a href="#" class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground">
+                              <span class="icon-[lucide--log-out] size-4"></span>
+                              <span>Log out</span>
+                          </a>
+                      </div>
+                  </div>
+              </div>
+          </aside>
+          <!-- Drag handle to resize the inspector sidebar. Sits at the panel's right edge. -->
+          <div
+                  @mousedown.prevent="startResize($event)"
+                  :style="sidebarSide === 'left' ? { left: (sidebarWidth - 5) + 'px', right: '' } : { right: (sidebarWidth - 5) + 'px', left: '' }"
+                  :class="resizing ? 'bg-violet/60' : 'bg-transparent hover:bg-violet/40'"
+                  class="absolute inset-y-0 z-20 w-[10px] cursor-col-resize transition-colors"
+          ></div>
+      </div>
+  </body>
+</html>
