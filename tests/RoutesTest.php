@@ -6,12 +6,12 @@ it('defaults to the layout', function () {
     $response->assertSee('Draftsman');
 });
 
-it('gets a js file from _next ', function () {
-    $base_url = '/draftsman/_next/static/chunks/';
-    $next_dir = 'resources/front/_next/static/chunks/';
+it('gets a js file from assets', function () {
+    $base_url = '/draftsman/assets/';
+    $front_dir = 'resources/front/assets/';
     $package_root_path = '/../';
     $pattern = '*.js';
-    $dir = $package_root_path.$next_dir;
+    $dir = $package_root_path.$front_dir;
     $dir = __DIR__.implode(DIRECTORY_SEPARATOR, explode('/', $dir));
     $files = glob($dir.$pattern);
     $file = $files[array_rand($files)];
@@ -20,12 +20,12 @@ it('gets a js file from _next ', function () {
     $response->assertStatus(200);
 });
 
-it('gets a css file from _next ', function () {
-    $base_url = '/draftsman/_next/static/chunks/';
-    $next_dir = 'resources/front/_next/static/chunks/';
+it('gets a css file from assets', function () {
+    $base_url = '/draftsman/assets/';
+    $front_dir = 'resources/front/assets/';
     $package_root_path = '/../';
     $pattern = '*.css';
-    $dir = $package_root_path.$next_dir;
+    $dir = $package_root_path.$front_dir;
     $dir = __DIR__.implode(DIRECTORY_SEPARATOR, explode('/', $dir));
     $files = glob($dir.$pattern);
     $file = $files[array_rand($files)];
@@ -34,12 +34,12 @@ it('gets a css file from _next ', function () {
     $response->assertStatus(200);
 });
 
-it('gets a txt file from front root ', function () {
+it('gets an svg file from front root', function () {
     $base_url = '/draftsman/';
-    $next_dir = 'resources/front/';
+    $front_dir = 'resources/front/';
     $package_root_path = '/../';
-    $pattern = '*.txt';
-    $dir = $package_root_path.$next_dir;
+    $pattern = '*.svg';
+    $dir = $package_root_path.$front_dir;
     $dir = __DIR__.implode(DIRECTORY_SEPARATOR, explode('/', $dir));
     $files = glob($dir.$pattern);
     $file = $files[array_rand($files)];
