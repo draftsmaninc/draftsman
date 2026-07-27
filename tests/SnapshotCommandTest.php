@@ -9,9 +9,9 @@ it('saves snapshot to default config path when no --path is provided', function 
     if (File::exists($defaultDir)) {
         File::deleteDirectory($defaultDir);
     }
-    // Mock the config setting that the command actually reads
-    // The command uses config('draftsman.snapshot_path'), so we set that here
-    config(['draftsman.snapshot_path' => $defaultDir]);
+    // Point the shipped config key (package.snapshot_path — what
+    // DRAFTSMAN_SNAPSHOT_PATH feeds) at the test directory.
+    config(['draftsman.package.snapshot_path' => $defaultDir]);
 
     // Act
     $exit = Artisan::call('draftsman:snapshot');

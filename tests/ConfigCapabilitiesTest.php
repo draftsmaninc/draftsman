@@ -1,6 +1,8 @@
 <?php
 
 use Draftsman\Draftsman\Actions\RenderGraphImage;
+use Draftsman\Draftsman\DraftsmanServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * The config endpoint reports what this backend can DO alongside what it's
@@ -33,25 +35,34 @@ it('includes the host app about report (artisan about --json)', function () {
         ->and($about['environment'])->toHaveKey('laravel_version');
 });
 
+it('does not offer the views for publishing — the render template is internal', function () {
+    $tagged = ServiceProvider::pathsToPublish(
+        DraftsmanServiceProvider::class,
+        'draftsman-views',
+    );
+
+    expect($tagged)->toBe([]);
+});
+
+it('still resolves the render template through the draftsman:: namespace', function () {
+    expect(view()->exists('draftsman::graph-render'))->toBeTrue();
+});
+
 /**
- * Contract for the shipped config file: only sections and keys with a consumer
- * or a committed purpose. The pre-graph-era front/graph sections and the dead
- * package keys (draftsman_path, model_class) are gone; editor/editor_flags
- * stay for the planned open-in-IDE inspector buttons.
+ * Contract for the shipped config file: only keys with a live consumer. The
+ * pre-graph-era front/graph sections and every dead key (draftsman_path,
+ * model_class, editor, editor_flags, browser, update_env) are gone — editor
+ * keys can return WITH the open-in-IDE feature, not ahead of it.
  */
 it('ships a lean config: live keys only', function () {
     $config = include dirname(__DIR__).'/config/draftsman.php';
 
     expect(array_keys($config))->toBe(['package'])
         ->and(array_keys($config['package']))->toBe([
-            'editor',
-            'editor_flags',
-            'browser',
             'models_path',
             'snapshot_path',
             'graphs_path',
             'node_binary',
             'npm_binary',
-            'update_env',
         ]);
 });

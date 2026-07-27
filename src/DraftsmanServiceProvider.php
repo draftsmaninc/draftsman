@@ -20,12 +20,20 @@ class DraftsmanServiceProvider extends PackageServiceProvider
         $package
             ->name('draftsman')
             ->hasConfigFile()
-            ->hasViews()
             ->hasRoute('web')
             ->hasCommands([
                 DraftsmanInstallCommand::class,
                 DraftsmanRenderCommand::class,
                 DraftsmanSnapshotCommand::class,
             ]);
+    }
+
+    public function packageBooted(): void
+    {
+        // The render template is internal: registered straight on the view
+        // factory (not hasViews()) so there is no draftsman-views publish tag
+        // and no views/vendor/draftsman override path. Rendered output must
+        // match what the UI saved — a stale host copy would silently win.
+        $this->app['view']->addNamespace('draftsman', __DIR__.'/../resources/views');
     }
 }
