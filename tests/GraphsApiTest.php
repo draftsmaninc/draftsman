@@ -134,7 +134,7 @@ it('streams a pdf download when Browsershot is available', function () {
     File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
     app()->instance(RenderGraphImage::class, new FakeRenderGraphImage);
 
-    $response = $this->get('/draftsman/render/teams?format=pdf');
+    $response = $this->get('/draftsman/api/render/teams?format=pdf');
 
     $response->assertOk()
         ->assertDownload('teams.pdf');
@@ -145,7 +145,7 @@ it('serves the html page when no format is asked for', function () {
     File::ensureDirectoryExists($this->graphsDir);
     File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
 
-    $this->get('/draftsman/render/teams')
+    $this->get('/draftsman/api/render/teams')
         ->assertOk()
         ->assertSee('flow-schema-node', false);
 });
@@ -154,7 +154,7 @@ it('answers 501 for image formats when Browsershot is missing', function () {
     File::ensureDirectoryExists($this->graphsDir);
     File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
 
-    $this->get('/draftsman/render/teams?format=pdf')->assertStatus(501);
+    $this->get('/draftsman/api/render/teams?format=pdf')->assertStatus(501);
 });
 
 it('rejects unknown render formats with 400', function () {
@@ -162,11 +162,11 @@ it('rejects unknown render formats with 400', function () {
     File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
     app()->instance(RenderGraphImage::class, new FakeRenderGraphImage);
 
-    $this->get('/draftsman/render/teams?format=webp')->assertStatus(400);
+    $this->get('/draftsman/api/render/teams?format=webp')->assertStatus(400);
 });
 
 it('still 404s an unsaved graph regardless of format', function () {
     app()->instance(RenderGraphImage::class, new FakeRenderGraphImage);
 
-    $this->get('/draftsman/render/nope?format=pdf')->assertNotFound();
+    $this->get('/draftsman/api/render/nope?format=pdf')->assertNotFound();
 });

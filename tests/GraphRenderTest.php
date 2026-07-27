@@ -16,7 +16,7 @@ it('renders a saved graph as a static page', function () {
     File::ensureDirectoryExists($this->graphsDir);
     File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
 
-    $response = $this->get('/draftsman/render/teams');
+    $response = $this->get('/draftsman/api/render/teams');
 
     $response->assertOk()
         // Node chrome: positioned wrapper, header title, namespace subtitle.
@@ -44,15 +44,15 @@ it('skips edges that never captured a rendered path', function () {
     File::ensureDirectoryExists($this->graphsDir);
     File::put($this->graphsDir.DIRECTORY_SEPARATOR.'teams.json', json_encode(renderableGraphDocument()));
 
-    $this->get('/draftsman/render/teams')
+    $this->get('/draftsman/api/render/teams')
         ->assertOk()
         ->assertDontSee('pathless-edge');
 });
 
 it('404s for a graph that has not been saved', function () {
-    $this->get('/draftsman/render/nope')->assertNotFound();
+    $this->get('/draftsman/api/render/nope')->assertNotFound();
 });
 
 it('404s for slugs outside the safe alphabet', function () {
-    $this->get('/draftsman/render/'.rawurlencode('..evil'))->assertNotFound();
+    $this->get('/draftsman/api/render/'.rawurlencode('..evil'))->assertNotFound();
 });

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 /**
  * Render a saved graph document as the static, JS-free HTML page.
  *
- * Shared by the `/draftsman/render/{slug}` route and the `draftsman:render`
+ * Shared by the `/draftsman/api/render/{slug}` route and the `draftsman:render`
  * command. Mirrors the DOM the live x-flow-schema canvas produces, styled by
  * the compiled frontend CSS, with edges drawn from the SVG paths frontv
  * captured at save time (edge.data.path). All geometry comes from the

@@ -27,7 +27,7 @@ A GitHub Action runs Pint on every push and auto-commits a "Fix styling" commit;
 
 **Routing** (`routes/web.php`): everything lives under the `/draftsman` prefix.
 - `GET /draftsman` serves the UI index.
-- `/draftsman/api/*` is the JSON API: `models` and `relations` apiResources (controllers in `src/Http/Controllers/ApiV1/`), plus `GET|POST config`.
+- `/draftsman/api/*` is the JSON API: `models` and `relations` apiResources (controllers in `src/Http/Controllers/ApiV1/`), `GET|POST config`, the `graphs` endpoints, and `GET api/render/{slug}` (server-rendered graph page/binaries).
 - A catch-all slug route (`draftsman.front`) serves static frontend assets.
 
 **Frontend**: `resources/front/` is a *prebuilt* Next.js static export committed to the repo (the "Build front" commits). The frontend source is not in this repository — do not hand-edit files under `resources/front/`. `DraftsmanController` streams these files from the package directory and patches MIME types (css/js/json/svg) that `mime_content_type` misreports.

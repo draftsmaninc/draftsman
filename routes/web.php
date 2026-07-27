@@ -20,9 +20,8 @@ Route::prefix('draftsman')->group(function () {
         Route::get('graphs/{slug}', [GraphsController::class, 'show']);
         Route::put('graphs/{slug}', [GraphsController::class, 'store']);
         Route::delete('graphs/{slug}', [GraphsController::class, 'destroy']);
+        Route::get('render/{slug}', [GraphsController::class, 'render'])->name('draftsman.render');
     });
-
-    Route::get('render/{slug}', [GraphsController::class, 'render'])->name('draftsman.render');
 
     Route::get(
         '/{slug0?}/{slug1?}/{slug2?}/{slug3?}/{slug4?}/{slug5?}/{slug6?}/{slug7?}/{slug8?}/{slug9?}',
