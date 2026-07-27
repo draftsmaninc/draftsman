@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -592,6 +593,20 @@ class ApiController extends BaseController
                         continue;
                     }
                     $seen[$target] = true;
+                    // THE one table-existence gate, for this exact class only:
+                    // the Notifiable trait puts notifications() on virtually
+                    // every app's User, so DatabaseNotification would tag
+                    // along into EVERY payload — unlike other vendor targets,
+                    // which only appear because a relation deliberately
+                    // declared them. If the notifications migration never
+                    // ran, the app doesn't really use them: keep it off the
+                    // vendor list.
+                    if ($target === DatabaseNotification::class) {
+                        $mod = new $target;
+                        if (! $mod->getConnection()->getSchemaBuilder()->hasTable($mod->getTable())) {
+                            continue;
+                        }
+                    }
                     $queue[] = $target;
                 }
             }

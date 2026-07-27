@@ -98,6 +98,67 @@ it('introspects vendor models like any other — relations included', function (
         ->and($parts->to)->toBe('VendorLib\\WidgetPart');
 });
 
+it('omits DatabaseNotification when the notifications table was never migrated', function () {
+    // THE one table-existence gate, for this exact class only: the Notifiable
+    // trait puts notifications() on virtually every app's User, so
+    // DatabaseNotification would tag along into every payload — unlike other
+    // vendor models, which only appear because a relation deliberately
+    // declared them. The table's existence is the real signal.
+    File::put(app_path('Models/Notifier.php'), <<<'PHP'
+    <?php
+
+    namespace App\Models;
+
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Notifications\Notifiable;
+
+    class Notifier extends Model
+    {
+        use Notifiable;
+
+        protected $table = 'users';
+    }
+    PHP);
+    require_once app_path('Models/Notifier.php');
+    // deliberately NO notifications table
+
+    $models = collect((new ApiController)->getModels())->keyBy('class');
+
+    expect($models)->not->toHaveKey('Illuminate\\Notifications\\DatabaseNotification');
+});
+
+it('includes DatabaseNotification once the notifications table exists', function () {
+    File::put(app_path('Models/Notifier.php'), <<<'PHP'
+    <?php
+
+    namespace App\Models;
+
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Notifications\Notifiable;
+
+    class Notifier extends Model
+    {
+        use Notifiable;
+
+        protected $table = 'users';
+    }
+    PHP);
+    require_once app_path('Models/Notifier.php');
+    Schema::create('notifications', function ($table) {
+        $table->uuid('id')->primary();
+        $table->string('type');
+        $table->morphs('notifiable');
+        $table->text('data');
+        $table->timestamp('read_at')->nullable();
+        $table->timestamps();
+    });
+
+    $models = collect((new ApiController)->getModels())->keyBy('class');
+
+    expect($models)->toHaveKey('Illuminate\\Notifications\\DatabaseNotification')
+        ->and($models['Illuminate\\Notifications\\DatabaseNotification']->vendor)->toBeTrue();
+});
+
 it('survives a relation method that throws, keeping the rest of the model', function () {
     // Widget::proParts() throws on invocation (the medialibrary-pro pattern).
     // The model must still emit with its healthy relations; the throwing one
