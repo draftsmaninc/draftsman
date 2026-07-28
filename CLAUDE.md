@@ -27,7 +27,7 @@ A GitHub Action runs Pint on every push and auto-commits a "Fix styling" commit;
 
 **Routing** (`routes/web.php`): everything lives under the `/draftsman` prefix.
 - `GET /draftsman` serves the UI index.
-- `/draftsman/api/*` is the JSON API: `models` and `relations` apiResources (controllers in `src/Http/Controllers/ApiV1/`), `GET|POST config`, the `graphs` endpoints, and `GET api/render/{slug}` (server-rendered graph page/binaries).
+- `/draftsman/api/*` is the JSON API: `models` and `relations` apiResources (controllers in `src/Http/Controllers/ApiV1/`), `GET models/changed` (uncommitted model-file deletions via git, see `Actions/ChangedFiles`; additions/modifications ride the models payload as `changed`/`created` flags), `GET|POST config`, the `graphs` endpoints, and `GET api/render/{slug}` (server-rendered graph page/binaries).
 - A catch-all slug route (`draftsman.front`) serves static frontend assets.
 
 **Frontend**: `resources/front/` is a *prebuilt* Vite build committed to the repo, produced by the sibling `frontv` repo's `npm run front:sync` (which builds with the `/draftsman/` base prefix and rsyncs `dist/` here). The frontend source is not in this repository — do not hand-edit files under `resources/front/`. `DraftsmanController` streams these files from the package directory and patches MIME types (css/js/json/svg) that `mime_content_type` misreports.

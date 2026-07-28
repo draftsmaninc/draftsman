@@ -2,6 +2,7 @@
 
 namespace Draftsman\Draftsman\Http\Controllers\ApiV1;
 
+use Draftsman\Draftsman\Actions\ChangedFiles;
 use Draftsman\Draftsman\Actions\GetDraftsmanConfig;
 use Draftsman\Draftsman\Actions\RenderGraphImage;
 use Draftsman\Draftsman\Actions\UpdateDraftsmanConfig;
@@ -256,7 +257,7 @@ class ApiController extends BaseController
      * shape their UI on it (e.g. the download menu offers pdf only when
      * render/{slug}?format=pdf would actually work).
      */
-    public function getConfig(GetDraftsmanConfig $action, RenderGraphImage $imageRenderer)
+    public function getConfig(GetDraftsmanConfig $action, RenderGraphImage $imageRenderer, ChangedFiles $changedFiles)
     {
         try {
             $data = $action->handle();
@@ -265,6 +266,11 @@ class ApiController extends BaseController
                     'formats' => $imageRenderer->available()
                         ? ['html', ...RenderGraphImage::FORMATS]
                         : ['html'],
+                ],
+                // Whether the host is a git work tree — when true, model
+                // entries may carry `changed` (uncommitted-file) flags.
+                'git' => [
+                    'available' => $changedFiles->available(),
                 ],
             ];
             // The host app's `artisan about` report (versions, drivers,
@@ -563,6 +569,12 @@ class ApiController extends BaseController
      */
     public function getModels(): array
     {
+        // Uncommitted-change flags, one git invocation for the whole payload.
+        // Empty when the host isn't a git work tree — capability-gated, see
+        // ChangedFiles and capabilities.git in getConfig.
+        $changedFiles = app(ChangedFiles::class);
+        $changed = $changedFiles->available() ? $changedFiles->handle() : [];
+
         $data = [];
         $queue = $this->getModelsList();
         $appModels = array_flip($queue);
@@ -576,6 +588,16 @@ class ApiController extends BaseController
             }
             if (! isset($appModels[$model])) {
                 $show->vendor = true;
+            }
+            if (isset($show->file, $changed[$show->file])) {
+                $show->changed = true;
+                // Git-new (untracked or index-added): the model didn't exist
+                // at HEAD, so a saved graph legitimately won't have it —
+                // frontends use this to tell "new model" from "deliberately
+                // left out of the graph".
+                if ($changed[$show->file] === 'added') {
+                    $show->created = true;
+                }
             }
             $data[] = $show;
 
@@ -788,6 +810,37 @@ class ApiController extends BaseController
             });
 
         return $models->values()->sort()->toArray();
+    }
+
+    /**
+     * Uncommitted DELETIONS in the host app's class space — the change kind
+     * that can't ride the models payload (the class is gone, there is nothing
+     * to introspect). Classes are guessed from the file path with the same
+     * root-namespace convention getModelsList scans by; a guess that was never
+     * a model simply won't match any node frontend-side. Additions and
+     * modifications ride the models payload itself (`changed`/`created`).
+     */
+    public function getModelChanges(ChangedFiles $changedFiles)
+    {
+        if (! $changedFiles->available()) {
+            return response()->json(['available' => false, 'deleted' => []]);
+        }
+
+        $appPath = (realpath(app_path()) ?: app_path()).DIRECTORY_SEPARATOR;
+        $deleted = [];
+        foreach ($changedFiles->handle() as $file => $status) {
+            if ($status !== 'deleted' || ! str_starts_with($file, $appPath) || ! str_ends_with($file, '.php')) {
+                continue;
+            }
+            $relative = substr($file, strlen($appPath));
+            $deleted[] = [
+                'file' => $file,
+                'class' => Container::getInstance()->getNamespace()
+                    .strtr(substr($relative, 0, -4), DIRECTORY_SEPARATOR, '\\'),
+            ];
+        }
+
+        return response()->json(['available' => true, 'deleted' => $deleted]);
     }
 
     /**

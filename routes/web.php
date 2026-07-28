@@ -12,6 +12,7 @@ Route::prefix('draftsman')->group(function () {
 
     Route::prefix('api')->group(function () {
         Route::get('models/presorted', [ModelsController::class, 'presorted']);
+        Route::get('models/changed', [ApiController::class, 'getModelChanges']);
         Route::apiResource('models', ModelsController::class);
         Route::apiResource('relations', RelationsController::class);
         Route::get('config', [ApiController::class, 'getConfig']);
