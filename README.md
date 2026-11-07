@@ -68,14 +68,6 @@ pivot tables your relations reach — and lays them out as an interactive
 diagram. Graphs you save land as JSON documents in `graphs_path`
 (`draftsman/` by default), so they are version-controlled with your code.
 
-For a support/diagnostic dump of what Draftsman sees (models, config, about
-report), there is also:
-
-```bash
-php artisan draftsman:snapshot            # writes to snapshot_path
-php artisan draftsman:snapshot --path=... # or a specific file/directory
-```
-
 ## Rendering graphs
 
 Any graph saved from the Draftsman UI (stored as `<graphs_path>/<slug>.json`,
@@ -134,6 +126,17 @@ For png/pdf in CI, add Browsershot and Puppeteer before the render step:
       - run: npm install puppeteer
       - run: npx puppeteer browsers install chrome-headless-shell
       - run: php artisan draftsman:render teams --format=png --path=docs/erd.png
+```
+
+## Support
+
+If you're having problems with draftsman please feel free to reach out to use at support@draftsman.dev.
+
+We might ask you to include a snapshot of your draftsman data using the snapshot tool.
+
+```bash
+php artisan draftsman:snapshot            # writes to snapshot_path
+php artisan draftsman:snapshot --path=... # or a specific file/directory
 ```
 
 ## Local Dev
