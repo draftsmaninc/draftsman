@@ -14,25 +14,10 @@ A graphical tool that diagrams and edits Laravel eloquent models.
 
 ## Installation
 
-Because this package hasn't been published yet on Packagist you'll 
-need to start by adding it to your repositories block in composer.json.
-If your composer.json file doesn't have a repositories block add it to the end.
-
-```json
-"repositories" : {
-    ...
-
-    "draftsman" : {
-        "type": "vcs",
-        "url": "https://github.com/draftsmaninc/draftsman.git"
-    }
-}
-```
-
-You can now install the package via composer:
+You can install the package via composer:
 
 ```bash
-composer require --dev draftsmaninc/draftsman:dev-main
+composer require draftsmaninc/draftsman
 ```
 
 You can publish the config file with:
